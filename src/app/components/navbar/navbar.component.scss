@@ -1,0 +1,80 @@
+.top-bar {
+  width: 100vw !important;
+  background: linear-gradient(90deg, #a78bfa, #c084fc) !important; // degradado púrpura-lila
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 0.5rem 2rem !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25) !important;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif !important;
+  animation: slideDown 0.7s ease-in-out;
+  z-index: 10;
+  position: relative;
+  border-bottom: 3px dashed #fcd34d !important; // línea decorativa
+}
+
+.logo {
+  width: 60px !important;
+  height: 60px !important;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8)) !important;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotate(-10deg) scale(1.1);
+  }
+}
+
+.top-options {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.2rem !important;
+}
+
+.progreso-button,
+.logout-button {
+  font-size: 1.2rem !important;
+  font-weight: bold !important;
+  padding: 0.7rem 1.6rem !important;
+  border: none !important;
+  border-radius: 16px !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, background-color 0.3s ease !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.progreso-button {
+  background-color: #34d399 !important; // verde amigable
+  color: #fff !important;
+
+  &:hover {
+    background-color: #10b981 !important;
+    transform: scale(1.08);
+  }
+
+}
+
+.logout-button {
+  background-color: #f472b6 !important; // rosa fuerte
+  color: #fff !important;
+
+  &:hover {
+    background-color: #ec4899 !important;
+    transform: scale(1.08);
+  }
+
+}
+
+/* Animación */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

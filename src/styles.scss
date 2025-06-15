@@ -1,0 +1,19 @@
+@import './assets/scss/variables';
+@import './bootstrap/scss/bootstrap';
+@import './assets/scss/table';
+@import './assets/scss/button';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html, body {
+  width: 100% !important;
+  height: 100% !important;
+  overflow-x: hidden !important; /* ¡Obligatorio! */
+  position: relative !important;
+}

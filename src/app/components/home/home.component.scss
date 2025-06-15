@@ -1,0 +1,455 @@
+.home-container {
+  min-height: 100vh !important;
+height: auto !important;
+  padding-top: 60px !important;
+  width: 100vw !important;
+  background-image: url('/assets/img/fondo.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0 1.5rem !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  color: white !important;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.welcome-title {
+  font-size: 4rem !important;
+  font-weight: bold !important;
+  color: #ffd700 !important;
+  margin-bottom: 1.8rem !important;
+  text-shadow: 3px 3px 6px #000 !important;
+  animation: bounce 2s infinite;
+}
+
+.main-content {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2.5rem !important;
+  width: 90vw !important;
+  max-width: 1000px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  padding: 2.5rem !important;
+  border-radius: 2rem !important;
+  border: 4px dashed #fff176 !important;
+  backdrop-filter: blur(5px) !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important;
+}
+
+.text-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  flex: 1 !important;
+}
+
+.welcome-subtitle {
+  font-size: 2.4rem !important;
+  color: #fff !important;
+  line-height: 1.6 !important;
+  margin-bottom: 1.5rem !important;
+  text-shadow: 2px 2px 5px #000 !important;
+}
+
+.pregunta-subtitle {
+  font-size: 1.8rem !important;
+  color: #fff !important;
+  line-height: 1.6 !important;
+  margin-bottom: 1.5rem !important;
+  text-shadow: 2px 2px 5px #000 !important;
+  text-align: center !important;
+}
+
+ .pregunta-numeros {
+  font-size: 1.8rem !important;
+  color: #fff !important;
+  line-height: 1.6 !important;
+  margin: 1.5rem auto !important; /* auto centra horizontalmente */
+  text-shadow: 2px 2px 5px #000 !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+.start-button {
+  font-size: 1.6rem !important;
+  font-weight: bold !important;
+  padding: 1.2rem 3rem !important;
+  background-color: #22c55e !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 1.5rem !important;
+  cursor: pointer !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+  transition: transform 0.2s ease, background-color 0.3s ease !important;display: block !important;
+  margin: 1rem auto !important;
+  text-align: center !important;
+
+  &:hover {
+    background-color: #16a34a !important;
+    transform: scale(1.08) !important;
+  }
+}
+
+
+.opcion-button {
+  font-size: 1.6rem !important;
+  font-weight: bold !important;
+  padding: 1.2rem 3rem !important;
+  background-color: #360066 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 1.5rem !important;
+  cursor: pointer !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+  transition: transform 0.2s ease, background-color 0.3s ease !important;display: block !important;
+  margin: 1rem auto !important;
+  text-align: center !important;
+
+  &:hover {
+    background-color: #360066 !important;
+    transform: scale(1.08) !important;
+  }
+}
+
+.pregunta-image {
+  width: 280px !important;
+  height: auto !important;
+  display: block !important;
+}
+
+
+.trofeo-image {
+  width:100px !important;
+  height: auto !important;
+  display: block !important;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) !important;
+  transform-origin: center bottom;
+}
+
+
+.robot-image {
+  width: 240px !important;
+  height: auto !important;
+  display: block !important;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) !important;
+  transform-origin: center bottom;
+}
+
+/* Animación para que el gato "hable" */
+.robot-image.speaking {
+  animation: float 3s ease-in-out infinite, speakMove 1s ease-in-out infinite !important;
+}
+
+.course-buttons {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 1.2rem !important;
+  width: 100% !important;
+  margin-top: 1.5rem !important;
+}
+
+/* Base para todos los botones de curso */
+.course-button {
+  font-size: 1.3rem !important;
+  font-weight: bold !important;
+  padding: 1rem 1.8rem !important;
+  border-radius: 1.2rem !important;
+  border: none !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  flex: 1 1 30% !important;
+  min-width: 160px !important;
+  max-width: 250px !important;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25) !important;
+  transition: transform 0.2s ease, background-color 0.3s ease !important;
+}
+
+/* Entendi  */
+.course-button.entendi {
+  background-color: #34d399 !important;
+  &:hover {
+    background-color: #059669 !important;
+    transform: scale(1.05);
+  }
+}
+
+/* Entendi  */
+.course-button.noentendi {
+  background-color: #d71111 !important;
+  &:hover {
+    background-color: #d71111 !important;
+    transform: scale(1.05);
+  }
+}
+
+/* Terminar  */
+.course-button.terminar {
+  background-color: #5E0E7E !important;
+  &:hover {
+    background-color: #5E0E7E !important;
+    transform: scale(1.05);
+  }
+}
+
+
+
+/* Matemáticas  */
+.course-button.math {
+  background-color: #34d399 !important;
+  &:hover {
+    background-color: #059669 !important;
+    transform: scale(1.05);
+  }
+}
+/* comunicacion  */
+.course-button.communication {
+  background-color: #60a5fa !important;
+  &:hover {
+    background-color: #2563eb !important;
+    transform: scale(1.05);
+  }
+}
+
+/* Ciencias  */
+.course-button.science {
+  background-color: #f87171 !important;
+  &:hover {
+    background-color: #dc2626 !important;
+    transform: scale(1.05);
+  }
+}
+
+.robot-container {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+.timer-overlay {
+  position: absolute !important;
+  top: -10px !important;
+  left: +70px !important;
+  font-size: 1.8rem !important;
+  font-weight: bold !important;
+  color: #ffec3d !important;
+  background-color: rgba(0, 0, 0, 0.65) !important;
+  padding: 0.6rem 1.2rem !important;
+  border-radius: 0.8rem !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+  z-index: 5 !important;
+  animation: fadeIn 1s ease-in-out !important;
+}
+
+.chatgpt-container {
+  width: 100% !important;
+  max-width: 600px !important;
+  margin: 2rem auto !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border: 2px solid #ffd700 !important;
+  border-radius: 1.5rem !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(4px) !important;
+  color: #fff !important;
+}
+
+.chat-box {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  margin-bottom: 1rem !important;
+}
+
+.message {
+  margin-bottom: 1rem !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 1rem !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+.message.user {
+  background-color: #4ade80 !important;
+  color: #000 !important;
+}
+
+.message.assistant {
+  background-color: #3b82f6 !important;
+}
+
+.chat-input {
+  display: flex !important;
+  gap: 1rem !important;
+
+  input {
+    flex: 1 !important;
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+    border: none !important;
+    font-size: 1rem !important;
+  }
+
+  button {
+    padding: 1rem 1.5rem !important;
+    background-color: #22c55e !important;
+    border: none !important;
+    border-radius: 1rem !important;
+    color: white !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    &:hover {
+      background-color: #16a34a !important;
+    }
+  }
+}
+
+
+.barras-porcentajes {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.8rem !important;
+  width: 100% !important;
+  max-width: 400px !important;
+  margin: 2rem auto !important;
+}
+
+.barra-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+}
+
+.barra-titulo {
+  font-size: 1.6rem !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  text-shadow: 2px 2px 5px #000 !important;
+  text-align: left !important;
+}
+
+.barra {
+  position: relative !important;
+  height: 25px !important;
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 12.5px !important;
+  overflow: hidden !important;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2) !important;
+
+  &::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 12.5px;
+    transition: width 0.5s ease !important;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    z-index: 1 !important;
+  }
+}
+
+.barra-porcentaje {
+  position: absolute !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  z-index: 2 !important;
+  text-shadow: 1px 1px 3px #000 !important;
+  font-size: 1.3rem !important;
+}
+
+/* Colores y anchos reales para cada barra */
+.barra.curso1::after {
+  width: 75% !important;
+  background-color: #34d399 !important;
+}
+
+.barra.curso2::after {
+  width: 50% !important;
+  background-color: #60a5fa !important;
+}
+
+.barra.curso3::after {
+  width: 90% !important;
+  background-color: #f87171 !important;
+}
+
+
+.detalle-button {
+  font-size: 1rem !important;
+  padding: 0.5rem 1.2rem !important;
+  background-color: #2481A3 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 0.8rem !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+  transition: background-color 0.3s, transform 0.2s !important;
+  align-self: flex-end !important;
+  margin-top: 0.6rem !important;
+  margin-left: auto !important;
+  display: block !important;
+
+  &:hover {
+    background-color: #2481A3 !important;
+    transform: scale(1.05) !important;
+  }
+}
+
+
+
+
+
+@keyframes speakMove {
+  0%, 100% {
+    transform: translateY(0) scaleX(1);
+  }
+  50% {
+    transform: translateY(-5px) scaleX(1.05);
+  }
+}
+
+/* Animaciones extra */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

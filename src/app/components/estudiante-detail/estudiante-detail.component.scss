@@ -1,0 +1,120 @@
+
+.home-container {
+  min-height: 100vh !important;
+height: auto !important;
+  width: 100vw !important;
+  background-image: url('/assets/img/pantalladocente.png') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 1.5rem !important;
+  box-sizing: border-box !important;
+  color: white !important;
+  animation: fadeIn 1s ease-in-out !important;
+  position: relative !important;
+}
+
+.perfil-estudiante {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  margin-bottom: 1.5rem !important;
+  text-align: left !important;
+
+  .avatar-grande {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  .usuario {
+    font-size: 1.2rem !important;
+    color: #90caf9 !important;
+  }
+}
+
+.cursos-dominados {
+  margin-bottom: 1rem !important;
+  font-size: 1.2rem !important;
+
+  .barra-progreso-fina {
+    display: inline-block !important;
+    background: #555 !important;
+    border-radius: 5px !important;
+    height: 10px !important;
+    width: 100px !important;
+    margin: 0 10px !important;
+    vertical-align: middle !important;
+
+    .relleno {
+      background: #03a9f4 !important;
+      height: 100% !important;
+      border-radius: 5px !important;
+    }
+  }
+}
+
+.puntaje-titulo {
+  margin: 1rem 0 0.5rem 0 !important;
+  font-weight: bold !important;
+  font-size: 1.2rem !important;
+}
+
+.curso {
+  display: flex !important;
+  align-items: center !important;
+  background: rgba(255,255,255,0.08) !important;
+  border-radius: 10px !important;
+  padding: 0.5rem 1rem !important;
+  margin-bottom: 0.7rem !important;
+  gap: 0.8rem !important;
+
+  .nombre {
+    width: 130px !important;
+    font-weight: bold !important;
+  }
+
+  .barra-horizontal {
+    flex: 1 !important;
+    background: #333 !important;
+    height: 10px !important;
+    border-radius: 5px !important;
+    position: relative !important;
+
+    .relleno {
+      height: 100% !important;
+      background-color: var(--color) !important;
+      border-radius: 5px !important;
+      transition: width 0.4s ease !important;
+    }
+  }
+
+  .puntaje {
+    width: 50px !important;
+    text-align: center !important;
+  }
+
+  .btn-mas {
+    background-color: #1976d2 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 4px 10px !important;
+    font-size: 1.2rem !important;
+    cursor: pointer !important;
+
+    &:hover {
+      transform: scale(1.1) !important;
+    }
+  }
+}
+
+.radar-container {
+  position: absolute!important;
+  top: 10px !important;// ajusta según altura del navbar
+  right: 30px !important;
+  width: 250px !important;
+  height: 350px !important;
+  z-index: 10 !important;
+}

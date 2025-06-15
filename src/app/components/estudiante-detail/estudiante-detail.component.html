@@ -1,0 +1,57 @@
+<app-navbar></app-navbar>
+<div class="home-container">
+    <!-- Contenedor del radar -->
+
+
+  <div class="estudiantes-container">
+    <div class="perfil-estudiante">
+      <img src="/assets/img/robot.png" alt="Avatar" class="avatar-grande">
+      <div>
+        <h1>Estudiante</h1>
+        <p class="usuario">usuario 1</p>
+        <p>El estudiante ha completado su reforzamiento</p>
+      </div>
+        <div class="radar-container">
+    <canvas id="radarChart" width="150" height="150"></canvas>
+  </div>
+    </div>
+
+    <div class="cursos-dominados">
+      Cursos dominados: <span class="barra-progreso-fina">
+        <div class="relleno" style="width: 100%"></div>
+      </span> 3/3
+    </div>
+<div class="puntaje-titulo">
+      Puntaje Semanal
+    </div>
+
+
+    <div class="curso" style="--color:#f9a825;">
+      <span class="nombre">📘 Matemáticas</span>
+      <div class="barra-horizontal">
+        <div class="relleno" style="width: 80%"></div>
+      </div>
+      <span class="puntaje">08/10</span>
+      <button class="btn-mas">+</button>
+    </div>
+
+    <div class="curso" style="--color:#4fc3f7;">
+      <span class="nombre">📗 Comunicación</span>
+      <div class="barra-horizontal">
+        <div class="relleno" style="width: 100%"></div>
+      </div>
+      <span class="puntaje">10/10</span>
+      <button class="btn-mas">+</button>
+    </div>
+
+    <div class="curso" style="--color:#8bc34a;">
+      <span class="nombre">📙 Ciencias y Tecnología</span>
+      <div class="barra-horizontal">
+        <div class="relleno" style="width: 53%"></div>
+      </div>
+      <span class="puntaje">08/15</span>
+      <button class="btn-mas">+</button>
+    </div>
+
+  </div>
+</div>

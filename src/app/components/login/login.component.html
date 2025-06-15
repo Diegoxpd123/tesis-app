@@ -1,0 +1,32 @@
+<!-- login.component.html -->
+<div class="login-container">
+  <!-- Lado Izquierdo -->
+  <div class="login-left">
+    <img src="assets/img/logo.png" alt="Logo" class="logo" />
+
+    <h1 class="titulo">
+      <span class="azul">DREAN </span>
+      <span class="amarillo">TEACH </span>
+      <span class="azul">ME</span>
+    </h1>
+
+    <h2 class="subtitulo">¡Bienvenido! Ingresa tus datos</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <div class="mb-3">
+        <label for="username" class="form-label">Usuario</label>
+        <input type="text" class="form-control" id="username" formControlName="username" />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" id="password" formControlName="password" />
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Iniciar sesión</button>
+    </form>
+  </div>
+
+  <!-- Lado Derecho -->
+  <div class="login-right">
+    <img src="assets/img/plantilla.png" alt="Decoración divertida para niños" />
+  </div>
+</div>

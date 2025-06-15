@@ -1,0 +1,58 @@
+<app-navbar></app-navbar>
+<div class="home-container">
+<div class="estudiantes-container">
+  <h1>{{ tituloMessage }}</h1>
+
+<!-- Filtros de Grado y Sección -->
+<div class="filtros-grado-seccion">
+  <div>
+    <label for="gradoSelect" class="form-label">Seleccionar Grado</label>
+    <select id="gradoSelect" class="form-select" [(ngModel)]="gradoSeleccionado" (change)="filtrarEstudiantes()">
+      <option [ngValue]="null" disabled selected>Seleccione un grado</option>
+      <option *ngFor="let grado of grados" [ngValue]="grado">{{ grado }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="seccionSelect" class="form-label">Seleccionar Sección</label>
+    <select id="seccionSelect" class="form-select" [(ngModel)]="seccionSeleccionada" (change)="filtrarEstudiantes()">
+      <option [ngValue]="null" disabled selected>Seleccione una sección</option>
+      <option *ngFor="let seccion of secciones" [ngValue]="seccion">{{ seccion }}</option>
+    </select>
+  </div>
+</div>
+
+  <div class="tabla-header">
+    <span>Estudiantes</span>
+    <span>Progreso</span>
+    <span> </span>
+    <span> </span>
+  </div>
+
+  <div *ngFor="let estudiante of estudiantesPaginados" class="fila-estudiante">
+    <div class="info-estudiante">
+      <img src="/assets/img/robot.png" alt="Avatar" class="avatar">
+      <span>{{ estudiante.nombre }}</span>
+    </div>
+
+    <div class="progreso">
+      <div class="barra-container">
+        <div class="barra" [style.width.%]="estudiante.porcentaje"></div>
+      </div>
+      <div class="iconos">
+        🔢
+        📚
+        🔬
+      </div>
+    </div>
+
+    <button class="btn-detalles" routerLink="/estudiantes/detail">Ver Detalles</button>
+  </div>
+<div *ngIf="totalPages > 1" class="paginacion">
+  <button (click)="cambiarPagina(-1)" [disabled]="currentPage === 1">Anterior</button>
+  <span>Página {{ currentPage }} de {{ totalPages }}</span>
+  <button (click)="cambiarPagina(1)" [disabled]="currentPage === totalPages">Siguiente</button>
+</div>
+</div>
+
+</div>

@@ -1,0 +1,188 @@
+
+.home-container {
+  min-height: 100vh !important;
+height: auto !important;
+  width: 100vw !important;
+  background-image: url('/assets/img/pantalladocente.png') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 1.5rem !important;
+  box-sizing: border-box !important;
+  color: white !important;
+  animation: fadeIn 1s ease-in-out !important;
+  position: relative !important;
+}
+
+.estudiantes-container {
+  padding: 2rem !important;
+  border-radius: 10px !important;
+  width: 90vw !important;
+  max-width: 700px !important;
+  margin: 0 auto !important;
+  color: white !important;
+  font-family: 'Comic Sans MS', sans-serif !important;
+  text-align: center !important;
+  h1 {
+    font-size: 2.8rem!important;
+    margin-bottom: 0.3rem!important;
+  }
+
+  h2 {
+    font-size: 1.8rem!important;
+    margin-bottom: 1rem!important;
+  }
+
+  .tabla-header {
+    display: flex!important;
+    justify-content: space-between!important;
+    font-weight: bold!important;
+    padding: 0.5rem 1rem !important;
+    border-bottom: 1px solid #ffffff33 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .fila-estudiante {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    padding: 0.7rem 1rem !important;
+    border-radius: 10px !important;
+    margin-bottom: 0.7rem !important;
+    gap: 1rem !important;
+
+    .info-estudiante {
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.5rem !important;
+
+      .avatar {
+        width: 40px !important;
+        height: 40px !important;
+      }
+    }
+
+    .progreso {
+      width: 50% !important;
+      flex: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 0.3rem !important;
+
+      .barra-container {
+        background: #333 !important;
+        border-radius: 5px !important;
+        width: 100% !important;
+        height: 10px !important;
+        overflow: hidden !important;
+
+        .barra {
+          height: 100% !important;
+          background: yellow !important;
+          transition: width 0.5s ease !important;
+        }
+      }
+
+      .iconos img {
+        width: 18px !important;
+        margin: 0 2px !important;
+      }
+    }
+
+    .btn-detalles {
+      background-color: #1976d2 !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 5px !important;
+      padding: 6px 12px !important;
+      cursor: pointer !important;
+       &:hover {
+    background-color: #1976d2 !important;
+    transform: scale(1.08) !important;
+  }
+    }
+  }
+
+  .btn-descargar {
+    background-color: #e91e63 !important;
+    color: white !important;
+    padding: 8px 16px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    margin-top: 1rem !important;
+       &:hover {
+    background-color: #e91e63 !important;
+    transform: scale(1.08) !important;
+  }
+  }
+}
+
+
+.paginacion {
+  margin-top: 1rem !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 1rem !important;
+
+  button {
+    background-color: #1976d2 !important;
+    color: white !important;
+    padding: 6px 12px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    &:disabled {
+      opacity: 0.5 !important;
+      cursor: not-allowed !important;
+    }
+    &:hover:not(:disabled) {
+      transform: scale(1.05);
+    }
+  }
+
+  span {
+    font-size: 1rem !important;
+  }
+}
+
+.filtros-grado-seccion {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .form-label {
+    font-weight: bold;
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-select {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-family: 'Comic Sans MS', sans-serif;
+    width: 100%;
+    max-width: 250px;
+
+    &:focus {
+      outline: none;
+      border-color: #ffc107;
+      box-shadow: 0 0 5px #ffc107;
+    }
+
+    option {
+      color: black; // Para evitar fondo blanco con texto blanco
+    }
+  }
+}
+

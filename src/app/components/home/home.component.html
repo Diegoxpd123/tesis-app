@@ -1,0 +1,151 @@
+<app-navbar></app-navbar>
+
+<div class="home-container">
+  <h1 id="titulo" class="welcome-title">
+        {{ tituloMessage }}
+      </h1>
+
+  <div class="main-content">
+    <div class="robot-container">
+  <div class="timer-overlay" *ngIf="showTimer">{{ timerMinutes }}:{{ timerSeconds | number: '2.0' }}</div>
+  <img src="/assets/img/robot.png" alt="Gato robot" class="robot-image" />
+</div>
+    <div class="text-content">
+      <p id="mensaje" class="welcome-subtitle">
+        {{ welcomeMessage }}
+      </p>
+      <p id="pregunta" class="pregunta-subtitle">
+        {{ preguntaMessage }}
+      </p>
+
+      <button
+        *ngIf="showStartButton"
+        class="start-button"
+        (click)="startClicked()"
+      >
+        🎮 ¡EMPEZAR!
+      </button>
+<div *ngIf="showCourseButtons" class="course-buttons slide-in">
+  <button class="start-button course-button math" (click)="startMath(1)">🔢 Matemáticas</button>
+  <button class="start-button course-button communication" (click)="startMath(2)">📚 Comunicación</button>
+  <button class="start-button course-button science" (click)="selectCourse('Ciencias y Tecnologías')">🔬 Ciencias y Tecnologías</button>
+</div>
+<div *ngIf="showCourseOpcionesImg" class="course-buttons slide-in">
+  <img src={{imagenpregunta}} alt="pregunta" class="pregunta-image" />
+
+</div>
+<!-- ChatGPT Integration -->
+<div *ngIf="showChatGpt" class="chatgpt-container">
+  <div class="chat-box">
+    <div *ngFor="let msg of messages" class="message" [ngClass]="msg.role">
+      <strong *ngIf="msg.role === 'user'">Tú:</strong>
+      <strong *ngIf="msg.role === 'assistant'">GPT:</strong>
+      {{ msg.content }}
+    </div>
+  </div>
+  <div class="chat-input">
+    <input [(ngModel)]="userMessage" placeholder="Escribe tu duda..." />
+    <button (click)="sendMessage()">Enviar</button>
+  </div>
+</div>
+
+
+<div *ngIf="showCourseOpciones" class="course-buttons slide-in">
+  <button class="opcion-button" (click)="selectRespuesta(opcion1)" >{{ opcion1 }}</button>
+  <button class="opcion-button" (click)="selectRespuesta(opcion2)"  >{{ opcion2 }}</button>
+  <button class="opcion-button" (click)="selectRespuesta(opcion3)"  >{{ opcion3 }}</button>
+  <button class="opcion-button" (click)="selectRespuesta(opcion4)"  >{{ opcion4 }}</button>
+</div>
+<div *ngIf="showYesOrNoOpciones" class="course-buttons slide-in">
+  <button class="start-button course-button entendi"  (click)="runPreguntas('Matematicas',evaluacionidnumber)"  >Entendi</button>
+  <button class="start-button course-button noentendi"  (click)="preguntargpt()"  >No Entendi</button>
+</div>
+<div *ngIf="showYesOrNoOpciones1" class="course-buttons slide-in">
+  <button class="start-button course-button entendi"  (click)="runPreguntas('Matematicas',evaluacionidnumber)"  >Ya Entendi</button>
+  <button class="start-button course-button noentendi"  (click)="iniciarChatGpt()"  >Sigo sin entender</button>
+</div>
+<div *ngIf="showTerminarChat" class="course-buttons slide-in">
+  <button class="start-button course-button terminar"  (click)="runPreguntas('Matematicas',evaluacionidnumber)"  >Terminar</button>
+</div>
+<div *ngIf="showVerMiProgreso" class="course-buttons slide-in">
+  <img src="/assets/img/trofeo.png" alt="trofeo" class="trofeo-image" />
+</div>
+<div *ngIf="showVerMiProgreso" class="course-buttons slide-in">
+  <button class="start-button course-button terminar"  (click)="showDetalleProgreso()"  >Ver mi progrso</button>
+</div>
+<div *ngIf="showDetallesProgreso" class="course-buttons slide-in">
+    <canvas id="progresoRadar" width="100" height="100"></canvas>
+</div>
+<div *ngIf="showDetallesProgreso" class="course-buttons slide-in">
+  <button class="start-button course-button terminar"  (click)="toggleDetalles()"  >Ver Detalles</button>
+</div>
+<div *ngIf="showMostrarBarras" class="barras-porcentajes" >
+
+ <div class="barra-container">
+    <div class="barra-titulo">Matemática</div>
+    <div class="barra curso1">
+      <span class="barra-porcentaje">75%</span>
+    </div>
+    <button class="detalle-button"  (click)="verMasDetallesPorCurso('Matematica')" >Ver más detalles</button>
+  </div>
+
+  <div class="barra-container">
+    <div class="barra-titulo">Comunicaciones</div>
+    <div class="barra curso2">
+      <span class="barra-porcentaje">50%</span>
+    </div>
+    <button class="detalle-button" (click)="verMasDetallesPorCurso('Comunicaciones')" >Ver más detalles</button>
+  </div>
+
+  <div class="barra-container">
+    <div class="barra-titulo">Ciencias</div>
+    <div class="barra curso3">
+      <span class="barra-porcentaje">90%</span>
+    </div>
+    <button class="detalle-button" (click)="verMasDetallesPorCurso('Ciencias')" >Ver más detalles</button>
+  </div>
+
+</div>
+<div *ngIf="showMostrarBarrasPorCurso" class="barras-porcentajes" >
+
+ <div class="barra-container">
+    <div class="barra-titulo">Conjuntos</div>
+    <div class="barra curso1">
+      <span class="barra-porcentaje">75%</span>
+    </div>
+  </div>
+
+  <div class="barra-container">
+    <div class="barra-titulo">Patrones</div>
+    <div class="barra curso2">
+      <span class="barra-porcentaje">50%</span>
+    </div>
+  </div>
+
+   <div class="barra-container">
+    <div class="barra-titulo">Suma y resta</div>
+    <div class="barra curso2">
+      <span class="barra-porcentaje">50%</span>
+    </div>
+  </div>
+
+    <div class="barra-container">
+    <div class="barra-titulo">Multiplicacion</div>
+    <div class="barra curso3">
+      <span class="barra-porcentaje">90%</span>
+    </div>
+  </div>
+
+</div>
+
+<div *ngIf="showCerrarSesion" class="course-buttons slide-in">
+  <button class="start-button course-button entendi"  (click)="cerrar()"  >Si</button>
+  <button class="start-button course-button noentendi"  (click)="toggleHome()"  >No</button>
+</div>
+ <!-- pie de pagina de las preguntas -->
+<p id="numero-preguntas" class="pregunta-numeros">
+        {{ preguntaNumeros }}
+      </p>
+    </div>
+  </div>
+</div>
