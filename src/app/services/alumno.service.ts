@@ -8,7 +8,7 @@ import { Alumno } from '../models/alumno.model';
 })
 export class AlumnoService {
 
-   private readonly API_URL = 'http://127.0.0.1:8000/api';
+   private readonly API_URL = 'https://moving-firefly-neatly.ngrok-free.app/api';
 
   constructor(
     private http: HttpClient

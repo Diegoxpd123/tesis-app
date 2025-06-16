@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';;
-import { ReactiveFormsModule } from '@angular/forms'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { LoginComponent } from './components/login/login.component';
-import { FormsModule } from '@angular/forms';
 import { EstudianteListComponent } from './components/estudiante-list/estudiante-list.component';
 import { EstudianteDetailComponent } from './components/estudiante-detail/estudiante-detail.component';
+
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { NgrokInterceptor } from './interceptors/ngrok.interceptor'; // asegúrate que esta ruta sea correcta
 
 @NgModule({
   declarations: [
@@ -25,11 +27,17 @@ import { EstudianteDetailComponent } from './components/estudiante-detail/estudi
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-     FormsModule,
+    FormsModule,
     ReactiveFormsModule,
-     ZXingScannerModule
+    ZXingScannerModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: NgrokInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

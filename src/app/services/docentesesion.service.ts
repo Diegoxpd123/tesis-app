@@ -8,7 +8,7 @@ import { Docentesesion } from '../models/docentesesion.model';
 })
 export class DocentesesionService {
 
-   private readonly API_URL = 'http://127.0.0.1:8000/api';
+   private readonly API_URL = 'https://moving-firefly-neatly.ngrok-free.app/api';
 
   constructor(
     private http: HttpClient
