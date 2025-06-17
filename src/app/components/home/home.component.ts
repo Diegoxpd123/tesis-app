@@ -112,7 +112,8 @@ export class HomeComponent implements OnInit {
     this.messages.push({ role: 'user', content: userMsg });
     this.userMessage = '';
 
-    this.http.post('http://127.0.0.1:8000/api/chatgpt', {
+
+    this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
       messages: userMsg
     }).subscribe((response: any) => {
       const reply = response.choices[0].message.content;
@@ -128,7 +129,7 @@ export class HomeComponent implements OnInit {
     this.messages.push({ role: 'user', content: userMsg });
     this.userMessage = '';
 
-    this.http.post('http://127.0.0.1:8000/api/chatgpt', {
+    this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
       messages: userMsg
     }).subscribe((response: any) => {
       this.preguntaMessage = response.choices[0].message.content;
