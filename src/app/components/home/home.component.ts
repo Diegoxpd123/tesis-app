@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
   tituloMessage: string = '¡Bienvenido! ';
   preguntaMessagetemp: string = '';
   preguntaMessage: string = '';
-   preguntaMessageenviar: string = '';
+  preguntaMessageenviar: string = '';
   preguntaNumeros: string = '';
   welcomeMessage: string = '¿Estás listo para comenzar con tu reforzamiento del día?';
   showStartButton: boolean = true;
@@ -50,6 +50,7 @@ export class HomeComponent implements OnInit {
 
   showTimer: boolean = false;
   showChatGpt: boolean = false;
+  opcionesHTML: string[] = [];
 
 
 
@@ -125,7 +126,7 @@ export class HomeComponent implements OnInit {
 
   sendMessageIndividual(value: string) {
     console.log(value);
-    const userMsg = "dame una respuesta que entienda un niño de primaria " +value;
+    const userMsg = "dame una respuesta que entienda un niño de primaria " + value;
     this.messages.push({ role: 'user', content: userMsg });
     this.userMessage = '';
 
@@ -134,6 +135,7 @@ export class HomeComponent implements OnInit {
     }).subscribe((response: any) => {
       this.preguntaMessage = response.choices[0].message.content;
       this.showYesOrNoOpciones1 = true;
+
       this.speakWelcomeMessage(this.preguntaMessage);
     });
   }
@@ -329,9 +331,9 @@ export class HomeComponent implements OnInit {
   runPreguntas(titulo: string, evaluacioid: number) {
 
     this.preguntaservice.getPreguntas().subscribe(preguntas => {
-      const preguntasencontradas = preguntas.filter(u =>
-        u.evaluacionid === evaluacioid
-      );
+      const preguntasencontradas = preguntas
+        .filter(u => u.evaluacionid === evaluacioid)
+        .sort(() => Math.random() - 0.5);
 
       if (this.preguntaActual == this.preguntaTotales) {
 
@@ -348,7 +350,7 @@ export class HomeComponent implements OnInit {
         this.showStartButton = false;
         this.showCourseButtons = false;
         this.showYesOrNoOpciones = false;
-      this.showYesOrNoOpciones1 = false;
+        this.showYesOrNoOpciones1 = false;
         this.showTerminarChat = false;
         this.showDetallesProgreso = false;
         this.showChatGpt = false;
@@ -375,9 +377,15 @@ export class HomeComponent implements OnInit {
         this.opcion2 = preguntasencontradas[this.preguntaActual].opcion2;
         this.opcion3 = preguntasencontradas[this.preguntaActual].opcion3;
         this.opcion4 = preguntasencontradas[this.preguntaActual].opcion4;
- this.showStartButton = false;
+        this.opcionesHTML = [
+  this.opcion1,
+  this.opcion2,
+  this.opcion3,
+  this.opcion4
+].sort(() => Math.random() - 0.5);
+        this.showStartButton = false;
         this.showCourseButtons = false;
-      this.showYesOrNoOpciones1 = false;
+        this.showYesOrNoOpciones1 = false;
         this.showTerminarChat = false;
         this.showDetallesProgreso = false;
         this.showChatGpt = false;
@@ -425,7 +433,7 @@ export class HomeComponent implements OnInit {
       clearInterval(this.timerInterval);
       this.showTimer = false;
 
-        const alumno_id = localStorage.getItem('usuario_id');
+      const alumno_id = localStorage.getItem('usuario_id');
       this.resultadopregunta = {
         alumnoid: Number(alumno_id),
         preguntaid: this.preguntaid,
@@ -463,18 +471,18 @@ export class HomeComponent implements OnInit {
 
   }
 
-  preguntargpt(){
-      this.showYesOrNoOpciones = false;
-this.preguntaMessage = "Consultando pregunta con la IA ......."
+  preguntargpt() {
+    this.showYesOrNoOpciones = false;
+    this.preguntaMessage = "Consultando pregunta con la IA ......."
 
-      this.sendMessageIndividual(this.preguntaMessageenviar);
+    this.sendMessageIndividual(this.preguntaMessageenviar);
 
   }
 
   iniciarChatGpt() {
     this.preguntaMessage = "Detallame más tu duda o problema:";
     this.showYesOrNoOpciones = false;
-      this.showYesOrNoOpciones1 = false;
+    this.showYesOrNoOpciones1 = false;
     this.showTerminarChat = true;
     this.showChatGpt = true;
     this.messages = [
@@ -505,19 +513,19 @@ this.preguntaMessage = "Consultando pregunta con la IA ......."
     this.showMostrarBarrasPorCurso = false;
     this.showStartButton = false;
     this.showCerrarSesion = false;
-     this.showCourseOpciones = false;
-        this.showCourseOpcionesImg = false;
-        this.showStartButton = false;
-        this.showCourseButtons = false;
-        this.showYesOrNoOpciones = false;
-      this.showYesOrNoOpciones1 = false;
-        this.showTerminarChat = false;
-        this.preguntaNumeros ="";
-        this.showDetallesProgreso = false;
-        this.showChatGpt = false;
-        //detener el timer
-        clearInterval(this.timerInterval);
-        this.showTimer = false;
+    this.showCourseOpciones = false;
+    this.showCourseOpcionesImg = false;
+    this.showStartButton = false;
+    this.showCourseButtons = false;
+    this.showYesOrNoOpciones = false;
+    this.showYesOrNoOpciones1 = false;
+    this.showTerminarChat = false;
+    this.preguntaNumeros = "";
+    this.showDetallesProgreso = false;
+    this.showChatGpt = false;
+    //detener el timer
+    clearInterval(this.timerInterval);
+    this.showTimer = false;
 
   }
 
@@ -543,7 +551,7 @@ this.preguntaMessage = "Consultando pregunta con la IA ......."
         this.showCourseOpciones = false;
         this.showCourseOpcionesImg = false;
         this.showYesOrNoOpciones = false;
-      this.showYesOrNoOpciones1 = false;
+        this.showYesOrNoOpciones1 = false;
         this.showTerminarChat = false;
         this.showVerMiProgreso = false;
         this.showDetallesProgreso = false;
@@ -568,7 +576,7 @@ this.preguntaMessage = "Consultando pregunta con la IA ......."
     this.showCourseOpciones = false;
     this.showCourseOpcionesImg = false;
     this.showYesOrNoOpciones = false;
-      this.showYesOrNoOpciones1 = false;
+    this.showYesOrNoOpciones1 = false;
     this.showTerminarChat = false;
     this.showVerMiProgreso = false;
     this.showDetallesProgreso = false;

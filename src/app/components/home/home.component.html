@@ -51,10 +51,13 @@
 
 
 <div *ngIf="showCourseOpciones" class="course-buttons slide-in">
-  <button class="opcion-button" (click)="selectRespuesta(opcion1)" >{{ opcion1 }}</button>
-  <button class="opcion-button" (click)="selectRespuesta(opcion2)"  >{{ opcion2 }}</button>
-  <button class="opcion-button" (click)="selectRespuesta(opcion3)"  >{{ opcion3 }}</button>
-  <button class="opcion-button" (click)="selectRespuesta(opcion4)"  >{{ opcion4 }}</button>
+  <button
+    *ngFor="let opcion of opcionesHTML"
+    class="opcion-button"
+    (click)="selectRespuesta(opcion)"
+  >
+    {{ opcion }}
+  </button>
 </div>
 <div *ngIf="showYesOrNoOpciones" class="course-buttons slide-in">
   <button class="start-button course-button entendi"  (click)="runPreguntas('Matematicas',evaluacionidnumber)"  >Entendi</button>
