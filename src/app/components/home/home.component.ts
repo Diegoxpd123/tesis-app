@@ -11,6 +11,7 @@ import { PreguntaService } from '../../services/pregunta.service';
 import { ResultadopreguntaService } from '../../services/resultadopregunta.service';
 import { EvaluacionService } from '../../services/evaluacion.service';
 import { Resultadopregunta } from '../../models/resultadopregunta.model';
+import { ChangeDetectorRef } from '@angular/core';
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
 
@@ -52,9 +53,9 @@ export class HomeComponent implements OnInit {
   showPreguntaSobreGato: boolean = false;
   showChatGpt: boolean = false;
   opcionesHTML: string[] = [];
-private palabrasProhibidas: string[] = [
-  'puta', 'mierda', 'estúpido', 'imbécil', 'idiota', 'perra', 'hijo de', 'maldito', 'conchudo', 'csm', 'hdp'
-];
+  private palabrasProhibidas: string[] = [
+    'puta', 'mierda', 'estúpido', 'imbécil', 'idiota', 'perra', 'hijo de', 'maldito', 'conchudo', 'csm', 'hdp'
+  ];
 
 
 
@@ -68,7 +69,7 @@ private palabrasProhibidas: string[] = [
   opcion3: any;
   opcion4: any;
   imagenpregunta: any;
-
+  isListening: boolean = false;
   respuestaCorrecta: any;
   respuestaSeleccionada: any;
   preguntaid: number = 0;
@@ -86,7 +87,8 @@ private palabrasProhibidas: string[] = [
     private alumnoservice: AlumnoService,
     private preguntaservice: PreguntaService,
     private evaluacionserice: EvaluacionService,
-    private resultadopreguntaservice: ResultadopreguntaService) { }
+    private resultadopreguntaservice: ResultadopreguntaService,
+    private cdr: ChangeDetectorRef) { }
 
 
   ngOnInit(): void {
@@ -111,44 +113,44 @@ private palabrasProhibidas: string[] = [
 
 
   sendMessage() {
-  if (!this.userMessage.trim()) return;
+    if (!this.userMessage.trim()) return;
 
-  const userMsg = this.userMessage.trim();
+    const userMsg = this.userMessage.trim();
 
-  // Verificar si contiene palabras prohibidas
-  const contieneMalaPalabra = this.palabrasProhibidas.some(palabra =>
-    userMsg.toLowerCase().includes(palabra)
-  );
+    // Verificar si contiene palabras prohibidas
+    const contieneMalaPalabra = this.palabrasProhibidas.some(palabra =>
+      userMsg.toLowerCase().includes(palabra)
+    );
 
-  if (contieneMalaPalabra) {
-    this.messages.push({
-      role: 'assistant',
-      content: '⚠️ Por favor, evita el uso de lenguaje ofensivo.'
-    });
-    this.userMessage = '';
-    return;
-  }
-
-  this.messages.push({ role: 'user', content: userMsg });
-  this.userMessage = '';
-
-  this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
-    messages: userMsg
-  }).subscribe(
-    (response: any) => {
-      const reply = response.choices[0].message.content;
-      this.messages.push({ role: 'assistant', content: reply });
-    },
-    err => {
-      this.messages.push({ role: 'assistant', content: 'Ocurrió un error. Intenta de nuevo más tarde.' });
+    if (contieneMalaPalabra) {
+      this.messages.push({
+        role: 'assistant',
+        content: '⚠️ Por favor, evita el uso de lenguaje ofensivo.'
+      });
+      this.userMessage = '';
+      return;
     }
-  );
-}
+
+    this.messages.push({ role: 'user', content: userMsg });
+    this.userMessage = '';
+
+    this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
+      messages: userMsg
+    }).subscribe(
+      (response: any) => {
+        const reply = response.choices[0].message.content;
+        this.messages.push({ role: 'assistant', content: reply });
+      },
+      err => {
+        this.messages.push({ role: 'assistant', content: 'Ocurrió un error. Intenta de nuevo más tarde.' });
+      }
+    );
+  }
 
 
   sendMessageIndividual(value: string) {
     console.log(value);
-    const userMsg = "Le mostre esta pregunta " + value + 'al alumno con esta imagen '+ this.imagenpregunta +'y el alumno me dio esta esta respuesta'+this.respuestaSeleccionada+ 'y yo le di esta explicación' + this.preguntaMessagetemp +'pero aun asi no me entendio. Necesito una explicación  básica y mas amplia. maximo 50 palabras';
+    const userMsg = "Le mostre esta pregunta " + value + 'al alumno con esta imagen ' + this.imagenpregunta + 'y el alumno me dio esta esta respuesta' + this.respuestaSeleccionada + 'y yo le di esta explicación' + this.preguntaMessagetemp + 'pero aun asi no me entendio. Necesito una explicación  básica y mas amplia. maximo 50 palabras';
     //this.messages.push({ role: 'user', content: userMsg });
     this.userMessage = '';
 
@@ -354,8 +356,10 @@ private palabrasProhibidas: string[] = [
 
   }
 
+
+
   runPreguntas(titulo: string, evaluacioid: number) {
-      this.showPreguntaSobreGato = false;
+    this.showPreguntaSobreGato = false;
 
     this.preguntaservice.getPreguntas().subscribe(preguntas => {
       const preguntasencontradas = preguntas
@@ -369,7 +373,7 @@ private palabrasProhibidas: string[] = [
         this.preguntaMessage = "";
         this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + this.tiempototal + " segundos";
 
-    this.speakWelcomeMessage(this.welcomeMessage);
+        this.speakWelcomeMessage(this.welcomeMessage);
         this.showCourseOpciones = false;
         this.showCourseOpcionesImg = false;
         this.preguntaNumeros = "";
@@ -407,11 +411,11 @@ private palabrasProhibidas: string[] = [
         this.opcion3 = preguntasencontradas[this.preguntaActual].opcion3;
         this.opcion4 = preguntasencontradas[this.preguntaActual].opcion4;
         this.opcionesHTML = [
-  this.opcion1,
-  this.opcion2,
-  this.opcion3,
-  this.opcion4
-]
+          this.opcion1,
+          this.opcion2,
+          this.opcion3,
+          this.opcion4
+        ]
         this.showStartButton = false;
         this.showCourseButtons = false;
         this.showYesOrNoOpciones1 = false;
@@ -493,7 +497,7 @@ private palabrasProhibidas: string[] = [
       this.showChatGpt = false;
       this.preguntaMessage = this.preguntaMessagetemp;
 
-    this.speakWelcomeMessage(this.preguntaMessage);
+      this.speakWelcomeMessage(this.preguntaMessage);
       this.showYesOrNoOpciones = true;
 
       this.showYesOrNoOpciones1 = false;
@@ -521,6 +525,8 @@ private palabrasProhibidas: string[] = [
 
 
   }
+
+
 
 
 
@@ -554,7 +560,7 @@ private palabrasProhibidas: string[] = [
     this.preguntaNumeros = "";
     this.showDetallesProgreso = false;
     this.showChatGpt = false;
-      this.showPreguntaSobreGato = false;
+    this.showPreguntaSobreGato = false;
     //detener el timer
     clearInterval(this.timerInterval);
     this.showTimer = false;
@@ -568,7 +574,7 @@ private palabrasProhibidas: string[] = [
     this.showMostrarBarras = false;
     this.showDetallesProgreso = false;
     this.showMostrarBarrasPorCurso = true;
-      this.showPreguntaSobreGato = false;
+    this.showPreguntaSobreGato = false;
   }
 
 
@@ -589,7 +595,7 @@ private palabrasProhibidas: string[] = [
         this.showTerminarChat = false;
         this.showVerMiProgreso = false;
         this.showDetallesProgreso = false;
-      this.showPreguntaSobreGato = false;
+        this.showPreguntaSobreGato = false;
 
         this.showMostrarBarras = false;
         this.showMostrarBarrasPorCurso = false;
@@ -614,7 +620,7 @@ private palabrasProhibidas: string[] = [
     this.showCourseOpcionesImg = false;
     this.showYesOrNoOpciones = false;
     this.showYesOrNoOpciones1 = false;
-      this.showPreguntaSobreGato = false;
+    this.showPreguntaSobreGato = false;
     this.showTerminarChat = false;
     this.showVerMiProgreso = false;
     this.showDetallesProgreso = false;
@@ -638,4 +644,49 @@ private palabrasProhibidas: string[] = [
   selectCourse(course: string) {
     alert(`Has seleccionado el curso: ${course}`);
   }
+
+  startListening() {
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Tu navegador no soporta reconocimiento de voz.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'es-PE';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    this.isListening = true; // 🔒 Desactivar botón
+
+    recognition.onstart = () => {
+      console.log('🎙️ Escuchando...');
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      this.userMessage = transcript;
+      this.cdr.detectChanges(); // 🔁 Forzar que el input se actualice
+      console.log('Transcripción:', transcript);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Error en reconocimiento de voz:', event.error);
+      alert('Hubo un error al usar el micrófono. Intenta nuevamente.');
+      this.isListening = false; // 🔓 Reactivar si hubo error
+      this.cdr.detectChanges();
+    };
+
+    recognition.onend = () => {
+      this.isListening = false; // 🔓 Reactivar al terminar
+      this.cdr.detectChanges();
+    };
+
+    recognition.start();
+  }
+
+
+
+
+
 }
