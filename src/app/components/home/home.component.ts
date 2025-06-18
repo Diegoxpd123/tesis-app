@@ -214,7 +214,8 @@ export class HomeComponent implements OnInit {
     this.welcomeMessage = '¿Con qué curso deseas empezar?';
     this.showStartButton = false;
     this.showCourseButtons = true;
-    this.speakWelcomeMessage(this.welcomeMessage);
+    this.speakWelcomeMessage(this.welcomeMessage + 'Selecciona un curso Matemáticas, Comunicación o Ciencias y Tecnologías');
+
   }
 
 
@@ -236,7 +237,7 @@ export class HomeComponent implements OnInit {
         this.evaluacionidnumber = evaluacion.id;
         this.runPreguntas(evaluacion.nombre, evaluacion.id);
       });
-    }, 1000);
+    }, 3500);
 
   }
 
@@ -245,6 +246,8 @@ export class HomeComponent implements OnInit {
     this.tituloMessage = "Mi Progreso";
     this.preguntaMessage = "";
     this.welcomeMessage = "¡Sigue así! Has mejorado un 75%";
+
+    this.speakWelcomeMessage(this.welcomeMessage);
     this.showCourseOpciones = false;
     this.showCourseOpcionesImg = false;
     this.preguntaNumeros = "";
@@ -341,6 +344,8 @@ export class HomeComponent implements OnInit {
         this.tituloMessage = "¡Refuerzo Completado! ";
         this.preguntaMessage = "";
         this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + this.tiempototal + " segundos";
+
+    this.speakWelcomeMessage(this.welcomeMessage);
         this.showCourseOpciones = false;
         this.showCourseOpcionesImg = false;
         this.preguntaNumeros = "";
@@ -545,6 +550,7 @@ export class HomeComponent implements OnInit {
       this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
         this.tituloMessage = "¡Bienvenido! " + usuario.usuario;
         this.welcomeMessage = "¿Estás listo para comenzar con tu reforzamiento del día?";
+
         this.preguntaMessage = "";
         this.showStartButton = true;
         this.showCourseButtons = false;
@@ -568,6 +574,8 @@ export class HomeComponent implements OnInit {
   toggleCerrarSesion() {
     this.tituloMessage = "HASTA PRONTO";
     this.welcomeMessage = "Fue un gusto haberte ayudado el día de hoy";
+
+    this.speakWelcomeMessage(this.welcomeMessage);
     this.preguntaMessage = "¿Estás seguro de querer cerrar tu sesión?";
 
     this.showCerrarSesion = true;
