@@ -78,12 +78,15 @@
 </div>
 <div *ngIf="showVerMiProgreso" class="course-buttons slide-in">
   <button class="start-button course-button terminar"  (click)="showDetalleProgreso()"  >Ver mi progrso</button>
+  <button class="start-button course-button terminar"  (click)="toggleHome()"  >Iniciar otra evaluacion</button>
+
 </div>
 <div *ngIf="showDetallesProgreso" class="course-buttons slide-in">
     <canvas id="progresoRadar" width="100" height="100"></canvas>
 </div>
 <div *ngIf="showDetallesProgreso" class="course-buttons slide-in">
   <button class="start-button course-button terminar"  (click)="toggleDetalles()"  >Ver Detalles</button>
+  <button class="start-button course-button terminar"  (click)="toggleHome()"  >Iniciar otra evaluacion</button>
 </div>
 <div *ngIf="showMostrarBarras" class="barras-porcentajes" >
 
@@ -110,7 +113,9 @@
     </div>
     <button class="detalle-button" (click)="verMasDetallesPorCurso('Ciencias')" >Ver más detalles</button>
   </div>
-
+<div  class="course-buttons slide-in">
+  <button class="start-button course-button terminar"  (click)="toggleHome()"  >Iniciar otra evaluacion</button>
+</div>
 </div>
 <div *ngIf="showMostrarBarrasPorCurso" class="barras-porcentajes" >
 
@@ -141,7 +146,9 @@
       <span class="barra-porcentaje">90%</span>
     </div>
   </div>
-
+<div  class="course-buttons slide-in">
+  <button class="start-button course-button terminar"  (click)="toggleDetalles()"  >ATRAS</button>
+</div>
 </div>
 
 <div *ngIf="showCerrarSesion" class="course-buttons slide-in">
