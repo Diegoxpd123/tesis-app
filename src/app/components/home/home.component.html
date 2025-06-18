@@ -11,6 +11,9 @@
    <p id="pregunta" *ngIf="showPreguntaSobreGato" class="pregunta-subtitle-sobrerobot">
         {{ preguntaMessageenviar }}
       </p>
+
+  <img *ngIf="showPreguntaSobreGato" src={{imagenpregunta}} alt="pregunta" class="pregunta-imagen" />
+
   <img src="/assets/img/robot.png" alt="Gato robot" class="robot-image" />
 </div>
     <div class="text-content">
