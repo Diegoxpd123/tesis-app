@@ -49,6 +49,7 @@ export class HomeComponent implements OnInit {
   showMostrarBarrasPorCurso: boolean = false;
 
   showTimer: boolean = false;
+  showPreguntaSobreGato: boolean = false;
   showChatGpt: boolean = false;
   opcionesHTML: string[] = [];
 
@@ -334,6 +335,7 @@ export class HomeComponent implements OnInit {
   }
 
   runPreguntas(titulo: string, evaluacioid: number) {
+      this.showPreguntaSobreGato = false;
 
     this.preguntaservice.getPreguntas().subscribe(preguntas => {
       const preguntasencontradas = preguntas
@@ -467,6 +469,7 @@ export class HomeComponent implements OnInit {
         });
       this.showCourseOpciones = false;
       this.showCourseOpcionesImg = false;
+      this.showPreguntaSobreGato = true;
       this.showChatGpt = false;
       this.preguntaMessage = this.preguntaMessagetemp;
 
@@ -531,6 +534,7 @@ export class HomeComponent implements OnInit {
     this.preguntaNumeros = "";
     this.showDetallesProgreso = false;
     this.showChatGpt = false;
+      this.showPreguntaSobreGato = false;
     //detener el timer
     clearInterval(this.timerInterval);
     this.showTimer = false;
@@ -544,6 +548,7 @@ export class HomeComponent implements OnInit {
     this.showMostrarBarras = false;
     this.showDetallesProgreso = false;
     this.showMostrarBarrasPorCurso = true;
+      this.showPreguntaSobreGato = false;
   }
 
 
@@ -564,6 +569,7 @@ export class HomeComponent implements OnInit {
         this.showTerminarChat = false;
         this.showVerMiProgreso = false;
         this.showDetallesProgreso = false;
+      this.showPreguntaSobreGato = false;
 
         this.showMostrarBarras = false;
         this.showMostrarBarrasPorCurso = false;
@@ -588,6 +594,7 @@ export class HomeComponent implements OnInit {
     this.showCourseOpcionesImg = false;
     this.showYesOrNoOpciones = false;
     this.showYesOrNoOpciones1 = false;
+      this.showPreguntaSobreGato = false;
     this.showTerminarChat = false;
     this.showVerMiProgreso = false;
     this.showDetallesProgreso = false;

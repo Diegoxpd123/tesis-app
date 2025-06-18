@@ -8,6 +8,9 @@
   <div class="main-content">
     <div class="robot-container">
   <div class="timer-overlay" *ngIf="showTimer">{{ timerMinutes }}:{{ timerSeconds | number: '2.0' }}</div>
+   <p id="pregunta" *ngIf="showPreguntaSobreGato" class="pregunta-subtitle-sobrerobot">
+        {{ preguntaMessageenviar }}
+      </p>
   <img src="/assets/img/robot.png" alt="Gato robot" class="robot-image" />
 </div>
     <div class="text-content">
