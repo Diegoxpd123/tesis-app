@@ -12,6 +12,9 @@ import Toastify from 'toastify-js';
 })
 export class LoginComponent implements OnInit {
 
+  mensajeLogin: string = '';
+colorMensaje: string = '';
+
   loginForm: FormGroup = new FormGroup({
 
     username: new FormControl('', Validators.required),
@@ -38,11 +41,8 @@ export class LoginComponent implements OnInit {
 
       localStorage.setItem('usuario_id', usuarioEncontrado.id.toString());
       localStorage.setItem('alumno_id', usuarioEncontrado.aludocenid.toString());
-      Toastify({
-        text: "Bienvenido " + usuarioEncontrado.usuario,
-        backgroundColor: "#4CAF50",
-        duration: 3000
-      }).showToast();
+       this.mensajeLogin = 'Bienvenido ' + usuarioEncontrado.usuario;
+  this.colorMensaje = 'green';
 
       if (usuarioEncontrado.tipousuarioid === 1) {
         this.router.navigate(['/home']);
@@ -50,11 +50,8 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/estudiantes']);
       }
     } else {
-      Toastify({
-        text: "Credenciales incorrectas",
-        backgroundColor: "#f44336",
-        duration: 3000
-      }).showToast();
+       this.mensajeLogin = 'Credenciales incorrectas';
+  this.colorMensaje = 'red';
     }
   });
 }

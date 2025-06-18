@@ -22,6 +22,9 @@
         <input type="password" class="form-control" id="password" formControlName="password" />
       </div>
       <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Iniciar sesión</button>
+      <p *ngIf="mensajeLogin" [style.color]="colorMensaje" style="margin-top: 10px;">
+  {{ mensajeLogin }}
+</p>
     </form>
   </div>
 

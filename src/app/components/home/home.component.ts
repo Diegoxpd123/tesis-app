@@ -382,7 +382,7 @@ export class HomeComponent implements OnInit {
   this.opcion2,
   this.opcion3,
   this.opcion4
-].sort(() => Math.random() - 0.5);
+]
         this.showStartButton = false;
         this.showCourseButtons = false;
         this.showYesOrNoOpciones1 = false;
