@@ -156,7 +156,9 @@ export class EstudianteListComponent implements OnInit {
     //       (!this.seccionSeleccionada || est.seccion === this.seccionSeleccionada);
     // });
   }
-  leerArchivoExcel(event: any): void {
+
+
+  async leerArchivoExcel(event: any): Promise<void> {
     const archivo = event.target.files[0];
     if (!archivo) return;
 
@@ -164,11 +166,9 @@ export class EstudianteListComponent implements OnInit {
     reader.onload = async (e: any) => {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: 'array' });
-
       const nombreHoja = workbook.SheetNames[0];
       const hoja = workbook.Sheets[nombreHoja];
       const filas: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
-
       const dataRows = filas.slice(1); // omitir cabecera
 
       for (const fila of dataRows) {
@@ -186,8 +186,8 @@ export class EstudianteListComponent implements OnInit {
           const fechaNumeroInicio = fila[9];
           const fechaNumeroFin = fila[10];
 
-          let fechainicio: string | null = null;
-          let fechafin: string | null = null;
+          let fechainicio: string = '';
+          let fechafin: string = '';
 
           if (!isNaN(fechaNumeroInicio)) {
             const fechaObj = XLSX.SSF.parse_date_code(fechaNumeroInicio);
@@ -205,73 +205,92 @@ export class EstudianteListComponent implements OnInit {
             }
           }
 
-          let cursoId = 3; // Otro por defecto
+          let cursoId = 3;
           if (curso === 'Matematica') cursoId = 1;
           else if (curso === 'Comunicacion') cursoId = 2;
 
           if (!temaNombre || !preguntaTexto) continue;
 
-          // Crear Tema
-          this.tema = {
-            id: 0,
-            nombre: temaNombre,
-            cursoid: cursoId,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            is_deleted: 0,
-            is_actived: 1
-          };
+          // Buscar o crear Tema
+          const temas = (await this.temaService.getTemas().toPromise()) ?? [];
+          const temaExistente = temas.find(t => t.nombre.trim().toLowerCase() === temaNombre.toLowerCase());
 
-          console.log(this.tema);
+          let temaId: number;
+          if (temaExistente) {
+            console.log(`⚠️ Tema ya existe: ${temaNombre}`);
+            temaId = temaExistente.id;
+          } else {
+            const tema = {
+              id: 0,
+              nombre: temaNombre,
+              cursoid: cursoId,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              is_deleted: 0,
+              is_actived: 1
+            };
+            const temaCreado = await this.temaService.createTema(tema).toPromise();
+            if (!temaCreado) continue;
+            temaId = temaCreado.id;
+            console.log(`✅ Tema creado: ${temaNombre}`);
+          }
 
-          const temaCreated: any = await this.temaService.createTema(this.tema).toPromise();
-          const temaId = temaCreated.id || temaCreated.temaid;
+          // Buscar o crear Evaluación
+          const evaluaciones = (await this.evaluacionserice.getEvaluacions().toPromise()) ?? [];
+          const evaluacionExistente = evaluaciones.find(ev => ev.nombre.trim().toLowerCase() === temaNombre.toLowerCase());
 
-          // Crear Evaluación
-          this.evaluacion = {
-            id: 0,
-            nombre: temaNombre,
-            temaid: temaId,
-            institucionid: cursoId,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            is_deleted: 0,
-            is_actived: 1
-          };
-
-          const evaluacionCreated: any = await this.evaluacionserice.createEvaluacion(this.evaluacion).toPromise();
-          const evaluacionId = evaluacionCreated.id || evaluacionCreated.evaluacionid;
+          let evaluacionId: number;
+          if (evaluacionExistente) {
+            console.log(`⚠️ Evaluación ya existe: ${temaNombre}`);
+            evaluacionId = evaluacionExistente.id;
+          } else {
+            const evaluacion = {
+              id: 0,
+              nombre: temaNombre,
+              temaid: temaId,
+              institucionid: cursoId,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              is_deleted: 0,
+              is_actived: 1
+            };
+            const evaluacionCreada = await this.evaluacionserice.createEvaluacion(evaluacion).toPromise();
+            if (!evaluacionCreada) continue;
+            evaluacionId = evaluacionCreada.id;
+            console.log(`✅ Evaluación creada: ${temaNombre}`);
+          }
 
           // Crear Pregunta
-          this.pregunta = {
+          const pregunta = {
             id: 0,
             descripcion: preguntaTexto,
             evaluacionid: evaluacionId,
-            imagen: imagen,
+            imagen,
             respuesta: descripcion,
-            opcion1: opcion1,
-            opcion2: opcion2,
-            opcion3: opcion3,
-            opcion4: opcion4,
-            fechainicio: fechainicio ?? '',
-            fechafin: fechafin ?? '',
+            opcion1,
+            opcion2,
+            opcion3,
+            opcion4,
+            fechainicio,
+            fechafin,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
             is_deleted: 0,
             is_actived: 1
           };
 
-          await this.preguntaservice.createPregunta(this.pregunta).toPromise();
-          console.log(`✔ Pregunta agregada: ${preguntaTexto}`);
+          await this.preguntaservice.createPregunta(pregunta).toPromise();
+          console.log(`✅ Pregunta creada: ${preguntaTexto}`);
 
         } catch (error) {
-          console.error(`❌ Error al registrar fila:`, error);
+          console.error('❌ Error al procesar fila:', error);
         }
       }
     };
 
     reader.readAsArrayBuffer(archivo);
   }
+
 
 
 
