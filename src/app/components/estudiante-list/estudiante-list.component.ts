@@ -252,7 +252,9 @@ export class EstudianteListComponent implements OnInit {
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
               is_deleted: 0,
-              is_actived: 1
+              is_actived: 1,
+              fechainicio,
+              fechafin
             };
             const evaluacionCreada = await this.evaluacionserice.createEvaluacion(evaluacion).toPromise();
             if (!evaluacionCreada) continue;
@@ -271,8 +273,6 @@ export class EstudianteListComponent implements OnInit {
             opcion2,
             opcion3,
             opcion4,
-            fechainicio,
-            fechafin,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
             is_deleted: 0,
