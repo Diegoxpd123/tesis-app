@@ -52,7 +52,9 @@ export class HomeComponent implements OnInit {
   showPreguntaSobreGato: boolean = false;
   showChatGpt: boolean = false;
   opcionesHTML: string[] = [];
-
+private palabrasProhibidas: string[] = [
+  'puta', 'mierda', 'estúpido', 'imbécil', 'idiota', 'perra', 'hijo de', 'maldito', 'conchudo', 'csm', 'hdp'
+];
 
 
 
@@ -109,22 +111,40 @@ export class HomeComponent implements OnInit {
 
 
   sendMessage() {
-    if (!this.userMessage.trim()) return;
+  if (!this.userMessage.trim()) return;
 
-    const userMsg = this.userMessage.trim();
-    this.messages.push({ role: 'user', content: userMsg });
+  const userMsg = this.userMessage.trim();
+
+  // Verificar si contiene palabras prohibidas
+  const contieneMalaPalabra = this.palabrasProhibidas.some(palabra =>
+    userMsg.toLowerCase().includes(palabra)
+  );
+
+  if (contieneMalaPalabra) {
+    this.messages.push({
+      role: 'assistant',
+      content: '⚠️ Por favor, evita el uso de lenguaje ofensivo.'
+    });
     this.userMessage = '';
+    return;
+  }
 
+  this.messages.push({ role: 'user', content: userMsg });
+  this.userMessage = '';
 
-    this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
-      messages: userMsg
-    }).subscribe((response: any) => {
+  this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
+    messages: userMsg
+  }).subscribe(
+    (response: any) => {
       const reply = response.choices[0].message.content;
       this.messages.push({ role: 'assistant', content: reply });
-    }, err => {
+    },
+    err => {
       this.messages.push({ role: 'assistant', content: 'Ocurrió un error. Intenta de nuevo más tarde.' });
-    });
-  }
+    }
+  );
+}
+
 
   sendMessageIndividual(value: string) {
     console.log(value);
