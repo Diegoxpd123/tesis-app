@@ -13,8 +13,15 @@ import { DocenteService } from '../../services/docente.service';
 import { DocentesesionService } from '../../services/docentesesion.service';
 import { EvaluacionService } from '../../services/evaluacion.service';
 import { Resultadopregunta } from '../../models/resultadopregunta.model';
+import { Tema } from '../../models/tema.model';
+import { Pregunta } from '../../models/pregunta.model';
+import { Evaluacion } from '../../models/evaluacion.model';
+import * as XLSX from 'xlsx';
+import { TemaService } from '../../services/tema.service';
+import { bindCallback } from 'rxjs';
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
+
 
 
 @Component({
@@ -25,6 +32,10 @@ Chart.register(...registerables, ChartDataLabels);
 })
 export class EstudianteListComponent implements OnInit {
 
+
+  tema!: Tema;
+  evaluacion!: Evaluacion;
+  pregunta!: Pregunta;
   grados: string[] = ['1°', '2°', '3°', '4°', '5°'];
   secciones: string[] = ['A', 'B', 'C'];
   gradoSeleccionado: string | null = null;
@@ -59,6 +70,7 @@ export class EstudianteListComponent implements OnInit {
     private docentesesionservice: DocentesesionService,
     private alumnoservice: AlumnoService,
     private preguntaservice: PreguntaService,
+    private temaService: TemaService,
     private evaluacionserice: EvaluacionService,
     private resultadopreguntaservice: ResultadopreguntaService) { }
 
@@ -144,6 +156,124 @@ export class EstudianteListComponent implements OnInit {
     //       (!this.seccionSeleccionada || est.seccion === this.seccionSeleccionada);
     // });
   }
+  leerArchivoExcel(event: any): void {
+    const archivo = event.target.files[0];
+    if (!archivo) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e: any) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+
+      const nombreHoja = workbook.SheetNames[0];
+      const hoja = workbook.Sheets[nombreHoja];
+      const filas: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
+
+      const dataRows = filas.slice(1); // omitir cabecera
+
+      for (const fila of dataRows) {
+        try {
+          const curso = fila[0]?.toString().trim();
+          const temaNombre = fila[1]?.toString().trim();
+          const preguntaTexto = fila[2]?.toString().trim();
+          const descripcion = fila[3]?.toString().trim();
+          const opcion3 = fila[4]?.toString().trim();
+          const opcion2 = fila[5]?.toString().trim();
+          const opcion1 = fila[6]?.toString().trim();
+          const opcion4 = fila[7]?.toString().trim();
+          const imagen = "/assets/img/" + fila[8]?.toString().trim() + ".png";
+
+          const fechaNumeroInicio = fila[9];
+          const fechaNumeroFin = fila[10];
+
+          let fechainicio: string | null = null;
+          let fechafin: string | null = null;
+
+          if (!isNaN(fechaNumeroInicio)) {
+            const fechaObj = XLSX.SSF.parse_date_code(fechaNumeroInicio);
+            if (fechaObj) {
+              const jsFecha = new Date(fechaObj.y, fechaObj.m - 1, fechaObj.d);
+              fechainicio = jsFecha.toISOString().split('T')[0];
+            }
+          }
+
+          if (!isNaN(fechaNumeroFin)) {
+            const fechaObj = XLSX.SSF.parse_date_code(fechaNumeroFin);
+            if (fechaObj) {
+              const jsFecha = new Date(fechaObj.y, fechaObj.m - 1, fechaObj.d);
+              fechafin = jsFecha.toISOString().split('T')[0];
+            }
+          }
+
+          let cursoId = 3; // Otro por defecto
+          if (curso === 'Matematica') cursoId = 1;
+          else if (curso === 'Comunicacion') cursoId = 2;
+
+          if (!temaNombre || !preguntaTexto) continue;
+
+          // Crear Tema
+          this.tema = {
+            id: 0,
+            nombre: temaNombre,
+            cursoid: cursoId,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_deleted: 0,
+            is_actived: 1
+          };
+
+          console.log(this.tema);
+
+          const temaCreated: any = await this.temaService.createTema(this.tema).toPromise();
+          const temaId = temaCreated.id || temaCreated.temaid;
+
+          // Crear Evaluación
+          this.evaluacion = {
+            id: 0,
+            nombre: temaNombre,
+            temaid: temaId,
+            institucionid: cursoId,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_deleted: 0,
+            is_actived: 1
+          };
+
+          const evaluacionCreated: any = await this.evaluacionserice.createEvaluacion(this.evaluacion).toPromise();
+          const evaluacionId = evaluacionCreated.id || evaluacionCreated.evaluacionid;
+
+          // Crear Pregunta
+          this.pregunta = {
+            id: 0,
+            descripcion: preguntaTexto,
+            evaluacionid: evaluacionId,
+            imagen: imagen,
+            respuesta: descripcion,
+            opcion1: opcion1,
+            opcion2: opcion2,
+            opcion3: opcion3,
+            opcion4: opcion4,
+            fechainicio: fechainicio ?? '',
+            fechafin: fechafin ?? '',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_deleted: 0,
+            is_actived: 1
+          };
+
+          await this.preguntaservice.createPregunta(this.pregunta).toPromise();
+          console.log(`✔ Pregunta agregada: ${preguntaTexto}`);
+
+        } catch (error) {
+          console.error(`❌ Error al registrar fila:`, error);
+        }
+      }
+    };
+
+    reader.readAsArrayBuffer(archivo);
+  }
+
+
 
 
 }

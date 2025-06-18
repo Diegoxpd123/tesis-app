@@ -12,5 +12,7 @@ export interface Pregunta {
   updated_at: string;
   is_deleted: number;
   is_actived: number;
+  fechainicio: string;
+  fechafin: string;
 
  }

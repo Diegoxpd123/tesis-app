@@ -3,6 +3,12 @@
 <div class="estudiantes-container">
   <h1>{{ tituloMessage }}</h1>
 
+  <div class="mb-3">
+  <label for="excelInput" class="btn btn-primary">
+    📂 Cargar Excel
+    <input id="excelInput" type="file" (change)="leerArchivoExcel($event)" accept=".xlsx, .xls" hidden>
+  </label>
+</div>
 <!-- Filtros de Grado y Sección -->
 <div class="filtros-grado-seccion">
   <div>
