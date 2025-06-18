@@ -67,6 +67,7 @@ export class HomeComponent implements OnInit {
   imagenpregunta: any;
 
   respuestaCorrecta: any;
+  respuestaSeleccionada: any;
   preguntaid: number = 0;
   preguntaTotales: number = 5;
   preguntaActual: number = 0;
@@ -126,14 +127,15 @@ export class HomeComponent implements OnInit {
 
   sendMessageIndividual(value: string) {
     console.log(value);
-    const userMsg = "dame una respuesta que entienda un niño de primaria " + value;
-    this.messages.push({ role: 'user', content: userMsg });
+    const userMsg = "Le mostre esta pregunta " + value + 'al alumno con esta imagen '+ this.imagenpregunta +'y el alumno me dio esta esta respuesta'+this.respuestaSeleccionada+ 'y yo le di esta explicación' + this.preguntaMessagetemp +'pero aun asi no me entendio. Necesito una explicación  básica y mas amplia. maximo 50 palabras';
+    //this.messages.push({ role: 'user', content: userMsg });
     this.userMessage = '';
 
     this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
       messages: userMsg
     }).subscribe((response: any) => {
       this.preguntaMessage = response.choices[0].message.content;
+      this.messages.push({ role: 'assistant', content: this.preguntaMessage });
       this.showYesOrNoOpciones1 = true;
 
       this.speakWelcomeMessage(this.preguntaMessage);
@@ -404,6 +406,7 @@ export class HomeComponent implements OnInit {
   }
 
   selectRespuesta(respuesta: any) {
+    this.respuestaSeleccionada = respuesta;
     if (this.respuestaCorrecta == respuesta) {
       //PASAMOS A LA SIGUIENTE PREGUNTA
 
@@ -466,6 +469,8 @@ export class HomeComponent implements OnInit {
       this.showCourseOpcionesImg = false;
       this.showChatGpt = false;
       this.preguntaMessage = this.preguntaMessagetemp;
+
+    this.speakWelcomeMessage(this.preguntaMessage);
       this.showYesOrNoOpciones = true;
 
       this.showYesOrNoOpciones1 = false;
@@ -490,9 +495,7 @@ export class HomeComponent implements OnInit {
     this.showYesOrNoOpciones1 = false;
     this.showTerminarChat = true;
     this.showChatGpt = true;
-    this.messages = [
-      { role: 'assistant', content: 'Hola, ¿en qué puedo ayudarte con esta pregunta?' }
-    ];
+
 
   }
 
