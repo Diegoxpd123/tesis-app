@@ -732,6 +732,7 @@ if (this.resultadopregunta ) {
     this.timerisactiver = false;
     this.modalInicioVisible = false;
     this.evaluacionPendiente == null;
+    this.opcionesHTML = [];
 
     const usuarioId = localStorage.getItem('usuario_id');
     if (usuarioId) {
