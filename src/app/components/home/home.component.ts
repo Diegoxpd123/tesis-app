@@ -564,7 +564,7 @@ if (this.resultadopregunta ) {
 
   selectRespuesta(respuesta: any) {
     this.respuestaSeleccionada = respuesta;
-    if (this.respuestaCorrecta == respuesta) {
+    if (this.respuestaCorrecta == respuesta ||  this.preguntaActual >  4) {
       //PASAMOS A LA SIGUIENTE PREGUNTA
 
       const alumno_id = localStorage.getItem('usuario_id');
