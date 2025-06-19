@@ -39,7 +39,7 @@
         <select (change)="startMath($event)">
           <option value="">-- Selecciona --</option>
           <option *ngFor="let evaluacion of evaluacionesDisponibles" [value]="evaluacion.id">
-            {{ evaluacion.nombre }} ({{ evaluacion.fechainicio }} - {{ evaluacion.fechafin }})
+            {{ evaluacion.nombre }}
           </option>
         </select>
       </div>
