@@ -27,10 +27,21 @@
       <button *ngIf="showStartButton" class="start-button" (click)="startClicked()">
         🎮 ¡EMPEZAR!
       </button>
-      <div *ngIf="showCourseButtons" class="course-buttons slide-in">
-        <button class="start-button course-button math" (click)="startMath(1)">🔢 Matemáticas</button>
-        <button class="start-button course-button communication" (click)="startMath(2)">📚 Comunicación</button>
-        <button class="start-button course-button science" (click)="startMath(3)">🔬 Ciencias y Tecnologías</button>
+      <div  *ngIf="showCourseButtonsb"  class="course-buttons slide-in">
+        <button  class="start-button course-button math" (click)="MostrarEvaluaciones(1)">🔢 Matemáticas</button>
+        <button   class="start-button course-button communication" (click)="MostrarEvaluaciones(2)">📚 Comunicación</button>
+        <button class="start-button course-button science" (click)="MostrarEvaluaciones(3)">🔬 Ciencias y Tecnologías</button>
+
+      </div>
+
+        <div *ngIf="showCourseButtons" class="evaluaciones-dropdown">
+        <label>Selecciona una evaluación disponible:</label>
+        <select (change)="startMath($event)">
+          <option value="">-- Selecciona --</option>
+          <option *ngFor="let evaluacion of evaluacionesDisponibles" [value]="evaluacion.id">
+            {{ evaluacion.nombre }} ({{ evaluacion.fechainicio }} - {{ evaluacion.fechafin }})
+          </option>
+        </select>
       </div>
       <div *ngIf="showCourseOpcionesImg" class="course-buttons slide-in">
         <img src={{imagenpregunta}} alt="pregunta" class="pregunta-image" />

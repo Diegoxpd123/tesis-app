@@ -12,6 +12,10 @@ import { ResultadopreguntaService } from '../../services/resultadopregunta.servi
 import { EvaluacionService } from '../../services/evaluacion.service';
 import { Resultadopregunta } from '../../models/resultadopregunta.model';
 import { ChangeDetectorRef } from '@angular/core';
+import { Tema } from '../../models/tema.model';
+import { Pregunta } from '../../models/pregunta.model';
+import { Evaluacion } from '../../models/evaluacion.model';
+import { TemaService } from '../../services/tema.service';
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
 
@@ -27,6 +31,7 @@ export class HomeComponent implements OnInit {
   resultadopregunta!: Resultadopregunta;
   userMessage = '';
   messages: { role: string; content: string }[] = [];
+  evaluacionesDisponibles: Evaluacion[] = [];
 
   tituloMessage: string = '¡Bienvenido! ';
   preguntaMessagetemp: string = '';
@@ -36,6 +41,7 @@ export class HomeComponent implements OnInit {
   welcomeMessage: string = '¿Estás listo para comenzar con tu reforzamiento del día?';
   showStartButton: boolean = true;
   showCourseButtons: boolean = false;
+  showCourseButtonsb: boolean = false;
   showCourseOpciones: boolean = false;
   showCourseOpcionesImg: boolean = false;
   showYesOrNoOpciones: boolean = false;
@@ -87,6 +93,7 @@ export class HomeComponent implements OnInit {
     private alumnoservice: AlumnoService,
     private preguntaservice: PreguntaService,
     private evaluacionserice: EvaluacionService,
+    private temaservice: TemaService,
     private resultadopreguntaservice: ResultadopreguntaService,
     private cdr: ChangeDetectorRef) { }
 
@@ -110,6 +117,38 @@ export class HomeComponent implements OnInit {
       });
     }
   }
+
+ MostrarEvaluaciones(cursoId: number): void {
+  this.showCourseButtons = true;
+  this.showCourseButtonsb = false;
+  this.welcomeMessage = 'Buscando evaluaciones disponibles...';
+  this.speakWelcomeMessage(this.welcomeMessage);
+
+  const hoy = new Date();
+
+  this.temaservice.getTemas().subscribe(temas => {
+    const temasIds = temas
+      .filter(t => t.cursoid === cursoId)
+      .map(t => t.id); // extraemos los IDs de temas que coinciden
+console.clear();
+      console.log(temasIds);
+    this.evaluacionserice.getEvaluacions().subscribe(evaluaciones => {
+      this.evaluacionesDisponibles = evaluaciones.filter(e => {
+        const inicio = new Date(e.fechainicio);
+        const fin = new Date(e.fechafin);
+        return temasIds.includes(e.temaid) &&
+               hoy >= inicio && hoy <= fin;
+      });
+
+      if (this.evaluacionesDisponibles.length > 0) {
+        this.showCourseOpciones = true; // mostrar el desplegable
+      } else {
+        this.welcomeMessage = 'No hay evaluaciones disponibles para hoy.';
+        this.speakWelcomeMessage(this.welcomeMessage);
+      }
+    });
+  });
+}
 
 
   sendMessage() {
@@ -238,16 +277,19 @@ export class HomeComponent implements OnInit {
   startClicked() {
     this.welcomeMessage = '¿Con qué curso deseas empezar?';
     this.showStartButton = false;
-    this.showCourseButtons = true;
+    this.showCourseButtons = false;
+    this.showCourseButtonsb = true;
     this.speakWelcomeMessage(this.welcomeMessage + 'Selecciona un curso Matemáticas, Comunicación o Ciencias y Tecnologías');
 
   }
 
 
-  startMath(evaluacionid: number) {
+  startMath(event: any) {
+  const evaluacionid = +event.target.value;
     this.welcomeMessage = '¡Perfecto! Comenzarás en 3, 2, 1 ....';
     this.showStartButton = false;
     this.showCourseButtons = false;
+    this.showCourseButtonsb = false;
     this.speakWelcomeMessage(this.welcomeMessage);
     // Espera 3 segundos (3000 milisegundos)
     setTimeout(() => {
@@ -382,6 +424,7 @@ export class HomeComponent implements OnInit {
         // eliminamos lo que no deberia verse
         this.showStartButton = false;
         this.showCourseButtons = false;
+        this.showCourseButtonsb = false;
         this.showYesOrNoOpciones = false;
         this.showYesOrNoOpciones1 = false;
         this.showTerminarChat = false;
@@ -418,6 +461,7 @@ export class HomeComponent implements OnInit {
         ]
         this.showStartButton = false;
         this.showCourseButtons = false;
+        this.showCourseButtonsb = false;
         this.showYesOrNoOpciones1 = false;
         this.showTerminarChat = false;
         this.showDetallesProgreso = false;
@@ -554,6 +598,7 @@ export class HomeComponent implements OnInit {
     this.showCourseOpcionesImg = false;
     this.showStartButton = false;
     this.showCourseButtons = false;
+    this.showCourseButtonsb = false;
     this.showYesOrNoOpciones = false;
     this.showYesOrNoOpciones1 = false;
     this.showTerminarChat = false;
@@ -588,6 +633,7 @@ export class HomeComponent implements OnInit {
         this.preguntaMessage = "";
         this.showStartButton = true;
         this.showCourseButtons = false;
+        this.showCourseButtonsb = false;
         this.showCourseOpciones = false;
         this.showCourseOpcionesImg = false;
         this.showYesOrNoOpciones = false;
@@ -616,6 +662,7 @@ export class HomeComponent implements OnInit {
     this.showCerrarSesion = true;
     this.showStartButton = false;
     this.showCourseButtons = false;
+    this.showCourseButtonsb = false;
     this.showCourseOpciones = false;
     this.showCourseOpcionesImg = false;
     this.showYesOrNoOpciones = false;

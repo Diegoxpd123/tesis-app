@@ -206,8 +206,8 @@ export class EstudianteListComponent implements OnInit {
           }
 
           let cursoId = 3;
-          if (curso === 'Matematica') cursoId = 1;
-          else if (curso === 'Comunicacion') cursoId = 2;
+          if (curso == 'Matemática') cursoId = 1;
+          else if (curso == 'Comunicacion') cursoId = 2;
 
           if (!temaNombre || !preguntaTexto) continue;
 
