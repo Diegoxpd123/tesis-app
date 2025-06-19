@@ -108,6 +108,10 @@ export class HomeComponent implements OnInit {
 
 
   ngOnInit(): void {
+  const userId = localStorage.getItem('usuario_id');
+    if (!userId) {
+      this.router.navigate(['/login']);
+    }
     const usuarioId = localStorage.getItem('usuario_id');
     if (usuarioId) {
       this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
