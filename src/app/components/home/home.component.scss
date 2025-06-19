@@ -76,6 +76,11 @@ height: auto !important;
   margin-bottom: 0.9rem !important;
   text-shadow: 2px 2px 5px #000 !important;
   text-align: center !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  max-width: 400px !important;
+margin: 0 auto !important;
 }
 
  .pregunta-numeros {
