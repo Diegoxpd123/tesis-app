@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit {
   userMessage = '';
   messages: { role: string; content: string }[] = [];
   evaluacionesDisponibles: Evaluacion[] = [];
-
+  preguntasEncontradas: Pregunta[] = [];
   tituloMessage: string = '¡Bienvenido! ';
   preguntaMessagetemp: string = '';
   preguntaMessage: string = '';
@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
   showDetallesProgreso: boolean = false;
   showCerrarSesion: boolean = false;
 
-
+  cursoNombre: string = '';
   showMostrarBarras: boolean = false;
   showMostrarBarrasPorCurso: boolean = false;
 
@@ -118,37 +118,47 @@ export class HomeComponent implements OnInit {
     }
   }
 
- MostrarEvaluaciones(cursoId: number): void {
-  this.showCourseButtons = true;
-  this.showCourseButtonsb = false;
-  this.welcomeMessage = 'Buscando evaluaciones disponibles...';
-  this.speakWelcomeMessage(this.welcomeMessage);
+  MostrarEvaluaciones(cursoId: number): void {
+    this.showCourseButtons = true;
+    this.showCourseButtonsb = false;
+    this.welcomeMessage = 'Buscando evaluaciones disponibles...';
+    this.speakWelcomeMessage(this.welcomeMessage);
 
-  const hoy = new Date();
+    if (cursoId == 1) {
+      this.cursoNombre = "Matematicas";
+    }
+    if (cursoId == 2) {
+      this.cursoNombre = "Comunicaciones";
+    }
+    if (cursoId == 3) {
+      this.cursoNombre = "Ciencias y Tecnologia";
+    }
 
-  this.temaservice.getTemas().subscribe(temas => {
-    const temasIds = temas
-      .filter(t => t.cursoid === cursoId)
-      .map(t => t.id); // extraemos los IDs de temas que coinciden
-console.clear();
+    const hoy = new Date();
+
+    this.temaservice.getTemas().subscribe(temas => {
+      const temasIds = temas
+        .filter(t => t.cursoid === cursoId)
+        .map(t => t.id); // extraemos los IDs de temas que coinciden
+      console.clear();
       console.log(temasIds);
-    this.evaluacionserice.getEvaluacions().subscribe(evaluaciones => {
-      this.evaluacionesDisponibles = evaluaciones.filter(e => {
-        const inicio = new Date(e.fechainicio);
-        const fin = new Date(e.fechafin);
-        return temasIds.includes(e.temaid) &&
-               hoy >= inicio && hoy <= fin;
-      });
+      this.evaluacionserice.getEvaluacions().subscribe(evaluaciones => {
+        this.evaluacionesDisponibles = evaluaciones.filter(e => {
+          const inicio = new Date(e.fechainicio);
+          const fin = new Date(e.fechafin);
+          return temasIds.includes(e.temaid) &&
+            hoy >= inicio && hoy <= fin;
+        });
 
-      if (this.evaluacionesDisponibles.length > 0) {
-        this.showCourseOpciones = true; // mostrar el desplegable
-      } else {
-        this.welcomeMessage = 'No hay evaluaciones disponibles para hoy.';
-        this.speakWelcomeMessage(this.welcomeMessage);
-      }
+        if (this.evaluacionesDisponibles.length > 0) {
+          this.showCourseOpciones = true; // mostrar el desplegable
+        } else {
+          this.welcomeMessage = 'No hay evaluaciones disponibles para hoy.';
+          this.speakWelcomeMessage(this.welcomeMessage);
+        }
+      });
     });
-  });
-}
+  }
 
 
   sendMessage() {
@@ -285,7 +295,7 @@ console.clear();
 
 
   startMath(event: any) {
-  const evaluacionid = +event.target.value;
+    const evaluacionid = +event.target.value;
     this.welcomeMessage = '¡Perfecto! Comenzarás en 3, 2, 1 ....';
     this.showStartButton = false;
     this.showCourseButtons = false;
@@ -299,7 +309,7 @@ console.clear();
       this.evaluacionserice.getEvaluacion(evaluacionid).subscribe(evaluacion => {
         console.log(evaluacion.nombre);
         //traemos preguntas
-        this.welcomeMessage = '¡LISTO!';
+        this.tituloMessage = this.cursoNombre + " - " + evaluacion.nombre;
         this.speakWelcomeMessage(this.welcomeMessage);
         this.evaluacionidnumber = evaluacion.id;
         this.runPreguntas(evaluacion.nombre, evaluacion.id);
@@ -403,77 +413,76 @@ console.clear();
   runPreguntas(titulo: string, evaluacioid: number) {
     this.showPreguntaSobreGato = false;
 
-    this.preguntaservice.getPreguntas().subscribe(preguntas => {
-      const preguntasencontradas = preguntas
-        .filter(u => u.evaluacionid === evaluacioid)
-        .sort(() => Math.random() - 0.5);
+    // Verificamos si ya tenemos preguntas
+    if (this.preguntasEncontradas.length === 0) {
+      this.preguntaservice.getPreguntas().subscribe(preguntas => {
+        // Filtramos por evaluación y desordenamos
+        this.preguntasEncontradas = preguntas
+          .filter(u => u.evaluacionid === evaluacioid)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 5);
 
-      if (this.preguntaActual == this.preguntaTotales) {
+        // Llamamos recursivamente ahora que ya tenemos preguntas cargadas
+        this.runPreguntas(titulo, evaluacioid);
+      });
+      return; // Salimos hasta que tengamos preguntas cargadas
+    }
+    console.clear();
+    console.log(this.preguntasEncontradas);
 
+    if (this.preguntaActual === this.preguntaTotales) {
+      this.tituloMessage = "¡Refuerzo Completado! ";
+      this.preguntaMessage = "";
+      this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + this.tiempototal + " segundos";
+      this.speakWelcomeMessage(this.welcomeMessage);
+      this.showCourseOpciones = false;
+      this.showCourseOpcionesImg = false;
+      this.preguntaNumeros = "";
+      this.showVerMiProgreso = true;
+      this.preguntaActual = 0;
+      this.preguntasEncontradas = []; // Reiniciamos para la próxima evaluación
+      this.showStartButton = false;
+      this.showCourseButtons = false;
+      this.showCourseButtonsb = false;
+      this.showYesOrNoOpciones = false;
+      this.showYesOrNoOpciones1 = false;
+      this.showTerminarChat = false;
+      this.showDetallesProgreso = false;
+      this.showChatGpt = false;
+      clearInterval(this.timerInterval);
+      this.showTimer = false;
+      return;
+    }
 
-        this.tituloMessage = "¡Refuerzo Completado! ";
-        this.preguntaMessage = "";
-        this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + this.tiempototal + " segundos";
+    const pregunta = this.preguntasEncontradas[this.preguntaActual];
+    this.respuestaCorrecta = pregunta.opcion1;
+    this.preguntaid = pregunta.id;
+    this.welcomeMessage = "";
+    this.preguntaMessage = pregunta.descripcion;
+    this.preguntaMessageenviar = pregunta.descripcion;
+    this.imagenpregunta = pregunta.imagen;
+    this.opcion1 = pregunta.opcion1;
+    this.opcion2 = pregunta.opcion2;
+    this.opcion3 = pregunta.opcion3;
+    this.opcion4 = pregunta.opcion4;
+    this.opcionesHTML = [this.opcion1, this.opcion2, this.opcion3, this.opcion4];
+    this.showCourseOpciones = true;
+    this.showCourseOpcionesImg = true;
+    this.showYesOrNoOpciones = false;
+    this.showStartButton = false;
+    this.showCourseButtons = false;
+    this.showCourseButtonsb = false;
+    this.showYesOrNoOpciones1 = false;
+    this.showTerminarChat = false;
+    this.showDetallesProgreso = false;
+    this.showChatGpt = false;
+    this.preguntaNumeros = "Pregunta " + (this.preguntaActual + 1) + " de 5";
+    this.preguntaMessagetemp = pregunta.respuesta;
 
-        this.speakWelcomeMessage(this.welcomeMessage);
-        this.showCourseOpciones = false;
-        this.showCourseOpcionesImg = false;
-        this.preguntaNumeros = "";
-        this.showVerMiProgreso = true;
-        this.preguntaActual = 0;
-        // eliminamos lo que no deberia verse
-        this.showStartButton = false;
-        this.showCourseButtons = false;
-        this.showCourseButtonsb = false;
-        this.showYesOrNoOpciones = false;
-        this.showYesOrNoOpciones1 = false;
-        this.showTerminarChat = false;
-        this.showDetallesProgreso = false;
-        this.showChatGpt = false;
-        //detener el timer
-        clearInterval(this.timerInterval);
-        this.showTimer = false;
-
-
-      } else {
-        // colocamos la respuesta correcta de la pregunta a la variable
-        this.respuestaCorrecta = preguntasencontradas[this.preguntaActual].opcion1;
-
-        this.preguntaid = preguntasencontradas[this.preguntaActual].id;
-        //this.tituloMessage = titulo;
-        this.welcomeMessage = "";
-        this.preguntaMessage = preguntasencontradas[this.preguntaActual].descripcion;
-        this.preguntaMessageenviar = preguntasencontradas[this.preguntaActual].descripcion;
-        this.showCourseOpciones = true;
-        this.showCourseOpcionesImg = true;
-        this.showYesOrNoOpciones = false;
-        this.imagenpregunta = preguntasencontradas[this.preguntaActual].imagen;
-        console.log(preguntasencontradas[this.preguntaActual].imagen);
-        this.opcion1 = preguntasencontradas[this.preguntaActual].opcion1;
-        this.opcion2 = preguntasencontradas[this.preguntaActual].opcion2;
-        this.opcion3 = preguntasencontradas[this.preguntaActual].opcion3;
-        this.opcion4 = preguntasencontradas[this.preguntaActual].opcion4;
-        this.opcionesHTML = [
-          this.opcion1,
-          this.opcion2,
-          this.opcion3,
-          this.opcion4
-        ]
-        this.showStartButton = false;
-        this.showCourseButtons = false;
-        this.showCourseButtonsb = false;
-        this.showYesOrNoOpciones1 = false;
-        this.showTerminarChat = false;
-        this.showDetallesProgreso = false;
-        this.showChatGpt = false;
-
-        this.preguntaNumeros = "Pregunta " + (this.preguntaActual + 1) + " de 5";
-        this.preguntaMessagetemp = preguntasencontradas[this.preguntaActual].respuesta;
-        this.speakWelcomeMessage(this.preguntaMessage);
-        this.startTimer(); // ⏱️ Iniciar temporizador aquí
-      }
-    });
+    this.speakWelcomeMessage(this.preguntaMessage);
+    this.startTimer(); // ⏱️ Iniciar temporizador
   }
+
 
   selectRespuesta(respuesta: any) {
     this.respuestaSeleccionada = respuesta;
