@@ -515,7 +515,7 @@ export class HomeComponent implements OnInit {
       this.preguntaMessage = "";
       const minutos = Math.floor(this.tiempototal / 60);
       const segundos = this.tiempototal % 60;
-      const tiempoFormateado = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+      const tiempoFormateado = `${minutos} minutos y ${segundos < 10 ? '0' : ''}${segundos}`;
       this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + tiempoFormateado + " segundos";
       this.speakWelcomeMessage(this.welcomeMessage);
       this.showCourseOpciones = false;
