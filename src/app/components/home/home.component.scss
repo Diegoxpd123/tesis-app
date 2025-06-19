@@ -110,7 +110,7 @@ height: auto !important;
 
 
 .opcion-button {
-  font-size: 1.6rem !important;
+  font-size: 0.8rem !important;
   font-weight: bold !important;
   padding: 1.2rem 3rem !important;
   background-color: #360066 !important;
@@ -602,3 +602,148 @@ height: auto !important;
     transform: scale(1);
   }
 }
+
+@media (max-width: 1024px) {
+  .main-content {
+    flex-direction: column !important;
+    padding: 2rem 1.5rem !important;
+    gap: 2rem !important;
+  }
+
+  .text-content {
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .welcome-title {
+    font-size: 3rem !important;
+  }
+
+  .welcome-subtitle,
+  .pregunta-subtitle,
+  .pregunta-numeros {
+    font-size: 1.8rem !important;
+  }
+
+  .robot-image,
+  .trofeo-image {
+    width: 180px !important;
+  }
+
+  .pregunta-image,
+  .pregunta-imagen {
+    width: 160px !important;
+  }
+
+  .start-button,
+  .opcion-button,
+  .course-button {
+    font-size: 0.8rem !important;
+    padding: 1rem 2rem !important;
+  }
+
+  .course-buttons {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .chatgpt-container {
+    padding: 1rem !important;
+  }
+
+  .barra-titulo {
+    font-size: 1.4rem !important;
+  }
+
+  .barra-porcentaje {
+    font-size: 1.1rem !important;
+  }
+
+  .evaluaciones-dropdown {
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-container {
+    padding: 2rem 1rem !important;
+  }
+
+  .welcome-title {
+    font-size: 2.2rem !important;
+  }
+
+  .welcome-subtitle,
+  .pregunta-subtitle {
+    font-size: 1.5rem !important;
+  }
+
+  .pregunta-subtitle-sobrerobot {
+    font-size: 1rem !important;
+  }
+
+  .pregunta-numeros {
+    font-size: 1.4rem !important;
+  }
+
+  .robot-image,
+  .trofeo-image {
+    width: 130px !important;
+  }
+
+  .pregunta-image,
+  .pregunta-imagen {
+    width: 120px !important;
+  }
+
+  .start-button,
+  .opcion-button,
+  .course-button {
+    font-size: 0.8rem !important;
+    padding: 0.8rem 1.5rem !important;
+  }
+
+  .modal-contenido h2,
+  .modal-contenido h3 {
+    font-size: 2rem !important;
+  }
+
+  .modal-contenido {
+    padding: 2rem 1rem !important;
+  }
+
+  .chat-input {
+    flex-direction: column !important;
+
+    input {
+      font-size: 1rem !important;
+    }
+
+    button {
+      width: 100% !important;
+    }
+  }
+
+  .barra {
+    height: 20px !important;
+  }
+
+  .barra-porcentaje {
+    font-size: 1rem !important;
+  }
+
+  .timer-overlay {
+    font-size: 1.2rem !important;
+    left: 50px !important;
+  }
+
+  .evaluaciones-dropdown label {
+    font-size: 1.2rem !important;
+  }
+
+  .evaluaciones-dropdown select {
+    font-size: 1rem !important;
+    padding: 0.6rem 0.8rem !important;
+  }
+}
+

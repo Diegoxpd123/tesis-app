@@ -1,4 +1,5 @@
 export interface Resultadopregunta {
+  id: number;
   alumnoid: number;
   preguntaid: number;
   cursoid: number;
@@ -10,5 +11,6 @@ export interface Resultadopregunta {
   updated_at: string;
   is_deleted: number;
   is_actived: number;
+  tiemporeforzamiento: number;
 
  }

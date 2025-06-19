@@ -51,6 +51,7 @@ export class HomeComponent implements OnInit {
   showDetallesProgreso: boolean = false;
   showCerrarSesion: boolean = false;
   timerisactive: boolean = false;
+  timerisactiver: boolean = false;
 
   cursoNombre: string = '';
   showMostrarBarras: boolean = false;
@@ -66,6 +67,10 @@ export class HomeComponent implements OnInit {
 
 
 
+  timerMinutesr: number = 0;
+  timerSecondsr: number = 0;
+  tiempototalr: number = 0;
+  private timerIntervalr: any;
 
   timerMinutes: number = 0;
   timerSeconds: number = 0;
@@ -231,6 +236,30 @@ export class HomeComponent implements OnInit {
       }
     }, 1000);
   }
+
+
+  startTimerReforzamiento() {
+  if (this.timerIntervalr) {
+    clearInterval(this.timerIntervalr); // ✅ Detener si ya había uno activo
+  }
+
+  this.timerSecondsr = 0;
+  this.timerMinutesr = 0;
+  this.tiempototalr = 0;
+
+  this.timerIntervalr = setInterval(() => {
+    this.timerSecondsr++;
+    this.tiempototalr++;
+
+    if (this.timerSecondsr === 60) {
+      this.timerSecondsr = 0;
+      this.timerMinutesr++;
+    }
+  }, 1000);
+
+  this.timerisactiver = true; // ✅ asegurar que solo está activo uno
+}
+
 
   speakWelcomeMessage(message: string) {
     const utterance = new SpeechSynthesisUtterance(message);
@@ -417,10 +446,32 @@ export class HomeComponent implements OnInit {
   }
 
   runPreguntas(titulo: string, evaluacioid: number) {
+//aca
+console.clear();
+console.log("el resultado", this.resultadopregunta);
+console.log("el tiempo", this.timerIntervalr);
+if (this.resultadopregunta ) {
+
+  this.resultadopregunta.tiemporeforzamiento = this.tiempototalr;
+   clearInterval(this.timerIntervalr);
+    this.timerisactiver = false;
+
+  this.resultadopreguntaservice.updateResultadopregunta(this.resultadopregunta.id,this.resultadopregunta)
+    .subscribe({
+      next: (response) => {
+        console.log('Resultado actualizado correctamente:', response);
+      },
+      error: (error) => {
+        console.error('Error al actualizar el resultado:', error);
+      }
+    });
+}
+
+
     if (this.timerisactive == false) {
 
       this.startTimer();
-      this.timerisactive =true;
+      this.timerisactive = true;
     }
     this.showPreguntaSobreGato = false;
 
@@ -470,7 +521,7 @@ export class HomeComponent implements OnInit {
       this.showChatGpt = false;
       clearInterval(this.timerInterval);
       this.showTimer = false;
-      this.timerisactive =false;
+      this.timerisactive = false;
       return;
     }
 
@@ -516,6 +567,7 @@ export class HomeComponent implements OnInit {
 
       const alumno_id = localStorage.getItem('usuario_id');
       this.resultadopregunta = {
+        id: 0,
         alumnoid: Number(alumno_id),
         preguntaid: this.preguntaid,
         cursoid: 1,
@@ -526,28 +578,38 @@ export class HomeComponent implements OnInit {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         is_actived: 1,
-        is_deleted: 0
+        is_deleted: 0,
+        tiemporeforzamiento: 0
       };
 
       this.resultadopreguntaservice.createResultadopregunta(this.resultadopregunta)
         .subscribe({
           next: (res) => {
             console.log('Registro exitoso', res);
+            this.resultadopregunta = res;
           },
           error: (err) => {
             console.error('Error al registrar resultado', err);
           }
         });
+
       this.preguntaActual++;
       this.runPreguntas("MATEMATICAS - CONJUNTOS", this.evaluacionidnumber);
     } else {
 
       clearInterval(this.timerInterval);
       this.showTimer = false;
-      this.timerisactive =false;
+      this.timerisactive = false;
+
+      if (this.timerisactiver == false) {
+
+        this.startTimerReforzamiento();
+        this.timerisactiver = true;
+      }
 
       const alumno_id = localStorage.getItem('usuario_id');
       this.resultadopregunta = {
+         id: 0,
         alumnoid: Number(alumno_id),
         preguntaid: this.preguntaid,
         cursoid: 1,
@@ -558,13 +620,15 @@ export class HomeComponent implements OnInit {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         is_actived: 1,
-        is_deleted: 0
+        is_deleted: 0,
+        tiemporeforzamiento: 0
       };
 
       this.resultadopreguntaservice.createResultadopregunta(this.resultadopregunta)
         .subscribe({
           next: (res) => {
             console.log('Registro exitoso', res);
+            this.resultadopregunta = res;
           },
           error: (err) => {
             console.error('Error al registrar resultado', err);
@@ -644,7 +708,7 @@ export class HomeComponent implements OnInit {
     //detener el timer
     clearInterval(this.timerInterval);
     this.showTimer = false;
-      this.timerisactive =false;
+    this.timerisactive = false;
 
   }
 
