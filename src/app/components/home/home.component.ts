@@ -445,11 +445,11 @@ export class HomeComponent implements OnInit {
   continuarEvaluacionDesdeModal() {
     this.modalInicioVisible = false;
     clearInterval(this.timerInterval);
-    this.tiempototal=0;
-     this.timerSeconds = 0;
-        this.timerMinutes=0;
-      this.showTimer = false;
-      this.timerisactive = false;
+    this.tiempototal = 0;
+    this.timerSeconds = 0;
+    this.timerMinutes = 0;
+    this.showTimer = false;
+    this.timerisactive = false;
     this.runPreguntas(this.evaluacionPendiente!.titulo, this.evaluacionPendiente!.id);
   }
 
@@ -513,7 +513,10 @@ export class HomeComponent implements OnInit {
       // finalizar evaluación
       this.tituloMessage = "¡Refuerzo Completado! ";
       this.preguntaMessage = "";
-      this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + this.tiempototal + " segundos";
+      const minutos = Math.floor(this.tiempototal / 60);
+      const segundos = this.tiempototal % 60;
+      const tiempoFormateado = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+      this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + tiempoFormateado + " segundos";
       this.speakWelcomeMessage(this.welcomeMessage);
       this.showCourseOpciones = false;
       this.showCourseOpcionesImg = false;
