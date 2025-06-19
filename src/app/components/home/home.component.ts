@@ -449,6 +449,7 @@ export class HomeComponent implements OnInit {
 
   runPreguntas(titulo: string, evaluacioid: number) {
 //aca
+this.messages=[];
 console.clear();
 console.log("el resultado", this.resultadopregunta);
 console.log("el tiempo", this.timerIntervalr);
