@@ -529,6 +529,9 @@ if (this.resultadopregunta ) {
     }
 
     // Continuar mostrando pregunta
+    clearInterval(this.timerInterval); // detener timer
+     this.startTimer();
+      this.timerisactive = true;
     const pregunta = this.preguntasEncontradas[this.preguntaActual];
     this.respuestaCorrecta = pregunta.opcion1;
     this.preguntaid = pregunta.id;
@@ -551,6 +554,8 @@ if (this.resultadopregunta ) {
     this.showTerminarChat = false;
     this.showDetallesProgreso = false;
     this.showChatGpt = false;
+    this.showTimer = true;
+
     if (this.preguntaActual < 5) {
       this.preguntaNumeros = "Pregunta " + (this.preguntaActual + 1) + " de 5";
     } else {
