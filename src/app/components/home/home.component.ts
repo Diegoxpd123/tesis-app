@@ -550,7 +550,7 @@ export class HomeComponent implements OnInit {
     this.opcion2 = pregunta.opcion2;
     this.opcion3 = pregunta.opcion3;
     this.opcion4 = pregunta.opcion4;
-    this.opcionesHTML = [this.opcion1, this.opcion2, this.opcion3, this.opcion4];
+    this.opcionesHTML = [this.opcion1, this.opcion2, this.opcion3, this.opcion4].sort(() => Math.random() - 0.5);
     this.showCourseOpciones = true;
     this.showCourseOpcionesImg = true;
     this.showYesOrNoOpciones = false;
