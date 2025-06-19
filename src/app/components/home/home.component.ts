@@ -148,7 +148,7 @@ export class HomeComponent implements OnInit {
 
     this.temaservice.getTemas().subscribe(temas => {
       const temasIds = temas
-        .filter(t => t.cursoid === cursoId  )
+        .filter(t => t.cursoid === cursoId)
         .map(t => t.id); // extraemos los IDs de temas que coinciden
       console.clear();
       console.log(temasIds);
@@ -199,7 +199,7 @@ export class HomeComponent implements OnInit {
       (response: any) => {
         const reply = response.choices[0].message.content;
         this.messages.push({ role: 'assistant', content: reply });
-      this.speakWelcomeMessage(reply);
+        this.speakWelcomeMessage(reply);
       },
       err => {
         this.messages.push({ role: 'assistant', content: 'Ocurrió un error. Intenta de nuevo más tarde.' });
@@ -242,26 +242,26 @@ export class HomeComponent implements OnInit {
 
 
   startTimerReforzamiento() {
-  if (this.timerIntervalr) {
-    clearInterval(this.timerIntervalr); // ✅ Detener si ya había uno activo
-  }
-
-  this.timerSecondsr = 0;
-  this.timerMinutesr = 0;
-  this.tiempototalr = 0;
-
-  this.timerIntervalr = setInterval(() => {
-    this.timerSecondsr++;
-    this.tiempototalr++;
-
-    if (this.timerSecondsr === 60) {
-      this.timerSecondsr = 0;
-      this.timerMinutesr++;
+    if (this.timerIntervalr) {
+      clearInterval(this.timerIntervalr); // ✅ Detener si ya había uno activo
     }
-  }, 1000);
 
-  this.timerisactiver = true; // ✅ asegurar que solo está activo uno
-}
+    this.timerSecondsr = 0;
+    this.timerMinutesr = 0;
+    this.tiempototalr = 0;
+
+    this.timerIntervalr = setInterval(() => {
+      this.timerSecondsr++;
+      this.tiempototalr++;
+
+      if (this.timerSecondsr === 60) {
+        this.timerSecondsr = 0;
+        this.timerMinutesr++;
+      }
+    }, 1000);
+
+    this.timerisactiver = true; // ✅ asegurar que solo está activo uno
+  }
 
 
   speakWelcomeMessage(message: string) {
@@ -444,34 +444,41 @@ export class HomeComponent implements OnInit {
 
   continuarEvaluacionDesdeModal() {
     this.modalInicioVisible = false;
+    clearInterval(this.timerInterval);
+    this.tiempototal=0;
+     this.timerSeconds = 0;
+        this.timerMinutes=0;
+      this.showTimer = false;
+      this.timerisactive = false;
     this.runPreguntas(this.evaluacionPendiente!.titulo, this.evaluacionPendiente!.id);
   }
 
   runPreguntas(titulo: string, evaluacioid: number) {
-//aca
-this.messages=[];
-console.clear();
-console.log("el resultado", this.resultadopregunta);
-console.log("el tiempo", this.timerIntervalr);
-if (this.resultadopregunta ) {
+    //aca
+    this.messages = [];
+    console.clear();
+    console.log("el resultado", this.resultadopregunta);
+    console.log("el tiempo", this.timerIntervalr);
+    //aca guardamos el tiempo de reforzamiento
+    if (this.resultadopregunta) {
 
-  this.resultadopregunta.tiemporeforzamiento = this.tiempototalr;
-   clearInterval(this.timerIntervalr);
-    this.timerisactiver = false;
+      this.resultadopregunta.tiemporeforzamiento = this.tiempototalr;
+      clearInterval(this.timerIntervalr);
+      this.timerisactiver = false;
 
-  this.resultadopreguntaservice.updateResultadopregunta(this.resultadopregunta.id,this.resultadopregunta)
-    .subscribe({
-      next: (response) => {
-        console.log('Resultado actualizado correctamente:', response);
-      },
-      error: (error) => {
-        console.error('Error al actualizar el resultado:', error);
-      }
-    });
-}
+      this.resultadopreguntaservice.updateResultadopregunta(this.resultadopregunta.id, this.resultadopregunta)
+        .subscribe({
+          next: (response) => {
+            console.log('Resultado actualizado correctamente:', response);
+          },
+          error: (error) => {
+            console.error('Error al actualizar el resultado:', error);
+          }
+        });
+    }
 
 
-    if (this.timerisactive == false) {
+    if (this.timerisactive === false) {
 
       this.startTimer();
       this.timerisactive = true;
@@ -529,9 +536,6 @@ if (this.resultadopregunta ) {
     }
 
     // Continuar mostrando pregunta
-    clearInterval(this.timerInterval); // detener timer
-     this.startTimer();
-      this.timerisactive = true;
     const pregunta = this.preguntasEncontradas[this.preguntaActual];
     this.respuestaCorrecta = pregunta.opcion1;
     this.preguntaid = pregunta.id;
@@ -570,7 +574,7 @@ if (this.resultadopregunta ) {
 
   selectRespuesta(respuesta: any) {
     this.respuestaSeleccionada = respuesta;
-    if (this.respuestaCorrecta == respuesta ||  this.preguntaActual >  4) {
+    if (this.respuestaCorrecta == respuesta || this.preguntaActual > 4) {
       //PASAMOS A LA SIGUIENTE PREGUNTA
 
       const alumno_id = localStorage.getItem('usuario_id');
@@ -617,7 +621,7 @@ if (this.resultadopregunta ) {
 
       const alumno_id = localStorage.getItem('usuario_id');
       this.resultadopregunta = {
-         id: 0,
+        id: 0,
         alumnoid: Number(alumno_id),
         preguntaid: this.preguntaid,
         cursoid: 1,
@@ -732,8 +736,8 @@ if (this.resultadopregunta ) {
 
 
   toggleHome() {
-  window.location.reload();
-}
+    window.location.reload();
+  }
 
   toggleCerrarSesion() {
     this.tituloMessage = "HASTA PRONTO";
