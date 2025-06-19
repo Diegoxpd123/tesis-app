@@ -732,42 +732,8 @@ if (this.resultadopregunta ) {
 
 
   toggleHome() {
-    clearInterval(this.timerInterval);
-    this.timerisactive = false;
-    clearInterval(this.timerIntervalr);
-    this.timerisactiver = false;
-    this.modalInicioVisible = false;
-    this.evaluacionPendiente = null;
-    this.opcionesHTML = [];
-
-    const usuarioId = localStorage.getItem('usuario_id');
-    if (usuarioId) {
-      this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
-        this.tituloMessage = "¡Bienvenido! " + usuario.usuario;
-        this.welcomeMessage = "¿Estás listo para comenzar con tu reforzamiento del día?";
-
-        this.preguntaMessage = "";
-        this.showStartButton = true;
-        this.showCourseButtons = false;
-        this.showCourseButtonsb = false;
-        this.showCourseOpciones = false;
-        this.showCourseOpcionesImg = false;
-        this.showYesOrNoOpciones = false;
-        this.showYesOrNoOpciones1 = false;
-        this.showTerminarChat = false;
-        this.showVerMiProgreso = false;
-        this.showDetallesProgreso = false;
-        this.showPreguntaSobreGato = false;
-        this.showCourseOpciones = false;
-
-        this.showMostrarBarras = false;
-        this.showMostrarBarrasPorCurso = false;
-        this.showCerrarSesion = false;
-        this.showTimer = false;
-        this.showChatGpt = false;
-      });
-    }
-  }
+  window.location.reload();
+}
 
   toggleCerrarSesion() {
     this.tituloMessage = "HASTA PRONTO";
