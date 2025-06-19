@@ -174,3 +174,11 @@
     </div>
   </div>
 </div>
+
+<div *ngIf="modalInicioVisible" class="modal-inicio">
+  <div class="modal-contenido">
+    <h2>¡Perfecto!</h2>
+    <h3>Ya estas listo para demostrar lo que aprendiste, Tú puedes!</h3>
+    <button (click)="continuarEvaluacionDesdeModal()">Continuar</button>
+  </div>
+</div>

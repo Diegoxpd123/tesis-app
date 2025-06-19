@@ -79,9 +79,11 @@ export class HomeComponent implements OnInit {
   respuestaCorrecta: any;
   respuestaSeleccionada: any;
   preguntaid: number = 0;
-  preguntaTotales: number = 5;
+  preguntaTotales: number = 10;
   preguntaActual: number = 0;
   evaluacionidnumber: number = 0;
+  modalInicioVisible: boolean = false;
+  evaluacionPendiente: { titulo: string, id: number } | null = null;
 
 
   constructor(
@@ -408,29 +410,40 @@ export class HomeComponent implements OnInit {
 
   }
 
-
+  continuarEvaluacionDesdeModal() {
+    this.modalInicioVisible = false;
+    this.runPreguntas(this.evaluacionPendiente!.titulo, this.evaluacionPendiente!.id);
+  }
 
   runPreguntas(titulo: string, evaluacioid: number) {
     this.showPreguntaSobreGato = false;
 
-    // Verificamos si ya tenemos preguntas
     if (this.preguntasEncontradas.length === 0) {
       this.preguntaservice.getPreguntas().subscribe(preguntas => {
-        // Filtramos por evaluación y desordenamos
         this.preguntasEncontradas = preguntas
           .filter(u => u.evaluacionid === evaluacioid)
           .sort(() => Math.random() - 0.5)
-          .slice(0, 5);
+          .slice(0, 10);
 
-        // Llamamos recursivamente ahora que ya tenemos preguntas cargadas
         this.runPreguntas(titulo, evaluacioid);
       });
-      return; // Salimos hasta que tengamos preguntas cargadas
+      return;
     }
-    console.clear();
-    console.log(this.preguntasEncontradas);
+
+    // Mostrar modal en la pregunta 6
+    if (this.preguntaActual === 5 && this.evaluacionPendiente == null) { // índice 5 = sexta pregunta
+      this.modalInicioVisible = true;
+      this.evaluacionPendiente = { titulo, id: evaluacioid };
+      clearInterval(this.timerInterval); // detener timer
+      this.showTimer = false;
+
+      // Que el robot diga el mensaje del modal
+      this.speakWelcomeMessage("¿Estás listo para continuar con las siguientes preguntas?");
+      return;
+    }
 
     if (this.preguntaActual === this.preguntaTotales) {
+      // finalizar evaluación
       this.tituloMessage = "¡Refuerzo Completado! ";
       this.preguntaMessage = "";
       this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + this.tiempototal + " segundos";
@@ -440,7 +453,7 @@ export class HomeComponent implements OnInit {
       this.preguntaNumeros = "";
       this.showVerMiProgreso = true;
       this.preguntaActual = 0;
-      this.preguntasEncontradas = []; // Reiniciamos para la próxima evaluación
+      this.preguntasEncontradas = [];
       this.showStartButton = false;
       this.showCourseButtons = false;
       this.showCourseButtonsb = false;
@@ -454,6 +467,7 @@ export class HomeComponent implements OnInit {
       return;
     }
 
+    // Continuar mostrando pregunta
     const pregunta = this.preguntasEncontradas[this.preguntaActual];
     this.respuestaCorrecta = pregunta.opcion1;
     this.preguntaid = pregunta.id;
@@ -476,12 +490,17 @@ export class HomeComponent implements OnInit {
     this.showTerminarChat = false;
     this.showDetallesProgreso = false;
     this.showChatGpt = false;
-    this.preguntaNumeros = "Pregunta " + (this.preguntaActual + 1) + " de 5";
+    if (this.preguntaActual < 5) {
+      this.preguntaNumeros = "Pregunta " + (this.preguntaActual + 1) + " de 5";
+    } else {
+      this.preguntaNumeros = "Pregunta " + (this.preguntaActual - 4) + " de 5";
+    }
     this.preguntaMessagetemp = pregunta.respuesta;
 
     this.speakWelcomeMessage(this.preguntaMessage);
-    this.startTimer(); // ⏱️ Iniciar temporizador
+    this.startTimer();
   }
+
 
 
   selectRespuesta(respuesta: any) {
