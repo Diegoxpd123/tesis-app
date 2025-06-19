@@ -50,6 +50,7 @@ export class HomeComponent implements OnInit {
   showVerMiProgreso: boolean = false;
   showDetallesProgreso: boolean = false;
   showCerrarSesion: boolean = false;
+  timerisactive: boolean = false;
 
   cursoNombre: string = '';
   showMostrarBarras: boolean = false;
@@ -416,6 +417,11 @@ export class HomeComponent implements OnInit {
   }
 
   runPreguntas(titulo: string, evaluacioid: number) {
+    if (this.timerisactive == false) {
+
+      this.startTimer();
+      this.timerisactive =true;
+    }
     this.showPreguntaSobreGato = false;
 
     if (this.preguntasEncontradas.length === 0) {
@@ -464,6 +470,7 @@ export class HomeComponent implements OnInit {
       this.showChatGpt = false;
       clearInterval(this.timerInterval);
       this.showTimer = false;
+      this.timerisactive =false;
       return;
     }
 
@@ -498,7 +505,6 @@ export class HomeComponent implements OnInit {
     this.preguntaMessagetemp = pregunta.respuesta;
 
     this.speakWelcomeMessage(this.preguntaMessage);
-    this.startTimer();
   }
 
 
@@ -538,6 +544,7 @@ export class HomeComponent implements OnInit {
 
       clearInterval(this.timerInterval);
       this.showTimer = false;
+      this.timerisactive =false;
 
       const alumno_id = localStorage.getItem('usuario_id');
       this.resultadopregunta = {
@@ -637,6 +644,7 @@ export class HomeComponent implements OnInit {
     //detener el timer
     clearInterval(this.timerInterval);
     this.showTimer = false;
+      this.timerisactive =false;
 
   }
 
