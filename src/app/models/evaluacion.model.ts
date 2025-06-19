@@ -9,5 +9,6 @@ export interface Evaluacion {
   is_actived: number;
   fechainicio: string;
   fechafin: string;
+  grado: number;
 
  }

@@ -185,6 +185,7 @@ export class EstudianteListComponent implements OnInit {
 
           const fechaNumeroInicio = fila[9];
           const fechaNumeroFin = fila[10];
+          const grado = fila[11]?.toString().trim();
 
           let fechainicio: string = '';
           let fechafin: string = '';
@@ -254,7 +255,8 @@ export class EstudianteListComponent implements OnInit {
               is_deleted: 0,
               is_actived: 1,
               fechainicio,
-              fechafin
+              fechafin,
+              grado: grado
             };
             const evaluacionCreada = await this.evaluacionserice.createEvaluacion(evaluacion).toPromise();
             if (!evaluacionCreada) continue;

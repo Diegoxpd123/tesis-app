@@ -88,6 +88,7 @@ export class HomeComponent implements OnInit {
   preguntaTotales: number = 10;
   preguntaActual: number = 0;
   evaluacionidnumber: number = 0;
+  gradoactual: number = 0;
   modalInicioVisible: boolean = false;
   evaluacionPendiente: { titulo: string, id: number } | null = null;
 
@@ -111,6 +112,7 @@ export class HomeComponent implements OnInit {
     if (usuarioId) {
       this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
         this.tituloMessage = "¡Bienvenido! " + usuario.usuario;
+        this.gradoactual = usuario.grado;
         this.comunicacionService.toggleHome$.subscribe(() => {
           this.toggleHome();
         });
@@ -146,7 +148,7 @@ export class HomeComponent implements OnInit {
 
     this.temaservice.getTemas().subscribe(temas => {
       const temasIds = temas
-        .filter(t => t.cursoid === cursoId)
+        .filter(t => t.cursoid === cursoId  )
         .map(t => t.id); // extraemos los IDs de temas que coinciden
       console.clear();
       console.log(temasIds);
@@ -155,7 +157,7 @@ export class HomeComponent implements OnInit {
           const inicio = new Date(e.fechainicio);
           const fin = new Date(e.fechafin);
           return temasIds.includes(e.temaid) &&
-            hoy >= inicio && hoy <= fin;
+            hoy >= inicio && hoy <= fin && e.grado === this.gradoactual;
         });
 
         if (this.evaluacionesDisponibles.length > 0) {

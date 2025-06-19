@@ -8,5 +8,5 @@ export interface Usuario {
   updated_at: string;
   is_deleted: number;
   is_actived: number;
-
+  grado: number;
  }
