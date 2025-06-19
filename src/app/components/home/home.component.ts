@@ -199,6 +199,7 @@ export class HomeComponent implements OnInit {
       (response: any) => {
         const reply = response.choices[0].message.content;
         this.messages.push({ role: 'assistant', content: reply });
+      this.speakWelcomeMessage(reply);
       },
       err => {
         this.messages.push({ role: 'assistant', content: 'Ocurrió un error. Intenta de nuevo más tarde.' });
@@ -344,7 +345,6 @@ export class HomeComponent implements OnInit {
         console.log(evaluacion.nombre);
         //traemos preguntas
         this.tituloMessage = this.cursoNombre + " - " + evaluacion.nombre;
-        this.speakWelcomeMessage(this.welcomeMessage);
         this.evaluacionidnumber = evaluacion.id;
         this.runPreguntas(evaluacion.nombre, evaluacion.id);
       });
@@ -726,6 +726,13 @@ if (this.resultadopregunta ) {
 
 
   toggleHome() {
+    clearInterval(this.timerInterval);
+    this.timerisactive = false;
+    clearInterval(this.timerIntervalr);
+    this.timerisactiver = false;
+    this.modalInicioVisible = false;
+    this.evaluacionPendiente == null;
+
     const usuarioId = localStorage.getItem('usuario_id');
     if (usuarioId) {
       this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
@@ -744,6 +751,7 @@ if (this.resultadopregunta ) {
         this.showVerMiProgreso = false;
         this.showDetallesProgreso = false;
         this.showPreguntaSobreGato = false;
+        this.showCourseOpciones = false;
 
         this.showMostrarBarras = false;
         this.showMostrarBarrasPorCurso = false;
