@@ -13,8 +13,13 @@
       </p>
     <br>
 
-      <img *ngIf="showPreguntaSobreGato" src={{imagenpregunta}} alt="pregunta" class="pregunta-imagen" />
-
+<img
+  *ngIf="showPreguntaSobreGato && imagenValida"
+  [src]="imagenpregunta"
+  alt="pregunta"
+  class="pregunta-imagen"
+  (error)="imagenValida = false"
+/>
       <img src="/assets/img/robot.png" alt="Gato robot" class="robot-image" />
     </div>
     <div class="text-content">
@@ -44,8 +49,9 @@
           </option>
         </select>
       </div>
-      <div *ngIf="showCourseOpcionesImg" class="course-buttons slide-in">
-        <img src={{imagenpregunta}} alt="pregunta" class="pregunta-image" />
+      <div *ngIf="showCourseOpcionesImg && imagenValida" class="course-buttons slide-in">
+        <img src={{imagenpregunta}} alt="pregunta" class="pregunta-image"
+  (error)="imagenValida = false" />
 
       </div>
       <!-- ChatGPT Integration -->

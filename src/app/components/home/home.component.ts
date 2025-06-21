@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
   gradoactual: number = 0;
   modalInicioVisible: boolean = false;
   evaluacionPendiente: { titulo: string, id: number } | null = null;
-
+imagenValida = true;
 
   constructor(
     private router: Router,
