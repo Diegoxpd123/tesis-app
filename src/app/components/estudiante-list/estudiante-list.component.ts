@@ -36,29 +36,21 @@ export class EstudianteListComponent implements OnInit {
   tema!: Tema;
   evaluacion!: Evaluacion;
   pregunta!: Pregunta;
-  grados: string[] = ['1°', '2°', '3°', '4°', '5°'];
+  grados: string[] = ['4', '5', '6'];
   secciones: string[] = ['A', 'B', 'C'];
   gradoSeleccionado: string | null = null;
   seccionSeleccionada: string | null = null;
   estudiantes = [
-    { nombre: 'usuario1', porcentaje: 70 },
-    { nombre: 'usuario2', porcentaje: 60 },
-    { nombre: 'usuario3', porcentaje: 70 },
-    { nombre: 'usuario4', porcentaje: 60 },
-    { nombre: 'usuario5', porcentaje: 70 },
-    { nombre: 'usuario6', porcentaje: 60 },
-    { nombre: 'usuario7', porcentaje: 70 },
-    { nombre: 'usuario8', porcentaje: 60 },
-    { nombre: 'usuario9', porcentaje: 70 },
-    { nombre: 'usuario11', porcentaje: 75 }
+    { nombre: 'usuario1', porcentaje: 70, grado: 70 , seccion: 70},
   ];
 
   pageSize = 5;
   currentPage = 1;
+  usuarioid: string = '';
 
 
   tituloMessage: string = '¡Bienvenido! ';
-
+estudiantesFiltrados = this.estudiantes;
 
   constructor(
     private router: Router,
@@ -79,9 +71,12 @@ export class EstudianteListComponent implements OnInit {
   ngOnInit(): void {
 
     const usuarioId = localStorage.getItem('usuario_id');
+ this.comunicacionService.toggleCerrarSesion$.subscribe(() => {
+          this.toggleCerrarSesion();
+        });
     if (usuarioId) {
       this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
-
+      this.usuarioid = usuarioId;
         if (usuario.usuario == "admin") {
           this.tituloMessage = "¡Bienvenido! Administrador " + usuario.usuario;
           // Llamar a alumnos
@@ -90,9 +85,13 @@ export class EstudianteListComponent implements OnInit {
             const alumnosFiltrados = alumnos;
 
             this.estudiantes = alumnosFiltrados.map(alumno => ({
-              nombre: alumno.nombre,      // Asegúrate que `nombre` exista en tu modelo Alumno
-              porcentaje: 50              // O algún valor por defecto / calculado
+              nombre: alumno.nombre,
+              porcentaje: 50      ,
+              grado: alumno.grado    ,
+              seccion: alumno.seccionid
             }));
+
+this.estudiantesFiltrados = [...this.estudiantes];
 
           });
 
@@ -116,9 +115,13 @@ export class EstudianteListComponent implements OnInit {
               const alumnosFiltrados = alumnos.filter(a => seccionesIds.includes(a.seccionid));
 
               this.estudiantes = alumnosFiltrados.map(alumno => ({
-                nombre: alumno.nombre,      // Asegúrate que `nombre` exista en tu modelo Alumno
-                porcentaje: 50              // O algún valor por defecto / calculado
+                nombre: alumno.nombre,
+                porcentaje: 50,
+              grado: alumno.grado    ,
+              seccion: alumno.seccionid
               }));
+
+this.estudiantesFiltrados = [...this.estudiantes];
 
             });
           });
@@ -132,15 +135,20 @@ export class EstudianteListComponent implements OnInit {
 
 
 
+toggleCerrarSesion() {
+    // Aquí puedes validar usuario/contraseña si lo deseas
+    localStorage.removeItem('usuario_id');
+    this.router.navigate(['/login']);
+  }
 
   get totalPages(): number {
     return Math.ceil(this.estudiantes.length / this.pageSize);
   }
 
-  get estudiantesPaginados() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.estudiantes.slice(start, start + this.pageSize);
-  }
+get estudiantesPaginados() {
+  const start = (this.currentPage - 1) * this.pageSize;
+  return this.estudiantesFiltrados.slice(start, start + this.pageSize);
+}
 
   cambiarPagina(delta: number) {
     const nuevaPagina = this.currentPage + delta;
@@ -149,14 +157,17 @@ export class EstudianteListComponent implements OnInit {
     }
   }
 
-  filtrarEstudiantes() {
+ filtrarEstudiantes() {
+  const grado = Number(this.gradoSeleccionado);
+  const seccion = Number(this.seccionSeleccionada);
 
-    // this.estudiantesPaginados = this.estudiantes.filter(est => {
-    // return (!this.gradoSeleccionado || est.grado === this.gradoSeleccionado) &&
-    //       (!this.seccionSeleccionada || est.seccion === this.seccionSeleccionada);
-    // });
-  }
+  this.estudiantesFiltrados = this.estudiantes.filter(est => {
+    return (!this.gradoSeleccionado || est.grado === grado) &&
+           (!this.seccionSeleccionada || est.seccion === seccion);
+  });
 
+  this.currentPage = 1;
+}
 
   async leerArchivoExcel(event: any): Promise<void> {
     const archivo = event.target.files[0];

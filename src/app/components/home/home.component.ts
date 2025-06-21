@@ -108,7 +108,7 @@ export class HomeComponent implements OnInit {
 
 
   ngOnInit(): void {
-  const userId = localStorage.getItem('usuario_id');
+    const userId = localStorage.getItem('usuario_id');
     if (!userId) {
       this.router.navigate(['/login']);
     }
@@ -180,7 +180,7 @@ export class HomeComponent implements OnInit {
 
     const userMsg = this.userMessage.trim();
 
-    // Verificar si contiene palabras prohibidas
+    // Verificar palabras ofensivas
     const contieneMalaPalabra = this.palabrasProhibidas.some(palabra =>
       userMsg.toLowerCase().includes(palabra)
     );
@@ -194,11 +194,13 @@ export class HomeComponent implements OnInit {
       return;
     }
 
+    // Agregar mensaje del usuario al historial
     this.messages.push({ role: 'user', content: userMsg });
     this.userMessage = '';
 
+    // Enviar TODO el historial de mensajes
     this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
-      messages: userMsg
+      messages: this.messages
     }).subscribe(
       (response: any) => {
         const reply = response.choices[0].message.content;
@@ -206,29 +208,39 @@ export class HomeComponent implements OnInit {
         this.speakWelcomeMessage(reply);
       },
       err => {
-        this.messages.push({ role: 'assistant', content: 'Ocurrió un error. Intenta de nuevo más tarde.' });
+        this.messages.push({
+          role: 'assistant',
+          content: 'Ocurrió un error. Intenta de nuevo más tarde.'
+        });
       }
     );
   }
 
 
-  sendMessageIndividual(value: string) {
-    console.log(value);
-    const userMsg = "Le mostre esta pregunta " + value + 'al alumno con esta imagen ' + this.imagenpregunta + 'y el alumno me dio esta esta respuesta' + this.respuestaSeleccionada + 'y yo le di esta explicación' + this.preguntaMessagetemp + 'pero aun asi no me entendio. Necesito una explicación  básica y mas amplia. maximo 50 palabras';
-    //this.messages.push({ role: 'user', content: userMsg });
-    this.userMessage = '';
 
-    this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
-      messages: userMsg
-    }).subscribe((response: any) => {
-      this.preguntaMessage = response.choices[0].message.content;
-      this.messages.push({ role: 'assistant', content: this.preguntaMessage });
-      this.showYesOrNoOpciones1 = true;
+sendMessageIndividual(value: string) {
+  console.log(value);
 
-      this.speakWelcomeMessage(this.preguntaMessage);
-    });
-  }
+  const userMsg = "Le mostré esta pregunta: " + value + ', al alumno con esta imagen: ' + this.imagenpregunta +
+                  ', y el alumno me dio esta respuesta: ' + this.respuestaSeleccionada +
+                  '. Yo le di esta explicación: ' + this.preguntaMessagetemp +
+                  '. Pero aún así no me entendió. Necesito una explicación básica y más amplia, máximo 50 palabras y para niños de primaria.';
 
+  // Enviar como array de mensajes
+  const mensajes = [
+    { role: 'user', content: userMsg }
+  ];
+
+  this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
+    messages: mensajes
+  }).subscribe((response: any) => {
+    this.preguntaMessage = response.choices[0].message.content;
+    this.messages.push({ role: 'assistant', content: this.preguntaMessage });
+    this.showYesOrNoOpciones1 = true;
+
+    this.speakWelcomeMessage(this.preguntaMessage);
+  });
+}
 
   startTimer() {
     this.showTimer = true;
@@ -770,6 +782,7 @@ export class HomeComponent implements OnInit {
     this.showMostrarBarrasPorCurso = false;
     this.showTimer = false;
     this.showChatGpt = false;
+
 
   }
 
