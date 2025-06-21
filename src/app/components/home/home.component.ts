@@ -231,6 +231,7 @@ sendMessageIndividual(value: string) {
     { role: 'user', content: userMsg }
   ];
 
+
   this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
     messages: mensajes
   }).subscribe((response: any) => {
