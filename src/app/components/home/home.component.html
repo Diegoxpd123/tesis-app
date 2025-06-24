@@ -53,6 +53,7 @@
            <button *ngIf="showCourseButtons" class="start-button" (click)="startClicked()">
         ATRAS
       </button>
+
       <div *ngIf="showCourseOpcionesImg && imagenValida" class="course-buttons slide-in">
         <img src={{imagenpregunta}} alt="pregunta" class="pregunta-image"
   (error)="imagenValida = false" />
