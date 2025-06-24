@@ -16,6 +16,7 @@ import { Tema } from '../../models/tema.model';
 import { Pregunta } from '../../models/pregunta.model';
 import { Evaluacion } from '../../models/evaluacion.model';
 import { TemaService } from '../../services/tema.service';
+import { Usuario } from '../../models/usuario.model';
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
 
@@ -70,8 +71,11 @@ export class HomeComponent implements OnInit {
   timerMinutesr: number = 0;
   timerSecondsr: number = 0;
   tiempototalr: number = 0;
+  pormate: number = 0;
+  porcomu: number = 0;
+  porcien: number = 0;
   private timerIntervalr: any;
-
+usuarioActual!: Usuario;
   timerMinutes: number = 0;
   timerSeconds: number = 0;
   tiempototal: number = 0;
@@ -117,6 +121,7 @@ imagenValida = true;
       this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
         this.tituloMessage = "¡Bienvenido! " + usuario.usuario;
         this.gradoactual = usuario.grado;
+        this.usuarioActual = usuario;
         this.comunicacionService.toggleHome$.subscribe(() => {
           this.toggleHome();
         });
@@ -130,6 +135,8 @@ imagenValida = true;
 
       });
     }
+
+
   }
 
   MostrarEvaluaciones(cursoId: number): void {
@@ -369,8 +376,53 @@ sendMessageIndividual(value: string) {
 
   }
 
-  showDetalleProgreso() {
+  cargarPuntajes() {
+    Promise.all([
+    this.temaservice.getTemas().toPromise(),
+    this.evaluacionserice.getEvaluacions().toPromise(),
+    this.preguntaservice.getPreguntas().toPromise(),
+    this.resultadopreguntaservice.getResultadopreguntas().toPromise()
+  ]).then(([temas = [], evaluaciones = [], preguntas = [], resultados = []]) => {
 
+    console.clear();
+    console.log('Temas:', temas);
+    console.log('Evaluaciones:', evaluaciones);
+    console.log('Preguntas:', preguntas);
+    console.log('Resultados:', resultados);
+
+    const cursos = [
+      { id: 1, nombre: 'Matemáticas' },
+      { id: 2, nombre: 'Comunicación' },
+      { id: 3, nombre: 'Ciencia y Tecnología' }
+    ];
+
+    cursos.forEach(curso => {
+      const temasCurso = temas.filter(t => t.cursoid === curso.id).map(t => t.id);
+      const evaluacionesCurso = evaluaciones.filter(e => temasCurso.includes(e.temaid)).map(e => e.id);
+      const preguntasCurso = preguntas.filter(p => evaluacionesCurso.includes(p.evaluacionid)).map(p => p.id);
+   const resultadosCurso = resultados.filter(r =>
+  preguntasCurso.includes(r.preguntaid) &&
+  r.alumnoid === this.usuarioActual.aludocenid
+);
+      const total = resultadosCurso.length;
+      const correctas = resultadosCurso.filter(r => r.respuesta === 'correcta').length;
+      const porcentaje = total > 0 ? Math.round((correctas / total) * 100) : 0;
+
+      switch (curso.id) {
+        case 1: this.pormate = porcentaje; break;
+        case 2: this.porcomu = porcentaje; break;
+        case 3: this.porcien = porcentaje; break;
+      }
+    });
+
+  }).catch(err => {
+    console.error('Error al cargar puntajes:', err);
+  });
+}
+
+
+  showDetalleProgreso() {
+this.cargarPuntajes();
     this.tituloMessage = "Mi Progreso";
     this.preguntaMessage = "";
     this.welcomeMessage = "¡Sigue así! Has mejorado un 75%";
@@ -717,6 +769,8 @@ sendMessageIndividual(value: string) {
   }
 
   toggleDetalles() {
+
+this.cargarPuntajes();
     this.tituloMessage = "Mi Progreso";
     this.welcomeMessage = "";
     this.preguntaMessage = "";

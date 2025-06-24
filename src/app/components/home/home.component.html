@@ -48,7 +48,11 @@
             {{ evaluacion.nombre }}
           </option>
         </select>
+
       </div>
+           <button *ngIf="showCourseButtons" class="start-button" (click)="startClicked()">
+        ATRAS
+      </button>
       <div *ngIf="showCourseOpcionesImg && imagenValida" class="course-buttons slide-in">
         <img src={{imagenpregunta}} alt="pregunta" class="pregunta-image"
   (error)="imagenValida = false" />
@@ -111,7 +115,7 @@
         <div class="barra-container">
           <div class="barra-titulo">Matemática</div>
           <div class="barra curso1">
-            <span class="barra-porcentaje">75%</span>
+            <span class="barra-porcentaje"> {{ pormate }}%</span>
           </div>
           <button class="detalle-button" (click)="verMasDetallesPorCurso('Matematica')">Ver más detalles</button>
         </div>
@@ -119,7 +123,7 @@
         <div class="barra-container">
           <div class="barra-titulo">Comunicaciones</div>
           <div class="barra curso2">
-            <span class="barra-porcentaje">50%</span>
+            <span class="barra-porcentaje">{{ porcomu }}%</span>
           </div>
           <button class="detalle-button" (click)="verMasDetallesPorCurso('Comunicaciones')">Ver más detalles</button>
         </div>
@@ -127,7 +131,7 @@
         <div class="barra-container">
           <div class="barra-titulo">Ciencias</div>
           <div class="barra curso3">
-            <span class="barra-porcentaje">90%</span>
+            <span class="barra-porcentaje">{{ porcien }}%</span>
           </div>
           <button class="detalle-button" (click)="verMasDetallesPorCurso('Ciencias')">Ver más detalles</button>
         </div>
