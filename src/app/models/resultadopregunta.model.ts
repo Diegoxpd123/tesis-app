@@ -12,5 +12,6 @@ export interface Resultadopregunta {
   is_deleted: number;
   is_actived: number;
   tiemporeforzamiento: number;
+  isexamen: number;
 
  }

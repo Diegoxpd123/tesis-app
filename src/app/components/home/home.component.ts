@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
   showCerrarSesion: boolean = false;
   timerisactive: boolean = false;
   timerisactiver: boolean = false;
-
+   isexamen = 0;
   cursoNombre: string = '';
   showMostrarBarras: boolean = false;
   showMostrarBarrasPorCurso: boolean = false;
@@ -573,6 +573,7 @@ this.cargarPuntajes();
       clearInterval(this.timerInterval); // detener timer
       this.showTimer = false;
 
+      this.isexamen =1;
       // Que el robot diga el mensaje del modal
       this.speakWelcomeMessage("¿Estás listo para continuar con las siguientes preguntas?");
       return;
@@ -663,7 +664,8 @@ this.cargarPuntajes();
         updated_at: new Date().toISOString(),
         is_actived: 1,
         is_deleted: 0,
-        tiemporeforzamiento: 0
+        tiemporeforzamiento: 0,
+        isexamen: this.isexamen,
       };
 
       this.resultadopreguntaservice.createResultadopregunta(this.resultadopregunta)
@@ -705,7 +707,8 @@ this.cargarPuntajes();
         updated_at: new Date().toISOString(),
         is_actived: 1,
         is_deleted: 0,
-        tiemporeforzamiento: 0
+        tiemporeforzamiento: 0,
+        isexamen: this.isexamen,
       };
 
       this.resultadopreguntaservice.createResultadopregunta(this.resultadopregunta)

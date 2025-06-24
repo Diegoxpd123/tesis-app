@@ -247,18 +247,19 @@ get estudiantesPaginados() {
             console.log(`✅ Tema creado: ${temaNombre}`);
           }
 
+          const nombretotal =  temaNombre.toLowerCase()+grado+fechainicio;
           // Buscar o crear Evaluación
           const evaluaciones = (await this.evaluacionserice.getEvaluacions().toPromise()) ?? [];
-          const evaluacionExistente = evaluaciones.find(ev => ev.nombre.trim().toLowerCase() === temaNombre.toLowerCase());
+          const evaluacionExistente = evaluaciones.find(ev => ev.nombre.trim().toLowerCase() === nombretotal.toLowerCase());
 
           let evaluacionId: number;
           if (evaluacionExistente) {
-            console.log(`⚠️ Evaluación ya existe: ${temaNombre}`);
+            console.log(`⚠️ Evaluación ya existe: ${nombretotal}`);
             evaluacionId = evaluacionExistente.id;
           } else {
             const evaluacion = {
               id: 0,
-              nombre: temaNombre,
+              nombre: nombretotal,
               temaid: temaId,
               institucionid: cursoId,
               created_at: new Date().toISOString(),
@@ -272,7 +273,7 @@ get estudiantesPaginados() {
             const evaluacionCreada = await this.evaluacionserice.createEvaluacion(evaluacion).toPromise();
             if (!evaluacionCreada) continue;
             evaluacionId = evaluacionCreada.id;
-            console.log(`✅ Evaluación creada: ${temaNombre}`);
+            console.log(`✅ Evaluación creada: ${nombretotal}`);
           }
 
           // Crear Pregunta
