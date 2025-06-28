@@ -53,13 +53,13 @@ export class HomeComponent implements OnInit {
   showCerrarSesion: boolean = false;
   timerisactive: boolean = false;
   timerisactiver: boolean = false;
-  cursoid: number =0;
-  temaid: number =0;
-   isexamen = 0;
+  cursoid: number = 0;
+  temaid: number = 0;
+  isexamen = 0;
   cursoNombre: string = '';
   showMostrarBarras: boolean = false;
   showMostrarBarrasPorCurso: boolean = false;
-
+resultadosPorCurso: any[] = [];
   showTimer: boolean = false;
   showPreguntaSobreGato: boolean = false;
   showChatGpt: boolean = false;
@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit {
     'puta', 'mierda', 'estúpido', 'imbécil', 'idiota', 'perra', 'hijo de', 'maldito', 'conchudo', 'csm', 'hdp'
   ];
 
-corrector: string = "";
+  corrector: string = "";
 
   timerMinutesr: number = 0;
   timerSecondsr: number = 0;
@@ -77,7 +77,7 @@ corrector: string = "";
   porcomu: number = 0;
   porcien: number = 0;
   private timerIntervalr: any;
-usuarioActual!: Usuario;
+  usuarioActual!: Usuario;
   timerMinutes: number = 0;
   timerSeconds: number = 0;
   tiempototal: number = 0;
@@ -97,7 +97,7 @@ usuarioActual!: Usuario;
   gradoactual: number = 0;
   modalInicioVisible: boolean = false;
   evaluacionPendiente: { titulo: string, id: number } | null = null;
-imagenValida = true;
+  imagenValida = true;
 
   constructor(
     private router: Router,
@@ -149,15 +149,15 @@ imagenValida = true;
 
     if (cursoId == 1) {
       this.cursoNombre = "Matematicas";
-      this.cursoid =1;
+      this.cursoid = 1;
     }
     if (cursoId == 2) {
       this.cursoNombre = "Comunicaciones";
-      this.cursoid =2;
+      this.cursoid = 2;
     }
     if (cursoId == 3) {
       this.cursoNombre = "Ciencias y Tecnologia";
-      this.cursoid =3;
+      this.cursoid = 3;
     }
 
     const hoy = new Date();
@@ -230,30 +230,30 @@ imagenValida = true;
 
 
 
-sendMessageIndividual(value: string) {
-  console.log(value);
+  sendMessageIndividual(value: string) {
+    console.log(value);
 
-  const userMsg = "Le mostré esta pregunta: " + value + ', al alumno con esta imagen: ' + this.imagenpregunta +
-                  ', y el alumno me dio esta respuesta: ' + this.respuestaSeleccionada +
-                  '. Yo le di esta explicación: ' + this.preguntaMessagetemp +
-                  '. Pero aún así no me entendió. Necesito una explicación básica y más amplia, máximo 50 palabras y para niños de primaria.';
+    const userMsg = "Le mostré esta pregunta: " + value + ', al alumno con esta imagen: ' + this.imagenpregunta +
+      ', y el alumno me dio esta respuesta: ' + this.respuestaSeleccionada +
+      '. Yo le di esta explicación: ' + this.preguntaMessagetemp +
+      '. Pero aún así no me entendió. Necesito una explicación básica y más amplia, máximo 50 palabras y para niños de primaria.';
 
-  // Enviar como array de mensajes
-  const mensajes = [
-    { role: 'user', content: userMsg }
-  ];
+    // Enviar como array de mensajes
+    const mensajes = [
+      { role: 'user', content: userMsg }
+    ];
 
 
-  this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
-    messages: mensajes
-  }).subscribe((response: any) => {
-    this.preguntaMessage = response.choices[0].message.content;
-    this.messages.push({ role: 'assistant', content: this.preguntaMessage });
-    this.showYesOrNoOpciones1 = true;
+    this.http.post('https://moving-firefly-neatly.ngrok-free.app/api/chatgpt', {
+      messages: mensajes
+    }).subscribe((response: any) => {
+      this.preguntaMessage = response.choices[0].message.content;
+      this.messages.push({ role: 'assistant', content: this.preguntaMessage });
+      this.showYesOrNoOpciones1 = true;
 
-    this.speakWelcomeMessage(this.preguntaMessage);
-  });
-}
+      this.speakWelcomeMessage(this.preguntaMessage);
+    });
+  }
 
   startTimer() {
     this.showTimer = true;
@@ -384,52 +384,56 @@ sendMessageIndividual(value: string) {
   }
 
   cargarPuntajes() {
-    Promise.all([
-    this.temaservice.getTemas().toPromise(),
-    this.evaluacionserice.getEvaluacions().toPromise(),
-    this.preguntaservice.getPreguntas().toPromise(),
-    this.resultadopreguntaservice.getResultadopreguntas().toPromise()
-  ]).then(([temas = [], evaluaciones = [], preguntas = [], resultados = []]) => {
+  const hoy = new Date();
+  const haceUnAno = new Date();
+  haceUnAno.setFullYear(hoy.getFullYear() - 1);
 
-    console.clear();
-    console.log('Temas:', temas);
-    console.log('Evaluaciones:', evaluaciones);
-    console.log('Preguntas:', preguntas);
-    console.log('Resultados:', resultados);
+  const fechainicio = haceUnAno.toISOString().split('T')[0];
+  const fechafin = hoy.toISOString().split('T')[0];
 
-    const cursos = [
-      { id: 1, nombre: 'Matemáticas' },
-      { id: 2, nombre: 'Comunicación' },
-      { id: 3, nombre: 'Ciencia y Tecnología' }
-    ];
+  const usuarioid = this.usuarioActual.id;
 
-    cursos.forEach(curso => {
-      const temasCurso = temas.filter(t => t.cursoid === curso.id).map(t => t.id);
-      const evaluacionesCurso = evaluaciones.filter(e => temasCurso.includes(e.temaid)).map(e => e.id);
-      const preguntasCurso = preguntas.filter(p => evaluacionesCurso.includes(p.evaluacionid)).map(p => p.id);
-   const resultadosCurso = resultados.filter(r =>
-  preguntasCurso.includes(r.preguntaid) &&
-  r.alumnoid === this.usuarioActual.aludocenid
-);
-      const total = resultadosCurso.length;
-      const correctas = resultadosCurso.filter(r => r.respuesta === 'correcta').length;
-      const porcentaje = total > 0 ? Math.round((correctas / total) * 100) : 0;
+  const cursos = [
+    { id: 1, nombre: 'Matemáticas' },
+    { id: 2, nombre: 'Comunicación' },
+    { id: 3, nombre: 'Ciencia y Tecnología' }
+  ];
+
+  cursos.forEach(curso => {
+    this.usuaoservice.getResultadosCurso({
+      cursoid: curso.id,
+      usuarioid: usuarioid,
+      fechainicio: fechainicio,
+      fechafin: fechafin
+    }).subscribe(data => {
+      let totalBuenas = 0;
+      let totalPreguntas = 0;
+
+      data.forEach(r => {
+        const partes = r.respuestas_buenas_sobre_totales.split('/');
+        if (partes.length === 2) {
+          totalBuenas += parseInt(partes[0], 10);
+          totalPreguntas += parseInt(partes[1], 10);
+        }
+      });
+
+      const porcentaje = totalPreguntas > 0 ? Math.round((totalBuenas / totalPreguntas) * 100) : 0;
 
       switch (curso.id) {
         case 1: this.pormate = porcentaje; break;
         case 2: this.porcomu = porcentaje; break;
         case 3: this.porcien = porcentaje; break;
       }
+    }, err => {
+      console.error(`Error cargando resultados de ${curso.nombre}:`, err);
     });
-
-  }).catch(err => {
-    console.error('Error al cargar puntajes:', err);
   });
 }
 
 
+
   showDetalleProgreso() {
-this.cargarPuntajes();
+    this.cargarPuntajes();
     this.tituloMessage = "Mi Progreso";
     this.preguntaMessage = "";
     this.welcomeMessage = "¡Sigue así! Has mejorado un 75%";
@@ -580,7 +584,7 @@ this.cargarPuntajes();
       clearInterval(this.timerInterval); // detener timer
       this.showTimer = false;
 
-      this.isexamen =1;
+      this.isexamen = 1;
       // Que el robot diga el mensaje del modal
       this.speakWelcomeMessage("¿Estás listo para continuar con las siguientes preguntas?");
       return;
@@ -657,11 +661,11 @@ this.cargarPuntajes();
     this.respuestaSeleccionada = respuesta;
     if (this.respuestaCorrecta == respuesta || this.preguntaActual > 4) {
       //PASAMOS A LA SIGUIENTE PREGUNTA
-        if (this.respuestaCorrecta != respuesta) {
-         this.corrector = "incorrecta";
-        }else{
-          this.corrector = "correcta";
-        }
+      if (this.respuestaCorrecta != respuesta) {
+        this.corrector = "incorrecta";
+      } else {
+        this.corrector = "correcta";
+      }
       const alumno_id = localStorage.getItem('usuario_id');
       this.resultadopregunta = {
         id: 0,
@@ -785,7 +789,7 @@ this.cargarPuntajes();
 
   toggleDetalles() {
 
-this.cargarPuntajes();
+    this.cargarPuntajes();
     this.tituloMessage = "Mi Progreso";
     this.welcomeMessage = "";
     this.preguntaMessage = "";
@@ -814,14 +818,45 @@ this.cargarPuntajes();
   }
 
 
-  verMasDetallesPorCurso(curso: string) {
-    this.tituloMessage = curso;
-    this.welcomeMessage = "";
+  verMasDetallesPorCurso(curso: number) {
+  const hoy = new Date();
+  const haceUnAno = new Date();
+  haceUnAno.setFullYear(hoy.getFullYear() - 1);
+
+  const fechainicio = haceUnAno.toISOString().split('T')[0];
+  const fechafin = hoy.toISOString().split('T')[0];
+  const usuarioid = this.usuarioActual.id;
+
+  const params = {
+    cursoid: curso,
+    usuarioid: usuarioid,
+    fechainicio: fechainicio,
+    fechafin: fechafin
+  };
+
+  this.usuaoservice.getResultadosCurso(params).subscribe((resultados) => {
+    this.resultadosPorCurso = resultados.map(r => {
+      const partes = r.respuestas_buenas_sobre_totales.split('/');
+      const buenas = parseInt(partes[0], 10);
+      const totales = parseInt(partes[1], 10);
+      const porcentaje = Math.round((buenas / totales) * 100);
+
+      return {
+        ...r,          // mantiene tema, evaluacion, total_tiempo
+        buenas,
+        totales,
+        porcentaje
+      };
+    });
+
+    console.log(this.resultadosPorCurso);
+
+    this.showMostrarBarrasPorCurso = true;
     this.showMostrarBarras = false;
     this.showDetallesProgreso = false;
-    this.showMostrarBarrasPorCurso = true;
     this.showPreguntaSobreGato = false;
-  }
+  });
+}
 
 
   toggleHome() {

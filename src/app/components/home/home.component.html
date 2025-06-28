@@ -11,15 +11,10 @@
       <p id="pregunta" *ngIf="showPreguntaSobreGato" class="pregunta-subtitle-sobrerobot">
         {{ preguntaMessageenviar }}
       </p>
-    <br>
+      <br>
 
-<img
-  *ngIf="showPreguntaSobreGato && imagenValida"
-  [src]="imagenpregunta"
-  alt="pregunta"
-  class="pregunta-imagen"
-  (error)="imagenValida = false"
-/>
+      <img *ngIf="showPreguntaSobreGato && imagenValida" [src]="imagenpregunta" alt="pregunta" class="pregunta-imagen"
+        (error)="imagenValida = false" />
       <img src="/assets/img/robot.png" alt="Gato robot" class="robot-image" />
     </div>
     <div class="text-content">
@@ -33,14 +28,16 @@
       <button *ngIf="showStartButton" class="start-button" (click)="startClicked()">
         🎮 ¡EMPEZAR!
       </button>
-      <div  *ngIf="showCourseButtonsb"  class="course-buttons slide-in">
-        <button  class="start-button course-button math" (click)="MostrarEvaluaciones(1)">🔢 Matemáticas</button>
-        <button   class="start-button course-button communication" (click)="MostrarEvaluaciones(2)">📚 Comunicación</button>
-        <button class="start-button course-button science" (click)="MostrarEvaluaciones(3)">🔬 Ciencias y Tecnologías</button>
+      <div *ngIf="showCourseButtonsb" class="course-buttons slide-in">
+        <button class="start-button course-button math" (click)="MostrarEvaluaciones(1)">🔢 Matemáticas</button>
+        <button class="start-button course-button communication" (click)="MostrarEvaluaciones(2)">📚
+          Comunicación</button>
+        <button class="start-button course-button science" (click)="MostrarEvaluaciones(3)">🔬 Ciencias y
+          Tecnologías</button>
 
       </div>
 
-        <div *ngIf="showCourseButtons" class="evaluaciones-dropdown">
+      <div *ngIf="showCourseButtons" class="evaluaciones-dropdown">
         <label>Selecciona una evaluación disponible:</label>
         <select (change)="startMath($event)">
           <option value="">-- Selecciona --</option>
@@ -50,13 +47,12 @@
         </select>
 
       </div>
-           <button *ngIf="showCourseButtons" class="start-button" (click)="startClicked()">
+      <button *ngIf="showCourseButtons" class="start-button" (click)="startClicked()">
         ATRAS
       </button>
 
       <div *ngIf="showCourseOpcionesImg && imagenValida" class="course-buttons slide-in">
-        <img src={{imagenpregunta}} alt="pregunta" class="pregunta-image"
-  (error)="imagenValida = false" />
+        <img src={{imagenpregunta}} alt="pregunta" class="pregunta-image" (error)="imagenValida = false" />
       </div>
       <!-- ChatGPT Integration -->
       <div *ngIf="showChatGpt" class="chatgpt-container">
@@ -112,67 +108,63 @@
         <button class="start-button course-button terminar" (click)="toggleHome()">Iniciar otra evaluacion</button>
       </div>
       <div *ngIf="showMostrarBarras" class="barras-porcentajes">
-
         <div class="barra-container">
-          <div class="barra-titulo">Matemática</div>
-          <div class="barra curso1">
-            <span class="barra-porcentaje"> {{ pormate }}%</span>
+          <div class="barra-titulo">Matemáticas</div>
+          <div class="barra">
+            <div class="barra-progreso" [ngStyle]="{ width: pormate + '%', backgroundColor: '#34d399' }"></div>
+            <span class="barra-porcentaje">{{ pormate }}%</span>
           </div>
-          <button class="detalle-button" (click)="verMasDetallesPorCurso('Matematica')">Ver más detalles</button>
+          <button class="detalle-button" (click)="verMasDetallesPorCurso(1)">Ver más detalles</button>
         </div>
 
         <div class="barra-container">
-          <div class="barra-titulo">Comunicaciones</div>
-          <div class="barra curso2">
+          <div class="barra-titulo">Comunicación</div>
+          <div class="barra">
+            <div class="barra-progreso" [ngStyle]="{ width: porcomu + '%', backgroundColor: '#60a5fa' }"></div>
             <span class="barra-porcentaje">{{ porcomu }}%</span>
           </div>
-          <button class="detalle-button" (click)="verMasDetallesPorCurso('Comunicaciones')">Ver más detalles</button>
+          <button class="detalle-button" (click)="verMasDetallesPorCurso(2)">Ver más detalles</button>
         </div>
 
         <div class="barra-container">
-          <div class="barra-titulo">Ciencias</div>
-          <div class="barra curso3">
+          <div class="barra-titulo">Ciencia</div>
+          <div class="barra">
+            <div class="barra-progreso" [ngStyle]="{ width: porcien + '%', backgroundColor: '#f87171' }"></div>
             <span class="barra-porcentaje">{{ porcien }}%</span>
           </div>
-          <button class="detalle-button" (click)="verMasDetallesPorCurso('Ciencias')">Ver más detalles</button>
         </div>
-        <div class="course-buttons slide-in">
-          <button class="start-button course-button terminar" (click)="toggleHome()">Iniciar otra evaluacion</button>
-        </div>
+        <button class="detalle-button" (click)="verMasDetallesPorCurso(3)">Ver más detalles</button>
       </div>
-      <div *ngIf="showMostrarBarrasPorCurso" class="barras-porcentajes">
 
-        <div class="barra-container">
-          <div class="barra-titulo">Conjuntos</div>
-          <div class="barra curso1">
-            <span class="barra-porcentaje">75%</span>
-          </div>
-        </div>
+     <div *ngIf="showMostrarBarrasPorCurso" class="barras-porcentajes">
 
-        <div class="barra-container">
-          <div class="barra-titulo">Patrones</div>
-          <div class="barra curso2">
-            <span class="barra-porcentaje">50%</span>
-          </div>
-        </div>
-
-        <div class="barra-container">
-          <div class="barra-titulo">Suma y resta</div>
-          <div class="barra curso2">
-            <span class="barra-porcentaje">50%</span>
-          </div>
-        </div>
-
-        <div class="barra-container">
-          <div class="barra-titulo">Multiplicacion</div>
-          <div class="barra curso3">
-            <span class="barra-porcentaje">90%</span>
-          </div>
-        </div>
-        <div class="course-buttons slide-in">
-          <button class="start-button course-button terminar" (click)="toggleDetalles()">ATRAS</button>
-        </div>
+  <div
+    class="barra-container"
+    *ngFor="let resultado of resultadosPorCurso">
+    <div class="barra-titulo">
+      {{ resultado.tema }}
+    </div>
+    <div class="barra">
+      <div
+        class="barra-progreso"
+        [ngStyle]="{
+          width: resultado.porcentaje + '%',
+          backgroundColor: '#34d399'
+        }">
       </div>
+      <span class="barra-porcentaje">
+        {{ resultado.porcentaje }}% ({{ resultado.buenas }}/{{ resultado.totales }})
+      </span>
+    </div>
+  </div>
+
+  <div class="course-buttons slide-in">
+    <button class="start-button course-button terminar" (click)="toggleDetalles()">ATRÁS</button>
+  </div>
+
+</div>
+
+
 
       <div *ngIf="showCerrarSesion" class="course-buttons slide-in">
         <button class="start-button course-button entendi" (click)="cerrar()">Si</button>
