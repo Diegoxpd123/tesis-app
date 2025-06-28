@@ -8,12 +8,11 @@ import { Usuario } from '../models/usuario.model';
 })
 export class UsuarioService {
 
-   private readonly API_URL = 'https://moving-firefly-neatly.ngrok-free.app/api';
+  private readonly API_URL = 'https://moving-firefly-neatly.ngrok-free.app/api';
 
-  constructor(
-    private http: HttpClient
-  ) { }
+  constructor(private http: HttpClient) { }
 
+  // CRUD de usuarios
   getUsuarios(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(`${this.API_URL}/usuarios`);
   }
@@ -33,4 +32,15 @@ export class UsuarioService {
   deleteUsuario(id: number): Observable<any> {
     return this.http.delete<any>(`${this.API_URL}/usuarios/${id}`);
   }
+
+  // ✅ Nueva función: obtener resultados por curso, alumno y fechas
+  getResultadosCurso(params: {
+    cursoid: number;
+    usuarioid: number;
+    fechainicio: string;
+    fechafin: string;
+  }): Observable<any[]> {
+    return this.http.post<any[]>(`${this.API_URL}/resultados-curso`, params);
+  }
+
 }

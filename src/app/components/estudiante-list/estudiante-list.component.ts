@@ -18,11 +18,9 @@ import { Pregunta } from '../../models/pregunta.model';
 import { Evaluacion } from '../../models/evaluacion.model';
 import * as XLSX from 'xlsx';
 import { TemaService } from '../../services/tema.service';
-import { bindCallback } from 'rxjs';
+
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
-
-
 
 @Component({
   selector: 'app-estudiante-list',
@@ -32,7 +30,6 @@ Chart.register(...registerables, ChartDataLabels);
 })
 export class EstudianteListComponent implements OnInit {
 
-
   tema!: Tema;
   evaluacion!: Evaluacion;
   pregunta!: Pregunta;
@@ -41,16 +38,14 @@ export class EstudianteListComponent implements OnInit {
   gradoSeleccionado: string | null = null;
   seccionSeleccionada: string | null = null;
   estudiantes = [
-    { nombre: 'usuario1', porcentaje: 70, grado: 70 , seccion: 70},
+    { nombre: 'usuario1', porcentaje: 70, grado: 4, seccionid: 1 },
   ];
 
   pageSize = 5;
   currentPage = 1;
   usuarioid: string = '';
-
-
-  tituloMessage: string = '¡Bienvenido! ';
-estudiantesFiltrados = this.estudiantes;
+  tituloMessage: string = '¡Bienvenido!';
+  estudiantesFiltrados = this.estudiantes;
 
   constructor(
     private router: Router,
@@ -66,37 +61,29 @@ estudiantesFiltrados = this.estudiantes;
     private evaluacionserice: EvaluacionService,
     private resultadopreguntaservice: ResultadopreguntaService) { }
 
-
-
   ngOnInit(): void {
-
     const usuarioId = localStorage.getItem('usuario_id');
- this.comunicacionService.toggleCerrarSesion$.subscribe(() => {
-          this.toggleCerrarSesion();
-        });
+    this.comunicacionService.toggleCerrarSesion$.subscribe(() => {
+      this.toggleCerrarSesion();
+    });
     if (usuarioId) {
       this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
-      this.usuarioid = usuarioId;
+        this.usuarioid = usuarioId;
         if (usuario.usuario == "admin") {
           this.tituloMessage = "¡Bienvenido! Administrador " + usuario.usuario;
-          // Llamar a alumnos
           this.alumnoservice.getAlumnos().subscribe(alumnos => {
-            // Filtrar alumnos que pertenezcan a alguna de las secciones del docente
             const alumnosFiltrados = alumnos;
 
             this.estudiantes = alumnosFiltrados.map(alumno => ({
               nombre: alumno.nombre,
-              porcentaje: 50      ,
-              grado: alumno.grado    ,
-              seccion: alumno.seccionid
+              porcentaje: 50,
+              grado: alumno.grado,
+              seccionid: alumno.seccionid
             }));
 
-this.estudiantesFiltrados = [...this.estudiantes];
-
+            this.estudiantesFiltrados = [...this.estudiantes];
           });
-
         } else {
-
           this.tituloMessage = "¡Bienvenido! Docente " + usuario.usuario;
           this.docentesesionservice.getDocentesesions().subscribe(sesiones => {
             const sesionesDocente = sesiones.filter(s => s.docenteid === usuario.aludocenid);
@@ -106,49 +93,39 @@ this.estudiantesFiltrados = [...this.estudiantes];
               return;
             }
 
-            // Obtener todos los seccionid asociados al docente
             const seccionesIds = sesionesDocente.map(s => s.seccionid);
 
-            // Llamar a alumnos
             this.alumnoservice.getAlumnos().subscribe(alumnos => {
-              // Filtrar alumnos que pertenezcan a alguna de las secciones del docente
               const alumnosFiltrados = alumnos.filter(a => seccionesIds.includes(a.seccionid));
 
               this.estudiantes = alumnosFiltrados.map(alumno => ({
                 nombre: alumno.nombre,
                 porcentaje: 50,
-              grado: alumno.grado    ,
-              seccion: alumno.seccionid
+                grado: alumno.grado,
+                seccionid: alumno.seccionid
               }));
 
-this.estudiantesFiltrados = [...this.estudiantes];
-
+              this.estudiantesFiltrados = [...this.estudiantes];
             });
           });
-
         }
-
-
       });
     }
   }
 
-
-
-toggleCerrarSesion() {
-    // Aquí puedes validar usuario/contraseña si lo deseas
+  toggleCerrarSesion() {
     localStorage.removeItem('usuario_id');
     this.router.navigate(['/login']);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.estudiantes.length / this.pageSize);
+    return Math.ceil(this.estudiantesFiltrados.length / this.pageSize);
   }
 
-get estudiantesPaginados() {
-  const start = (this.currentPage - 1) * this.pageSize;
-  return this.estudiantesFiltrados.slice(start, start + this.pageSize);
-}
+  get estudiantesPaginados() {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.estudiantesFiltrados.slice(start, start + this.pageSize);
+  }
 
   cambiarPagina(delta: number) {
     const nuevaPagina = this.currentPage + delta;
@@ -157,17 +134,26 @@ get estudiantesPaginados() {
     }
   }
 
- filtrarEstudiantes() {
-  const grado = Number(this.gradoSeleccionado);
-  const seccion = Number(this.seccionSeleccionada);
+  private mapSeccionToNumber(seccion: string | null): number | null {
+    switch (seccion) {
+      case 'A': return 1;
+      case 'B': return 2;
+      case 'C': return 3;
+      default: return null;
+    }
+  }
 
-  this.estudiantesFiltrados = this.estudiantes.filter(est => {
-    return (!this.gradoSeleccionado || est.grado === grado) &&
-           (!this.seccionSeleccionada || est.seccion === seccion);
-  });
+  filtrarEstudiantes() {
+    const grado = Number(this.gradoSeleccionado);
+    const seccionId = this.mapSeccionToNumber(this.seccionSeleccionada);
 
-  this.currentPage = 1;
-}
+    this.estudiantesFiltrados = this.estudiantes.filter(est => {
+      return (!this.gradoSeleccionado || est.grado === grado) &&
+             (!this.seccionSeleccionada || est.seccionid === seccionId);
+    });
+
+    this.currentPage = 1;
+  }
 
   async leerArchivoExcel(event: any): Promise<void> {
     const archivo = event.target.files[0];
@@ -180,7 +166,7 @@ get estudiantesPaginados() {
       const nombreHoja = workbook.SheetNames[0];
       const hoja = workbook.Sheets[nombreHoja];
       const filas: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
-      const dataRows = filas.slice(1); // omitir cabecera
+      const dataRows = filas.slice(1);
 
       for (const fila of dataRows) {
         try {
@@ -223,7 +209,6 @@ get estudiantesPaginados() {
 
           if (!temaNombre || !preguntaTexto) continue;
 
-          // Buscar o crear Tema
           const temas = (await this.temaService.getTemas().toPromise()) ?? [];
           const temaExistente = temas.find(t => t.nombre.trim().toLowerCase() === temaNombre.toLowerCase());
 
@@ -247,8 +232,7 @@ get estudiantesPaginados() {
             console.log(`✅ Tema creado: ${temaNombre}`);
           }
 
-          const nombretotal =  temaNombre.toLowerCase()+grado+fechainicio;
-          // Buscar o crear Evaluación
+          const nombretotal = temaNombre.toLowerCase() + grado + fechainicio;
           const evaluaciones = (await this.evaluacionserice.getEvaluacions().toPromise()) ?? [];
           const evaluacionExistente = evaluaciones.find(ev => ev.nombre.trim().toLowerCase() === nombretotal.toLowerCase());
 
@@ -276,7 +260,6 @@ get estudiantesPaginados() {
             console.log(`✅ Evaluación creada: ${nombretotal}`);
           }
 
-          // Crear Pregunta
           const pregunta = {
             id: 0,
             descripcion: preguntaTexto,
@@ -304,9 +287,5 @@ get estudiantesPaginados() {
 
     reader.readAsArrayBuffer(archivo);
   }
-
-
-
-
 
 }

@@ -1,7 +1,5 @@
-
 .home-container {
   min-height: 100vh !important;
-height: auto !important;
   width: 100vw !important;
   background-image: url('/assets/img/pantalladocente.png') !important;
   background-size: cover !important;
@@ -25,29 +23,35 @@ height: auto !important;
   color: white !important;
   font-family: 'Comic Sans MS', sans-serif !important;
   text-align: center !important;
+
   h1 {
-    font-size: 2.8rem!important;
-    margin-bottom: 0.3rem!important;
+    font-size: 2.8rem !important;
+    margin-bottom: 0.3rem !important;
   }
 
   h2 {
-    font-size: 1.8rem!important;
-    margin-bottom: 1rem!important;
+    font-size: 1.8rem !important;
+    margin-bottom: 1rem !important;
   }
 
   .tabla-header {
-    display: flex!important;
-    justify-content: space-between!important;
-    font-weight: bold!important;
+    display: flex !important;
+    justify-content: space-between !important;
+    font-weight: bold !important;
     padding: 0.5rem 1rem !important;
     border-bottom: 1px solid #ffffff33 !important;
     margin-bottom: 0.5rem !important;
+
+    @media (max-width: 768px) {
+      font-size: 0.9rem !important;
+      padding: 0.5rem 0.5rem !important;
+    }
   }
 
   .fila-estudiante {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: space-between !important;
     background: rgba(255, 255, 255, 0.05) !important;
     padding: 0.7rem 1rem !important;
     border-radius: 10px !important;
@@ -62,6 +66,11 @@ height: auto !important;
       .avatar {
         width: 40px !important;
         height: 40px !important;
+
+        @media (max-width: 480px) {
+          width: 30px !important;
+          height: 30px !important;
+        }
       }
     }
 
@@ -87,9 +96,14 @@ height: auto !important;
         }
       }
 
-      .iconos img {
-        width: 18px !important;
-        margin: 0 2px !important;
+      .iconos {
+        display: flex;
+        gap: 5px;
+        font-size: 1rem;
+
+        @media (max-width: 480px) {
+          font-size: 0.8rem;
+        }
       }
     }
 
@@ -100,10 +114,16 @@ height: auto !important;
       border-radius: 5px !important;
       padding: 6px 12px !important;
       cursor: pointer !important;
-       &:hover {
-    background-color: #1976d2 !important;
-    transform: scale(1.08) !important;
-  }
+
+      &:hover {
+        background-color: #1976d2 !important;
+        transform: scale(1.08) !important;
+      }
+
+      @media (max-width: 480px) {
+        padding: 4px 8px !important;
+        font-size: 0.8rem !important;
+      }
     }
   }
 
@@ -115,13 +135,13 @@ height: auto !important;
     border-radius: 6px !important;
     cursor: pointer !important;
     margin-top: 1rem !important;
-       &:hover {
-    background-color: #e91e63 !important;
-    transform: scale(1.08) !important;
-  }
+
+    &:hover {
+      background-color: #e91e63 !important;
+      transform: scale(1.08) !important;
+    }
   }
 }
-
 
 .paginacion {
   margin-top: 1rem !important;
@@ -137,17 +157,28 @@ height: auto !important;
     border: none !important;
     border-radius: 4px !important;
     cursor: pointer !important;
+
     &:disabled {
       opacity: 0.5 !important;
       cursor: not-allowed !important;
     }
+
     &:hover:not(:disabled) {
       transform: scale(1.05);
+    }
+
+    @media (max-width: 480px) {
+      padding: 4px 8px !important;
+      font-size: 0.8rem !important;
     }
   }
 
   span {
     font-size: 1rem !important;
+
+    @media (max-width: 480px) {
+      font-size: 0.8rem !important;
+    }
   }
 }
 
@@ -181,8 +212,35 @@ height: auto !important;
     }
 
     option {
-      color: black; // Para evitar fondo blanco con texto blanco
+      color: black; // Evita texto blanco sobre fondo blanco
     }
   }
 }
 
+/* RESPONSIVE: Móviles */
+@media (max-width: 480px) {
+  .home-container {
+    padding: 0 1rem !important;
+  }
+
+  .estudiantes-container {
+    padding: 1rem !important;
+
+    h1 {
+      font-size: 2rem !important;
+    }
+
+    h2 {
+      font-size: 1.2rem !important;
+    }
+  }
+
+  .filtros-grado-seccion {
+    flex-direction: column;
+    align-items: center;
+
+    .form-select {
+      max-width: 100%;
+    }
+  }
+}

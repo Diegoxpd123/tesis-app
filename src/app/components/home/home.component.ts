@@ -53,6 +53,8 @@ export class HomeComponent implements OnInit {
   showCerrarSesion: boolean = false;
   timerisactive: boolean = false;
   timerisactiver: boolean = false;
+  cursoid: number =0;
+  temaid: number =0;
    isexamen = 0;
   cursoNombre: string = '';
   showMostrarBarras: boolean = false;
@@ -66,7 +68,7 @@ export class HomeComponent implements OnInit {
     'puta', 'mierda', 'estúpido', 'imbécil', 'idiota', 'perra', 'hijo de', 'maldito', 'conchudo', 'csm', 'hdp'
   ];
 
-
+corrector: string = "";
 
   timerMinutesr: number = 0;
   timerSecondsr: number = 0;
@@ -147,12 +149,15 @@ imagenValida = true;
 
     if (cursoId == 1) {
       this.cursoNombre = "Matematicas";
+      this.cursoid =1;
     }
     if (cursoId == 2) {
       this.cursoNombre = "Comunicaciones";
+      this.cursoid =2;
     }
     if (cursoId == 3) {
       this.cursoNombre = "Ciencias y Tecnologia";
+      this.cursoid =3;
     }
 
     const hoy = new Date();
@@ -354,7 +359,9 @@ sendMessageIndividual(value: string) {
 
 
   startMath(event: any) {
+
     const evaluacionid = +event.target.value;
+    this.temaid = evaluacionid;
     this.welcomeMessage = '¡Perfecto! Comenzarás en 3, 2, 1 ....';
     this.showStartButton = false;
     this.showCourseButtons = false;
@@ -646,20 +653,25 @@ this.cargarPuntajes();
 
 
   selectRespuesta(respuesta: any) {
+
     this.respuestaSeleccionada = respuesta;
     if (this.respuestaCorrecta == respuesta || this.preguntaActual > 4) {
       //PASAMOS A LA SIGUIENTE PREGUNTA
-
+        if (this.respuestaCorrecta != respuesta) {
+         this.corrector = "incorrecta";
+        }else{
+          this.corrector = "correcta";
+        }
       const alumno_id = localStorage.getItem('usuario_id');
       this.resultadopregunta = {
         id: 0,
         alumnoid: Number(alumno_id),
         preguntaid: this.preguntaid,
-        cursoid: 1,
+        cursoid: this.cursoid,
         institucionid: 1,
         temaid: 1,
         tiempo: this.tiempototal,
-        respuesta: "correcta",
+        respuesta: this.corrector,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         is_actived: 1,

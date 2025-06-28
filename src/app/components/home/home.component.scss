@@ -752,3 +752,72 @@ margin: 0 auto !important;
   }
 }
 
+@media (max-width: 480px) {
+  /* Imágenes generales más chicas */
+  .robot-image,
+  .trofeo-image {
+    width: 90px !important;
+  }
+
+  .pregunta-image,
+  .pregunta-imagen {
+    width: 80px !important;
+  }
+
+  /* Texto principal aún más compacto */
+  .welcome-title {
+    font-size: 1.8rem !important;
+  }
+
+  .welcome-subtitle,
+  .pregunta-subtitle {
+    font-size: 1.2rem !important;
+  }
+
+  .pregunta-subtitle-sobrerobot {
+    font-size: 0.9rem !important;
+  }
+
+  .pregunta-numeros {
+    font-size: 1.2rem !important;
+  }
+
+  /* Botones principales más chicos aún */
+  .start-button,
+  .opcion-button,
+  .course-button {
+    font-size: 0.7rem !important;
+    padding: 0.6rem 1.2rem !important;
+  }
+
+  .modal-contenido h2,
+  .modal-contenido h3 {
+    font-size: 1.8rem !important;
+  }
+
+  .modal-contenido {
+    padding: 1.5rem !important;
+  }
+
+  .timer-overlay {
+    font-size: 1rem !important;
+    left: 40px !important;
+  }
+
+  .barra {
+    height: 16px !important;
+  }
+
+  .barra-porcentaje {
+    font-size: 0.9rem !important;
+  }
+
+  .evaluaciones-dropdown label {
+    font-size: 1rem !important;
+  }
+
+  .evaluaciones-dropdown select {
+    font-size: 0.9rem !important;
+    padding: 0.5rem 0.6rem !important;
+  }
+}

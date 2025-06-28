@@ -1,6 +1,6 @@
 .top-bar {
   width: 100vw !important;
-  background: linear-gradient(90deg, #a78bfa, #c084fc) !important; // degradado púrpura-lila
+  background: linear-gradient(90deg, #a78bfa, #c084fc) !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -10,7 +10,11 @@
   animation: slideDown 0.7s ease-in-out;
   z-index: 10;
   position: relative;
-  border-bottom: 3px dashed #fcd34d !important; // línea decorativa
+  border-bottom: 3px dashed #fcd34d !important;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem !important;
+  }
 }
 
 .logo {
@@ -22,12 +26,21 @@
   &:hover {
     transform: rotate(-10deg) scale(1.1);
   }
+
+  @media (max-width: 480px) {
+    width: 40px !important;
+    height: 40px !important;
+  }
 }
 
 .top-options {
   display: flex !important;
   align-items: center !important;
-  gap: 1.2rem !important;
+  gap: 1rem !important;
+
+  @media (max-width: 480px) {
+    gap: 0.5rem !important;
+  }
 }
 
 .progreso-button,
@@ -42,32 +55,42 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: 0.5rem !important;
+
+  @media (max-width: 768px) {
+    font-size: 1rem !important;
+    padding: 0.5rem 1.2rem !important;
+    border-radius: 12px !important;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.8rem !important;
+    padding: 0.3rem 0.6rem !important;
+    border-radius: 10px !important;
+  }
 }
 
 .progreso-button {
-  background-color: #34d399 !important; // verde amigable
+  background-color: #34d399 !important;
   color: #fff !important;
 
   &:hover {
     background-color: #10b981 !important;
-    transform: scale(1.08);
+    transform: scale(1.05);
   }
-
 }
 
 .logout-button {
-  background-color: #f472b6 !important; // rosa fuerte
+  background-color: #f472b6 !important;
   color: #fff !important;
 
   &:hover {
     background-color: #ec4899 !important;
-    transform: scale(1.08);
+    transform: scale(1.05);
   }
-
 }
 
-/* Animación */
 @keyframes slideDown {
   from {
     transform: translateY(-100%);

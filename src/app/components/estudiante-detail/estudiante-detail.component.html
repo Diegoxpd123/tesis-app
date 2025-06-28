@@ -1,57 +1,138 @@
 <app-navbar></app-navbar>
+
 <div class="home-container">
-    <!-- Contenedor del radar -->
-
-
   <div class="estudiantes-container">
     <div class="perfil-estudiante">
-      <img src="/assets/img/robot.png" alt="Avatar" class="avatar-grande">
-      <div>
+      <img src="/assets/img/robot.png" alt="Avatar" class="avatar-grande" />
+      <div class="perfil-info">
         <h1>Estudiante</h1>
-        <p class="usuario">usuario 1</p>
+        <p class="usuario">Usuario 1</p>
         <p>El estudiante ha completado su reforzamiento</p>
       </div>
-        <div class="radar-container">
-    <canvas id="radarChart" width="150" height="150"></canvas>
-  </div>
+      <div class="radar-container">
+        <canvas id="radarChart" width="150" height="150"></canvas>
+      </div>
     </div>
 
     <div class="cursos-dominados">
-      Cursos dominados: <span class="barra-progreso-fina">
+      Cursos dominados:
+      <span class="barra-progreso-fina">
         <div class="relleno" style="width: 100%"></div>
-      </span> 3/3
-    </div>
-<div class="puntaje-titulo">
-      Puntaje Semanal
+      </span>
+      3/3
     </div>
 
+    <div class="puntaje-titulo">Puntaje Semanal</div>
 
+    <!-- 📅 Calendario -->
+    <div class="filtros-fechas">
+      <label>Fecha Inicio:</label>
+      <input type="date" [(ngModel)]="fechainicio" />
+
+      <label>Fecha Fin:</label>
+      <input type="date" [(ngModel)]="fechafin" />
+    </div>
+
+    <!-- 📘 Matemáticas -->
     <div class="curso" style="--color:#f9a825;">
       <span class="nombre">📘 Matemáticas</span>
       <div class="barra-horizontal">
         <div class="relleno" style="width: 80%"></div>
       </div>
-      <span class="puntaje">08/10</span>
-      <button class="btn-mas">+</button>
+      <span class="puntaje">
+  {{ calcularPuntaje(1) }}
+</span>
+      <button class="btn-mas" (click)="mostrarResultados(1)">+</button>
     </div>
 
+    <div *ngIf="resultados[1]?.length">
+      <button class="btn-excel" (click)="exportarExcel(1)">📥 Descargar Excel</button>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th>Tema</th>
+            <th>Evaluación</th>
+            <th>Respuestas</th>
+            <th>Tiempo (seg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of resultados[1]">
+            <td>{{ r.tema }}</td>
+            <td>{{ r.evaluacion }}</td>
+            <td>{{ r.respuestas_buenas_sobre_totales }}</td>
+            <td>{{ r.total_tiempo }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 📗 Comunicación -->
     <div class="curso" style="--color:#4fc3f7;">
       <span class="nombre">📗 Comunicación</span>
       <div class="barra-horizontal">
         <div class="relleno" style="width: 100%"></div>
       </div>
-      <span class="puntaje">10/10</span>
-      <button class="btn-mas">+</button>
+      <span class="puntaje">
+  {{ calcularPuntaje(2) }}
+</span>
+      <button class="btn-mas" (click)="mostrarResultados(2)">+</button>
     </div>
 
+    <div *ngIf="resultados[2]?.length">
+      <button class="btn-excel" (click)="exportarExcel(2)">📥 Descargar Excel</button>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th>Tema</th>
+            <th>Evaluación</th>
+            <th>Respuestas</th>
+            <th>Tiempo (seg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of resultados[2]">
+            <td>{{ r.tema }}</td>
+            <td>{{ r.evaluacion }}</td>
+            <td>{{ r.respuestas_buenas_sobre_totales }}</td>
+            <td>{{ r.total_tiempo }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 📙 Ciencias y Tecnología -->
     <div class="curso" style="--color:#8bc34a;">
       <span class="nombre">📙 Ciencias y Tecnología</span>
       <div class="barra-horizontal">
         <div class="relleno" style="width: 53%"></div>
       </div>
-      <span class="puntaje">08/15</span>
-      <button class="btn-mas">+</button>
+      <span class="puntaje">
+  {{ calcularPuntaje(3) }}
+</span>
+      <button class="btn-mas" (click)="mostrarResultados(3)">+</button>
     </div>
 
+    <div *ngIf="resultados[3]?.length">
+      <button class="btn-excel" (click)="exportarExcel(3)">📥 Descargar Excel</button>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th>Tema</th>
+            <th>Evaluación</th>
+            <th>Respuestas</th>
+            <th>Tiempo (seg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of resultados[3]">
+            <td>{{ r.tema }}</td>
+            <td>{{ r.evaluacion }}</td>
+            <td>{{ r.respuestas_buenas_sobre_totales }}</td>
+            <td>{{ r.total_tiempo }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

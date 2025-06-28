@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ChatGptService } from '../../services/chat-gpt.service';
-import { ComunicacionService } from '../../services/comunicacion.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { UsuarioService } from '../../services/usuario.service';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import * as XLSX from 'xlsx';
+
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
 
@@ -15,11 +14,15 @@ Chart.register(...registerables, ChartDataLabels);
   styleUrl: './estudiante-detail.component.scss'
 })
 export class EstudianteDetailComponent implements OnInit {
+  resultados: { [cursoid: number]: any[] } = {};
+  usuarioid: number = 25;
 
-   ngOnInit(): void {
+  fechainicio: string = '';
+  fechafin: string = '';
 
-  }
+  constructor(private usuarioService: UsuarioService) {}
 
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     const ctx = document.getElementById('radarChart') as HTMLCanvasElement;
@@ -30,7 +33,7 @@ export class EstudianteDetailComponent implements OnInit {
         labels: ['Matemáticas', 'Comunicación', 'Ciencias y Tecnología'],
         datasets: [{
           label: 'Progreso',
-          data: [8, 10, 8], // Usa tus valores reales aquí
+          data: [8, 10, 8],
           backgroundColor: 'rgba(25, 118, 210, 0.3)',
           borderColor: '#1976d2',
           pointBackgroundColor: '#1976d2',
@@ -66,9 +69,7 @@ export class EstudianteDetailComponent implements OnInit {
               }
             },
             angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
-            ticks: {
-              display: false
-            }
+            ticks: { display: false }
           }
         }
       },
@@ -76,4 +77,56 @@ export class EstudianteDetailComponent implements OnInit {
     });
   }
 
+  mostrarResultados(cursoid: number) {
+    if (!this.fechainicio || !this.fechafin) {
+      alert('Selecciona fechas válidas');
+      return;
+    }
+
+    this.usuarioService.getResultadosCurso({
+      cursoid: cursoid,
+      usuarioid: this.usuarioid,
+      fechainicio: this.fechainicio,
+      fechafin: this.fechafin
+    }).subscribe(data => {
+      this.resultados[cursoid] = data;
+    });
+  }
+
+  calcularPuntaje(cursoid: number): string {
+  const datos = this.resultados[cursoid];
+  if (!datos || datos.length === 0) return '0%';
+
+  let totalBuenas = 0;
+  let totalPreguntas = 0;
+
+  datos.forEach((r) => {
+    const partes = r.respuestas_buenas_sobre_totales.split('/');
+    if (partes.length === 2) {
+      totalBuenas += parseInt(partes[0], 10);
+      totalPreguntas += parseInt(partes[1], 10);
+    }
+  });
+
+  if (totalPreguntas === 0) return '0%';
+
+  const porcentaje = (totalBuenas / totalPreguntas) * 100;
+  return `${porcentaje.toFixed(1)}%`;
+}
+
+
+  exportarExcel(cursoid: number) {
+    const data = this.resultados[cursoid];
+    if (!data || data.length === 0) {
+      alert('No hay datos para exportar.');
+      return;
+    }
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { [`Curso_${cursoid}`]: worksheet },
+      SheetNames: [`Curso_${cursoid}`]
+    };
+    XLSX.writeFile(workbook, `resultados_curso_${cursoid}.xlsx`);
+  }
 }
