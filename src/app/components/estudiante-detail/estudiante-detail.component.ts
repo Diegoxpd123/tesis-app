@@ -100,6 +100,7 @@ export class EstudianteDetailComponent implements OnInit {
   let totalBuenas = 0;
   let totalPreguntas = 0;
 
+
   datos.forEach((r) => {
     const partes = r.respuestas_buenas_sobre_totales.split('/');
     if (partes.length === 2) {
