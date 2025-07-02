@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit {
   cursoNombre: string = '';
   showMostrarBarras: boolean = false;
   showMostrarBarrasPorCurso: boolean = false;
-resultadosPorCurso: any[] = [];
+  resultadosPorCurso: any[] = [];
   showTimer: boolean = false;
   showPreguntaSobreGato: boolean = false;
   showChatGpt: boolean = false;
@@ -175,6 +175,13 @@ resultadosPorCurso: any[] = [];
           return temasIds.includes(e.temaid) &&
             hoy >= inicio && hoy <= fin && e.grado === this.gradoactual;
         });
+
+        this.evaluacionesDisponibles.forEach(evaluacion => {
+          this.temaservice.getTema(evaluacion.temaid).subscribe(tema => {
+            evaluacion.nombre = tema.nombre;
+          });
+        });
+        console.log("sadsa", this.evaluacionesDisponibles);
 
         if (this.evaluacionesDisponibles.length > 0) {
           this.showCourseOpciones = true; // mostrar el desplegable
@@ -384,51 +391,51 @@ resultadosPorCurso: any[] = [];
   }
 
   cargarPuntajes() {
-  const hoy = new Date();
-  const haceUnAno = new Date();
-  haceUnAno.setFullYear(hoy.getFullYear() - 1);
+    const hoy = new Date();
+    const haceUnAno = new Date();
+    haceUnAno.setFullYear(hoy.getFullYear() - 1);
 
-  const fechainicio = haceUnAno.toISOString().split('T')[0];
-  const fechafin = hoy.toISOString().split('T')[0];
+    const fechainicio = haceUnAno.toISOString().split('T')[0];
+    const fechafin = hoy.toISOString().split('T')[0];
 
-  const usuarioid = this.usuarioActual.id;
+    const usuarioid = this.usuarioActual.id;
 
-  const cursos = [
-    { id: 1, nombre: 'Matemáticas' },
-    { id: 2, nombre: 'Comunicación' },
-    { id: 3, nombre: 'Ciencia y Tecnología' }
-  ];
+    const cursos = [
+      { id: 1, nombre: 'Matemáticas' },
+      { id: 2, nombre: 'Comunicación' },
+      { id: 3, nombre: 'Ciencia y Tecnología' }
+    ];
 
-  cursos.forEach(curso => {
-    this.usuaoservice.getResultadosCurso({
-      cursoid: curso.id,
-      usuarioid: usuarioid,
-      fechainicio: fechainicio,
-      fechafin: fechafin
-    }).subscribe(data => {
-      let totalBuenas = 0;
-      let totalPreguntas = 0;
+    cursos.forEach(curso => {
+      this.usuaoservice.getResultadosCurso({
+        cursoid: curso.id,
+        usuarioid: usuarioid,
+        fechainicio: fechainicio,
+        fechafin: fechafin
+      }).subscribe(data => {
+        let totalBuenas = 0;
+        let totalPreguntas = 0;
 
-      data.forEach(r => {
-        const partes = r.respuestas_buenas_sobre_totales.split('/');
-        if (partes.length === 2) {
-          totalBuenas += parseInt(partes[0], 10);
-          totalPreguntas += parseInt(partes[1], 10);
+        data.forEach(r => {
+          const partes = r.respuestas_buenas_sobre_totales.split('/');
+          if (partes.length === 2) {
+            totalBuenas += parseInt(partes[0], 10);
+            totalPreguntas += parseInt(partes[1], 10);
+          }
+        });
+
+        const porcentaje = totalPreguntas > 0 ? Math.round((totalBuenas / totalPreguntas) * 100) : 0;
+
+        switch (curso.id) {
+          case 1: this.pormate = porcentaje; break;
+          case 2: this.porcomu = porcentaje; break;
+          case 3: this.porcien = porcentaje; break;
         }
+      }, err => {
+        console.error(`Error cargando resultados de ${curso.nombre}:`, err);
       });
-
-      const porcentaje = totalPreguntas > 0 ? Math.round((totalBuenas / totalPreguntas) * 100) : 0;
-
-      switch (curso.id) {
-        case 1: this.pormate = porcentaje; break;
-        case 2: this.porcomu = porcentaje; break;
-        case 3: this.porcien = porcentaje; break;
-      }
-    }, err => {
-      console.error(`Error cargando resultados de ${curso.nombre}:`, err);
     });
-  });
-}
+  }
 
 
 
@@ -819,44 +826,44 @@ resultadosPorCurso: any[] = [];
 
 
   verMasDetallesPorCurso(curso: number) {
-  const hoy = new Date();
-  const haceUnAno = new Date();
-  haceUnAno.setFullYear(hoy.getFullYear() - 1);
+    const hoy = new Date();
+    const haceUnAno = new Date();
+    haceUnAno.setFullYear(hoy.getFullYear() - 1);
 
-  const fechainicio = haceUnAno.toISOString().split('T')[0];
-  const fechafin = hoy.toISOString().split('T')[0];
-  const usuarioid = this.usuarioActual.id;
+    const fechainicio = haceUnAno.toISOString().split('T')[0];
+    const fechafin = hoy.toISOString().split('T')[0];
+    const usuarioid = this.usuarioActual.id;
 
-  const params = {
-    cursoid: curso,
-    usuarioid: usuarioid,
-    fechainicio: fechainicio,
-    fechafin: fechafin
-  };
+    const params = {
+      cursoid: curso,
+      usuarioid: usuarioid,
+      fechainicio: fechainicio,
+      fechafin: fechafin
+    };
 
-  this.usuaoservice.getResultadosCurso(params).subscribe((resultados) => {
-    this.resultadosPorCurso = resultados.map(r => {
-      const partes = r.respuestas_buenas_sobre_totales.split('/');
-      const buenas = parseInt(partes[0], 10);
-      const totales = parseInt(partes[1], 10);
-      const porcentaje = Math.round((buenas / totales) * 100);
+    this.usuaoservice.getResultadosCurso(params).subscribe((resultados) => {
+      this.resultadosPorCurso = resultados.map(r => {
+        const partes = r.respuestas_buenas_sobre_totales.split('/');
+        const buenas = parseInt(partes[0], 10);
+        const totales = parseInt(partes[1], 10);
+        const porcentaje = Math.round((buenas / totales) * 100);
 
-      return {
-        ...r,          // mantiene tema, evaluacion, total_tiempo
-        buenas,
-        totales,
-        porcentaje
-      };
+        return {
+          ...r,          // mantiene tema, evaluacion, total_tiempo
+          buenas,
+          totales,
+          porcentaje
+        };
+      });
+
+      console.log(this.resultadosPorCurso);
+
+      this.showMostrarBarrasPorCurso = true;
+      this.showMostrarBarras = false;
+      this.showDetallesProgreso = false;
+      this.showPreguntaSobreGato = false;
     });
-
-    console.log(this.resultadosPorCurso);
-
-    this.showMostrarBarrasPorCurso = true;
-    this.showMostrarBarras = false;
-    this.showDetallesProgreso = false;
-    this.showPreguntaSobreGato = false;
-  });
-}
+  }
 
 
   toggleHome() {

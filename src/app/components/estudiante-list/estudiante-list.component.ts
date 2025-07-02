@@ -232,7 +232,7 @@ export class EstudianteListComponent implements OnInit {
             console.log(`✅ Tema creado: ${temaNombre}`);
           }
 
-          const nombretotal = temaNombre.toLowerCase() + grado + fechainicio;
+          const nombretotal = temaNombre.toLowerCase();
           const evaluaciones = (await this.evaluacionserice.getEvaluacions().toPromise()) ?? [];
           const evaluacionExistente = evaluaciones.find(ev => ev.nombre.trim().toLowerCase() === nombretotal.toLowerCase());
 
