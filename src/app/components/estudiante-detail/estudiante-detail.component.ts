@@ -22,7 +22,25 @@ export class EstudianteDetailComponent implements OnInit {
 
   constructor(private usuarioService: UsuarioService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.setSemanaActual();
+
+    [1, 2, 3].forEach(cursoid => this.mostrarResultados(cursoid));
+  }
+
+   setSemanaActual() {
+    const hoy = new Date();
+    const dia = hoy.getDay(); // 0 (Domingo) - 6 (Sábado)
+
+    // Calcular lunes
+    const diffLunes = hoy.getDate() - dia + (dia === 0 ? -6 : 1);
+    const lunes = new Date(hoy.setDate(diffLunes));
+    const domingo = new Date(lunes);
+    domingo.setDate(lunes.getDate() + 6);
+
+    this.fechainicio = lunes.toISOString().substring(0, 10);
+    this.fechafin = domingo.toISOString().substring(0, 10);
+  }
 
   ngAfterViewInit(): void {
     const ctx = document.getElementById('radarChart') as HTMLCanvasElement;

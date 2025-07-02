@@ -176,11 +176,11 @@ export class HomeComponent implements OnInit {
             hoy >= inicio && hoy <= fin && e.grado === this.gradoactual;
         });
 
-        this.evaluacionesDisponibles.forEach(evaluacion => {
-          this.temaservice.getTema(evaluacion.temaid).subscribe(tema => {
-            evaluacion.nombre = tema.nombre;
-          });
-        });
+       // this.evaluacionesDisponibles.forEach(evaluacion => {
+         // this.temaservice.getTema(evaluacion.temaid).subscribe(tema => {
+          //  evaluacion.nombre = tema.nombre;
+         // });
+       // });
         console.log("sadsa", this.evaluacionesDisponibles);
 
         if (this.evaluacionesDisponibles.length > 0) {
