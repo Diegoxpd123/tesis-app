@@ -234,13 +234,13 @@ export class EstudianteListComponent implements OnInit {
 
           const nombretotal = temaNombre.toLowerCase();
           const evaluaciones = (await this.evaluacionserice.getEvaluacions().toPromise()) ?? [];
-          //const evaluacionExistente = evaluaciones.find(ev => ev.nombre.trim().toLowerCase() === nombretotal.toLowerCase());
+          const evaluacionExistente = evaluaciones.find(ev => ev.nombre.trim().toLowerCase() === nombretotal.toLowerCase());
 
           let evaluacionId: number;
-        //  if (evaluacionExistente) {
-          //  console.log(`⚠️ Evaluación ya existe: ${nombretotal}`);
-         //   evaluacionId = evaluacionExistente.id;
-        //  } else {
+         if (evaluacionExistente) {
+           console.log(`⚠️ Evaluación ya existe: ${nombretotal}`);
+            evaluacionId = evaluacionExistente.id;
+          } else {
             const evaluacion = {
               id: 0,
               nombre: nombretotal,
@@ -258,7 +258,7 @@ export class EstudianteListComponent implements OnInit {
             if (!evaluacionCreada) continue;
             evaluacionId = evaluacionCreada.id;
             console.log(`✅ Evaluación creada: ${nombretotal}`);
-       //   }
+          }
 
           const pregunta = {
             id: 0,
