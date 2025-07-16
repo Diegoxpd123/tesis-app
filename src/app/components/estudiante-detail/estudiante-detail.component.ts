@@ -3,6 +3,7 @@ import { UsuarioService } from '../../services/usuario.service';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import * as XLSX from 'xlsx';
+import { ActivatedRoute } from '@angular/router';
 
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
@@ -15,18 +16,20 @@ Chart.register(...registerables, ChartDataLabels);
 })
 export class EstudianteDetailComponent implements OnInit {
   resultados: { [cursoid: number]: any[] } = {};
-  usuarioid: number = 25;
+  usuarioid: number = 5;
 
   fechainicio: string = '';
   fechafin: string = '';
 
-  constructor(private usuarioService: UsuarioService) {}
+  constructor(private usuarioService: UsuarioService,private route: ActivatedRoute) {}
 
-  ngOnInit(): void {
-    this.setSemanaActual();
+ ngOnInit(): void {
+  this.setSemanaActual();
 
-    [1, 2, 3].forEach(cursoid => this.mostrarResultados(cursoid));
-  }
+  this.usuarioid = Number(this.route.snapshot.paramMap.get('usuarioid') || 0);
+
+  [1, 2, 3].forEach(cursoid => this.mostrarResultados(cursoid));
+}
 
    setSemanaActual() {
     const hoy = new Date();

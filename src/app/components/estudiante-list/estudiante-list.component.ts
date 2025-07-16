@@ -38,7 +38,7 @@ export class EstudianteListComponent implements OnInit {
   gradoSeleccionado: string | null = null;
   seccionSeleccionada: string | null = null;
   estudiantes = [
-    { nombre: 'usuario1', porcentaje: 70, grado: 4, seccionid: 1 },
+    { nombre: 'usuario1', porcentaje: 70, grado: 4, seccionid: 1 , id:1},
   ];
 
   pageSize = 5;
@@ -76,6 +76,7 @@ export class EstudianteListComponent implements OnInit {
 
             this.estudiantes = alumnosFiltrados.map(alumno => ({
               nombre: alumno.nombre,
+                id: alumno.id,
               porcentaje: 50,
               grado: alumno.grado,
               seccionid: alumno.seccionid
@@ -100,6 +101,7 @@ export class EstudianteListComponent implements OnInit {
 
               this.estudiantes = alumnosFiltrados.map(alumno => ({
                 nombre: alumno.nombre,
+                id: alumno.id,
                 porcentaje: 50,
                 grado: alumno.grado,
                 seccionid: alumno.seccionid
