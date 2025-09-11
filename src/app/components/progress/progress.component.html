@@ -1,0 +1,124 @@
+<!-- Botón de Atrás -->
+<div class="back-button-container">
+  <button class="back-button" (click)="goBack()" [class.dark-theme]="isDarkMode">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    </svg>
+    <span>Volver</span>
+  </button>
+</div>
+
+<!-- Mensaje cuando no hay datos -->
+<div *ngIf="showBars && !hasProgressData" class="no-data-container page-container starry-background">
+  <div class="no-data-content">
+    <div class="no-data-icon">📊</div>
+    <h3>¡Aún no tienes progreso registrado!</h3>
+    <p>Completa algunas evaluaciones para ver tu progreso aquí.</p>
+    <div class="no-data-actions">
+      <button class="start-learning-button" (click)="onGoHome()">
+        🚀 ¡Comenzar a aprender!
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Botón de Atrás para vista con datos -->
+<div *ngIf="showBars && hasProgressData" class="back-button-container">
+  <button class="back-button" (click)="goBack()">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    </svg>
+    <span>Volver</span>
+  </button>
+</div>
+
+<!-- Barras de progreso principales -->
+<div *ngIf="showBars && hasProgressData && !showDetailedResults" class="progress-container page-container starry-background" [class.dark-theme]="isDarkMode">
+  <div class="progress-header">
+    <h2 class="progress-title">Mi Progreso</h2>
+    <p class="progress-subtitle">¡Mira cuánto has aprendido!</p>
+  </div>
+
+  <div class="barras-porcentajes">
+    <div *ngFor="let course of courseResults" class="barra-container">
+      <div class="barra-titulo">{{ course.name }}</div>
+      <div class="barra" [ngClass]="course.color">
+        <div class="barra-progreso" [style.width]="getProgressBarWidth(course.percentage)"></div>
+        <div class="barra-porcentaje">{{ course.percentage }}%</div>
+      </div>
+      <button class="detalle-button" (click)="onViewMoreDetails(course.id)">
+        Ver detalles
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Debug info -->
+<div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; z-index: 9999; font-size: 12px;">
+  showDetailedResults: {{ showDetailedResults }}<br>
+  selectedCourseId: {{ selectedCourseId }}<br>
+  detailedResults.length: {{ detailedResults.length }}
+</div>
+
+<!-- Vista de resultados detallados -->
+<div *ngIf="showDetailedResults" class="detailed-results-container page-container starry-background" [class.dark-theme]="isDarkMode">
+  <div class="detailed-header">
+    <button class="back-to-progress-button" (click)="backToProgress()">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+      <span>Volver al progreso</span>
+    </button>
+    <h2 class="detailed-title">Detalles del Curso</h2>
+    <p class="detailed-subtitle">Resultados por tema y evaluación</p>
+  </div>
+
+  <div class="detailed-results-list">
+    <div *ngFor="let result of detailedResults" class="detailed-result-item">
+      <div class="result-header">
+        <h3 class="result-tema">{{ result.tema }}</h3>
+        <span class="result-evaluacion">{{ result.evaluacion }}</span>
+      </div>
+      <div class="result-stats">
+        <div class="stat-item">
+          <span class="stat-label">Tiempo:</span>
+          <span class="stat-value">{{ result.total_tiempo }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Respuestas:</span>
+          <span class="stat-value">{{ result.respuestas_buenas_sobre_totales }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Porcentaje:</span>
+          <span class="stat-value">{{ result.porcentaje }}%</span>
+        </div>
+      </div>
+      <div class="result-progress-bar">
+        <div class="progress-fill" [style.width]="result.porcentaje + '%'"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gráfico radar -->
+<div *ngIf="showRadar" class="radar-container">
+  <canvas id="progresoRadar" width="300" height="300"></canvas>
+</div>
+
+<!-- Detalles por curso -->
+<div *ngIf="showDetails" class="course-details">
+  <h3>Detalles del Curso</h3>
+  <div *ngFor="let result of resultsByCourse" class="result-item">
+    <div class="result-info">
+      <span class="result-topic">{{ result.tema }}</span>
+      <span class="result-evaluation">{{ result.evaluacion }}</span>
+    </div>
+    <div class="result-stats">
+      <span class="result-percentage">{{ result.porcentaje }}%</span>
+      <span class="result-time">{{ result.total_tiempo }}s</span>
+    </div>
+  </div>
+  <button class="back-button" (click)="onGoHome()">
+    Volver al inicio
+  </button>
+</div>

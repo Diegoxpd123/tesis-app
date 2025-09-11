@@ -40,6 +40,7 @@ export class HomeComponent implements OnInit {
   preguntaMessageenviar: string = '';
   preguntaNumeros: string = '';
   welcomeMessage: string = '¿Estás listo para comenzar con tu reforzamiento del día?';
+  isDarkMode: boolean = false;
   showStartButton: boolean = true;
   showCourseButtons: boolean = false;
   showCourseButtonsb: boolean = false;
@@ -138,7 +139,12 @@ export class HomeComponent implements OnInit {
       });
     }
 
+    // Cargar tema y configurar listener
+    this.loadTheme();
+    this.setupThemeListener();
 
+    // Escuchar evento personalizado para mostrar progreso
+    this.setupProgressListener();
   }
 
   MostrarEvaluaciones(cursoId: number): void {
@@ -446,11 +452,20 @@ export class HomeComponent implements OnInit {
     this.welcomeMessage = "¡Sigue así! Has mejorado un 75%";
 
     this.speakWelcomeMessage(this.welcomeMessage);
+
+    // Ocultar botón de empezar y opciones de curso
+    this.showStartButton = false;
+    this.showCourseButtons = false;
+    this.showCourseButtonsb = false;
     this.showCourseOpciones = false;
     this.showCourseOpcionesImg = false;
     this.preguntaNumeros = "";
+
+    // Ocultar barras de progreso y mostrar detalles
     this.showVerMiProgreso = false;
     this.showDetallesProgreso = true;
+    this.showMostrarBarras = false;
+    this.showMostrarBarrasPorCurso = false;
 
     setTimeout(() => {
       const ctx = document.getElementById('progresoRadar') as HTMLCanvasElement;
@@ -782,7 +797,6 @@ export class HomeComponent implements OnInit {
 
 
 
-
   generarRespuestaSimulada(mensaje: string): string {
     // Aquí puedes personalizar más respuestas simuladas
     if (mensaje.includes('conjunto')) {
@@ -951,8 +965,47 @@ export class HomeComponent implements OnInit {
     recognition.start();
   }
 
+  // Métodos de tema
+  private loadTheme(): void {
+    const savedTheme = localStorage.getItem('theme');
+    this.isDarkMode = savedTheme === 'dark';
+  }
 
+  private setupThemeListener(): void {
+    window.addEventListener('storage', () => {
+      this.loadTheme();
+    });
+    setInterval(() => {
+      const currentTheme = localStorage.getItem('theme');
+      const shouldBeDark = currentTheme === 'dark';
+      if (this.isDarkMode !== shouldBeDark) {
+        this.loadTheme();
+      }
+    }, 100);
+  }
 
+  private setupProgressListener(): void {
+    // Escuchar cambios en el hash para activar progreso
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#progress') {
+        console.log('Hash progress detectado, mostrando progreso...');
+        setTimeout(() => {
+          this.showDetalleProgreso();
+        }, 100);
+        // Limpiar el hash
+        window.location.hash = '';
+      }
+    });
 
+    // Verificar hash inicial
+    if (window.location.hash === '#progress') {
+      console.log('Hash progress inicial detectado, mostrando progreso...');
+      setTimeout(() => {
+        this.showDetalleProgreso();
+      }, 100);
+      // Limpiar el hash
+      window.location.hash = '';
+    }
+  }
 
 }

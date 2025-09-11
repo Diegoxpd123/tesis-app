@@ -1,0 +1,430 @@
+/* ===============================
+   📌 Pagination Container
+   =============================== */
+.pagination-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: 2rem;
+
+  &.dark-theme {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+    .pagination-info {
+      .info-text {
+        color: #94a3b8;
+      }
+    }
+
+    .pagination-controls {
+      .pagination-btn {
+        background: #334155;
+        color: #f1f5f9;
+        border-color: #475569;
+
+        &:hover:not(:disabled) {
+          background: #475569;
+          color: white;
+        }
+
+        &.active {
+          background: #3b82f6;
+          color: white;
+          border-color: #2563eb;
+        }
+
+        &:disabled {
+          background: #1e293b;
+          color: #64748b;
+          border-color: #334155;
+        }
+      }
+
+      .pagination-ellipsis {
+        color: #94a3b8;
+      }
+    }
+
+    .current-page-info {
+      .current-page-text {
+        color: #94a3b8;
+      }
+    }
+  }
+}
+
+/* ===============================
+   📌 Pagination Info
+   =============================== */
+.pagination-info {
+  text-align: center;
+
+  .info-text {
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+}
+
+/* ===============================
+   📌 Pagination Controls
+   =============================== */
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0.5rem;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover:not(:disabled) {
+    background: #3b82f6;
+    color: white;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  &:disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Efecto de ondas */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* ===============================
+   📌 Page Numbers
+   =============================== */
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 0.5rem;
+}
+
+.page-btn {
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ===============================
+   📌 Ellipsis
+   =============================== */
+.pagination-ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+/* ===============================
+   📌 Current Page Info
+   =============================== */
+.current-page-info {
+  text-align: center;
+
+  .current-page-text {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 500;
+    background: #f3f4f6;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    display: inline-block;
+  }
+}
+
+/* ===============================
+   📌 Special Buttons
+   =============================== */
+.first-btn,
+.last-btn {
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0.5rem;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.prev-btn,
+.next-btn {
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0.5rem;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ===============================
+   📌 Responsive Design
+   =============================== */
+@media (max-width: 768px) {
+  .pagination-container {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .pagination-controls {
+    gap: 0.25rem;
+  }
+
+  .pagination-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .page-btn {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .pagination-ellipsis {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .first-btn,
+  .last-btn,
+  .prev-btn,
+  .next-btn {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .page-numbers {
+    margin: 0 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination-container {
+    padding: 1rem;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .page-numbers {
+    order: -1;
+    margin: 0;
+    justify-content: center;
+  }
+
+  .pagination-info {
+    order: 1;
+  }
+
+  .current-page-info {
+    order: 2;
+  }
+
+  .pagination-btn {
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .page-btn {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .pagination-ellipsis {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .first-btn,
+  .last-btn,
+  .prev-btn,
+  .next-btn {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ===============================
+   📌 Animations
+   =============================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.pagination-container {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.pagination-btn.active {
+  animation: pulse 2s infinite;
+}
+
+/* ===============================
+   📌 Hover Effects
+   =============================== */
+.pagination-btn:not(:disabled):hover {
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ===============================
+   📌 Focus States
+   =============================== */
+.pagination-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.pagination-btn.active:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* ===============================
+   📌 Dark Theme Enhancements
+   =============================== */
+.dark-theme {
+  .pagination-btn {
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+    }
+
+    &.active:focus {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.6);
+    }
+  }
+
+  .current-page-text {
+    background: #334155;
+    color: #f1f5f9;
+  }
+}

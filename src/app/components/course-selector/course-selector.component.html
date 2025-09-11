@@ -1,0 +1,24 @@
+<!-- Botones de cursos -->
+<div *ngIf="showCourseButtons" class="course-buttons slide-in">
+  <button
+    *ngFor="let course of courses"
+    class="start-button course-button"
+    [ngClass]="course.color"
+    (click)="onCourseClick(course.id)">
+    {{ course.icon }} {{ course.name }}
+  </button>
+</div>
+
+<!-- Selector de evaluaciones -->
+<div *ngIf="showEvaluations" class="evaluaciones-dropdown">
+  <label>Selecciona una evaluación disponible:</label>
+  <select (change)="onEvaluationChange($event)">
+    <option value="">-- Selecciona --</option>
+    <option *ngFor="let evaluacion of evaluations" [value]="evaluacion.id">
+      {{ evaluacion.nombre }}
+    </option>
+  </select>
+  <button class="start-button" (click)="onGoBack()">
+    ATRÁS
+  </button>
+</div>

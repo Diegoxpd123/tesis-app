@@ -1,0 +1,762 @@
+/* ===============================
+   📌 Table Wrapper
+   =============================== */
+.table-wrapper {
+  background: white;
+  border-radius: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &.dark-theme {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+    .students-table {
+      thead {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        border-bottom-color: #334155;
+
+        th {
+          color: #f1f5f9;
+          border-bottom-color: #334155;
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom-color: #334155;
+
+          &:hover {
+            background: #0f172a;
+          }
+
+          &.odd {
+            background: rgba(15, 23, 42, 0.3);
+          }
+
+          &.hovered {
+            background: #0f172a;
+            transform: scale(1.01);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+          }
+        }
+
+        td {
+          color: #f1f5f9;
+        }
+      }
+    }
+
+    .student-info {
+      .student-name {
+        color: #f1f5f9;
+      }
+
+      .student-id {
+        color: #94a3b8;
+      }
+    }
+
+    .grade-badge {
+      background: #334155;
+      color: #f1f5f9;
+    }
+
+    .section-badge {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .progress-container {
+      .progress-percentage {
+        color: #f1f5f9;
+      }
+    }
+
+    .status-badge {
+      &.excelente {
+        background: #065f46;
+        color: #a7f3d0;
+      }
+
+      &.bueno {
+        background: #92400e;
+        color: #fde68a;
+      }
+
+      &.regular {
+        background: #9a3412;
+        color: #fed7aa;
+      }
+
+      &.ayuda {
+        background: #991b1b;
+        color: #fecaca;
+      }
+    }
+
+    .action-btn {
+      background: #334155;
+      color: #f1f5f9;
+      border-color: #475569;
+
+      &:hover {
+        background: #475569;
+        color: white;
+      }
+    }
+
+    .loading-container {
+      .loading-spinner {
+        p {
+          color: #f1f5f9;
+        }
+      }
+    }
+
+    .empty-container {
+      .empty-content {
+        h3 {
+          color: #f1f5f9;
+        }
+
+        p {
+          color: #94a3b8;
+        }
+      }
+    }
+  }
+}
+
+/* ===============================
+   📌 Loading State
+   =============================== */
+.loading-container {
+  padding: 4rem 2rem;
+  text-align: center;
+
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e5e7eb;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+  }
+}
+
+/* ===============================
+   📌 Empty State
+   =============================== */
+.empty-container {
+  padding: 4rem 2rem;
+  text-align: center;
+
+  .empty-content {
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.6;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      color: #374151;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 1rem;
+    }
+  }
+}
+
+/* ===============================
+   📌 Table Container
+   =============================== */
+.table-container {
+  overflow: hidden;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.students-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+
+  thead {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-bottom: 2px solid #e5e7eb;
+
+    th {
+      padding: 1.5rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: #374151;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid #e5e7eb;
+
+      &.th-avatar {
+        width: 80px;
+        text-align: center;
+      }
+
+      &.th-name {
+        min-width: 200px;
+      }
+
+      &.th-grade {
+        width: 100px;
+        text-align: center;
+      }
+
+      &.th-section {
+        width: 100px;
+        text-align: center;
+      }
+
+      &.th-progress {
+        width: 150px;
+        text-align: center;
+      }
+
+      &.th-status {
+        width: 120px;
+        text-align: center;
+      }
+
+      &.th-actions {
+        width: 140px;
+        text-align: center;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #f3f4f6;
+      transition: all 0.3s ease;
+      animation: slideInUp 0.5s ease-out;
+
+      &:hover {
+        background: #f8fafc;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      &.odd {
+        background: rgba(248, 250, 252, 0.5);
+      }
+
+      &.hovered {
+        background: #f1f5f9;
+        transform: scale(1.01);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1;
+        position: relative;
+      }
+    }
+
+    td {
+      padding: 1.25rem 1rem;
+      vertical-align: middle;
+      color: #374151;
+    }
+  }
+}
+
+/* ===============================
+   📌 Student Avatar
+   =============================== */
+.student-avatar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+
+  .avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+    overflow: hidden;
+
+    .avatar-robot {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  .avatar-status {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    &.excelente {
+      background: #10b981;
+    }
+
+    &.bueno {
+      background: #f59e0b;
+    }
+
+    &.regular {
+      background: #f97316;
+    }
+
+    &.ayuda {
+      background: #ef4444;
+    }
+  }
+}
+
+/* ===============================
+   📌 Student Info
+   =============================== */
+.student-info {
+  .student-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.25rem 0;
+    line-height: 1.3;
+  }
+
+  .student-id {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+/* ===============================
+   📌 Grade Badge
+   =============================== */
+.grade-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+
+  .grade-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1;
+  }
+
+  .grade-text {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* ===============================
+   📌 Section Badge
+   =============================== */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* ===============================
+   📌 Progress Container
+   =============================== */
+.progress-container {
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    .progress-percentage {
+      font-weight: 700;
+      color: #1f2937;
+      font-size: 1rem;
+    }
+
+    .progress-icon {
+      font-size: 1.2rem;
+    }
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.8s ease;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shimmer 2s infinite;
+      }
+    }
+  }
+}
+
+/* ===============================
+   📌 Status Badge
+   =============================== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &.excelente {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &.bueno {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.regular {
+    background: #fed7aa;
+    color: #9a3412;
+  }
+
+  &.ayuda {
+    background: #fecaca;
+    color: #991b1b;
+  }
+
+  .status-icon {
+    font-size: 1rem;
+  }
+
+  .status-text {
+    font-size: 0.75rem;
+  }
+}
+
+/* ===============================
+   📌 Action Button
+   =============================== */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+
+  &:hover {
+    background: #3b82f6;
+    color: white;
+    border-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  span {
+    font-size: 0.8rem;
+  }
+}
+
+/* ===============================
+   📌 Responsive Design
+   =============================== */
+@media (max-width: 1024px) {
+  .students-table {
+    font-size: 0.9rem;
+
+    thead th {
+      padding: 1.25rem 0.75rem;
+    }
+
+    tbody td {
+      padding: 1rem 0.75rem;
+    }
+  }
+
+  .student-avatar .avatar-circle {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+
+  .grade-badge {
+    padding: 0.5rem 0.75rem;
+
+    .grade-number {
+      font-size: 1.25rem;
+    }
+  }
+
+  .action-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+
+    span {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .students-table {
+    thead {
+      th {
+        padding: 1rem 0.5rem;
+        font-size: 0.8rem;
+
+        &.th-avatar,
+        &.th-grade,
+        &.th-section {
+          width: 60px;
+        }
+
+        &.th-progress {
+          width: 120px;
+        }
+
+        &.th-status {
+          width: 100px;
+        }
+
+        &.th-actions {
+          width: 80px;
+        }
+      }
+    }
+
+    tbody {
+      td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  }
+
+  .student-info {
+    .student-name {
+      font-size: 1rem;
+    }
+
+    .student-id {
+      font-size: 0.8rem;
+    }
+  }
+
+  .grade-badge {
+    padding: 0.5rem;
+    min-width: 50px;
+
+    .grade-number {
+      font-size: 1.1rem;
+    }
+
+    .grade-text {
+      font-size: 0.7rem;
+    }
+  }
+
+  .section-badge {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .progress-container {
+    .progress-info {
+      .progress-percentage {
+        font-size: 0.9rem;
+      }
+
+      .progress-icon {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .status-badge {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+
+    .status-text {
+      font-size: 0.7rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .table-wrapper {
+    border-radius: 12px;
+    margin: 0 -0.5rem;
+  }
+
+  .students-table {
+    font-size: 0.85rem;
+
+    thead th {
+      padding: 0.75rem 0.25rem;
+      font-size: 0.75rem;
+    }
+
+    tbody td {
+      padding: 0.5rem 0.25rem;
+    }
+  }
+
+  .student-avatar .avatar-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .grade-badge {
+    padding: 0.4rem;
+    min-width: 45px;
+
+    .grade-number {
+      font-size: 1rem;
+    }
+
+    .grade-text {
+      font-size: 0.65rem;
+    }
+  }
+
+  .section-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+
+  .action-btn {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+/* ===============================
+   📌 Animations
+   =============================== */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.student-row {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.progress-fill {
+  animation: slideInUp 0.8s ease-out;
+}

@@ -1,12 +1,193 @@
-<div class="top-bar">
-  <img src="assets/img/logo.png" alt="Logo principal" class="logo" />
+<div class="navbar-container starry-background" [class.dark-theme]="isDarkMode">
+  <!-- Barra principal -->
+  <div class="top-bar">
+    <!-- Logo y título -->
+    <div class="navbar-brand">
+      <img src="assets/img/logo.png" alt="Logo principal" class="logo" />
+      <div class="brand-info">
+        <h1 class="brand-title">DREAN TEACH ME</h1>
+        <span class="route-title">{{ getRouteTitle() }}</span>
+      </div>
+    </div>
 
-  <div class="top-options">
-    <button class="progreso-button" title="¡Mira cuánto has aprendido!" (click)="emitirToggleDetalles()">
-      📊 ¡Ver mi progreso!
-    </button>
-    <button class="logout-button" title="Salir del juego" (click)="emitirToggleCerrarSesion()">
-      👋 ¡Hasta pronto!
-    </button>
+    <!-- Controles del usuario -->
+    <div class="user-controls">
+      <!-- Navegación desktop -->
+      <nav class="navbar-nav desktop-nav">
+        <button
+          *ngIf="showProgressButton"
+          class="nav-button progreso-button"
+          title="¡Mira cuánto has aprendido!"
+          (click)="navigateToProgress()">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 13h2l3-7 4 14 4-7h2l-5 7-4-14-3 7z"/>
+          </svg>
+          <span>Mi Progreso</span>
+        </button>
+
+        <button
+          *ngIf="showHomeButton"
+          class="nav-button home-button"
+          (click)="navigateToHome()"
+          title="Ir al inicio">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          <span>Inicio</span>
+        </button>
+      </nav>
+
+      <!-- Tema -->
+      <button
+        class="theme-toggle"
+        (click)="toggleTheme()"
+        [title]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" *ngIf="!isDarkMode">
+          <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39.39 1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41z"/>
+        </svg>
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" *ngIf="isDarkMode">
+          <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+        </svg>
+      </button>
+
+      <!-- Información del usuario -->
+      <div class="user-info">
+        <div class="user-avatar">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ getUserDisplayName() }}</span>
+          <span class="user-role">{{ getUserRole() }}</span>
+        </div>
+      </div>
+
+      <!-- Botón de cerrar sesión -->
+      <button
+        class="logout-button"
+        (click)="cerrarSesion()"
+        title="Cerrar sesión">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+        </svg>
+        <span class="logout-text">Cerrar</span>
+      </button>
+
+      <!-- Menú hamburguesa móvil -->
+      <button
+        class="mobile-menu-toggle"
+        (click)="toggleMobileMenu()"
+        [class.active]="isMobileMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Menú móvil -->
+  <div class="mobile-menu" [class.open]="isMobileMenuOpen">
+    <div class="mobile-menu-content">
+      <div class="mobile-user-info">
+        <div class="user-avatar">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ getUserDisplayName() }}</span>
+          <span class="user-role">{{ getUserRole() }}</span>
+        </div>
+      </div>
+
+      <nav class="mobile-nav">
+        <button
+          *ngIf="showHomeButton"
+          class="mobile-nav-button"
+          (click)="navigateTo('/home')">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          <span>Inicio</span>
+        </button>
+
+        <button
+          *ngIf="showProgressButton"
+          class="mobile-nav-button progreso-button"
+          (click)="navigateToProgress()">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 13h2l3-7 4 14 4-7h2l-5 7-4-14-3 7z"/>
+          </svg>
+          <span>Mi Progreso</span>
+        </button>
+
+        <button
+          class="mobile-nav-button"
+          (click)="navigateTo('/estudiantes')">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 7H16c-.8 0-1.54.5-1.84 1.25L12.5 12H14v10h2v-6h2v6h2zM12.5 5.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 3.17 11 4s.67 1.5 1.5 1.5zM5.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm2 16v-7H9V9.5c0-.83.67-1.5 1.5-1.5S12 8.67 12 9.5V15h1.5v7h-6z"/>
+          </svg>
+          <span>Estudiantes</span>
+        </button>
+
+        <button
+          class="mobile-nav-button logout-button"
+          (click)="cerrarSesion()">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+          </svg>
+          <span>Cerrar Sesión</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Overlay para móvil -->
+  <div
+    class="mobile-overlay"
+    [class.open]="isMobileMenuOpen"
+    (click)="closeMobileMenu()">
+  </div>
+
+  <!-- Modal de confirmación de cerrar sesión -->
+  <div
+    class="logout-modal-overlay"
+    [class.open]="showLogoutModal"
+    (click)="cancelarCerrarSesion()">
+    <div class="logout-modal" (click)="$event.stopPropagation()">
+      <div class="logout-modal-header">
+        <div class="logout-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+          </svg>
+        </div>
+        <h3>¿Cerrar sesión?</h3>
+      </div>
+
+      <div class="logout-modal-body">
+        <p>¿Estás seguro de que quieres cerrar sesión?</p>
+        <p class="logout-warning">Se perderán todos los datos no guardados.</p>
+      </div>
+
+      <div class="logout-modal-actions">
+        <button
+          class="btn-cancel"
+          (click)="cancelarCerrarSesion()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+          Cancelar
+        </button>
+        <button
+          class="btn-confirm"
+          (click)="confirmarCerrarSesion()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          Sí, cerrar sesión
+        </button>
+      </div>
+    </div>
   </div>
 </div>

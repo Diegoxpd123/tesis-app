@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<div class="home-container">
+<div class="home-container starry-background" [class.dark-theme]="isDarkMode">
   <h1 id="titulo" class="welcome-title">
     {{ tituloMessage }}
   </h1>
@@ -11,7 +11,6 @@
       <p id="pregunta" *ngIf="showPreguntaSobreGato" class="pregunta-subtitle-sobrerobot">
         {{ preguntaMessageenviar }}
       </p>
-      <br>
 
       <img *ngIf="showPreguntaSobreGato && imagenValida" [src]="imagenpregunta" alt="pregunta" class="pregunta-imagen"
         (error)="imagenValida = false" />
@@ -134,6 +133,11 @@
           </div>
         </div>
         <button class="detalle-button" (click)="verMasDetallesPorCurso(3)">Ver más detalles</button>
+
+        <!-- Botón Atrás para regresar a showDetalleProgreso -->
+        <div class="course-buttons slide-in" style="margin-top: 20px;">
+          <button class="start-button course-button terminar" (click)="showDetalleProgreso()">← Atrás</button>
+        </div>
       </div>
 
      <div *ngIf="showMostrarBarrasPorCurso" class="barras-porcentajes">

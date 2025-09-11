@@ -1,0 +1,205 @@
+<div class="admin-dashboard page-container starry-background" [class.dark-theme]="isDarkMode">
+  <!-- Header con controles -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="dashboard-title">
+          <span class="title-icon">👨‍🏫</span>
+          {{ tituloMessage }}
+        </h1>
+        <p class="dashboard-subtitle">
+          {{ isAdmin ? 'Panel de administración de estudiantes' : 'Gestión de tus estudiantes' }}
+        </p>
+      </div>
+
+      <div class="header-controls">
+        <!-- Búsqueda -->
+        <div class="search-container">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Buscar estudiantes..."
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange($event)"
+          />
+          <button
+            class="search-clear"
+            *ngIf="searchTerm"
+            (click)="clearSearch()"
+            title="Limpiar búsqueda">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Controles -->
+        <div class="control-buttons">
+          <button
+            class="control-btn refresh-btn"
+            (click)="refreshData()"
+            [disabled]="loading"
+            title="Actualizar datos">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            </svg>
+          </button>
+
+          <button
+            class="control-btn stats-btn"
+            [class.active]="showStats"
+            (click)="toggleStats()"
+            title="Mostrar/ocultar estadísticas">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 13h2l3-7 4 14 4-7h2l-5 7-4-14-3 7z"/>
+            </svg>
+          </button>
+
+          <!-- Botón de Excel (solo para usuarioid 4) -->
+          <label
+            *ngIf="usuarioid == '4'"
+            class="control-btn excel-btn"
+            for="excelInput"
+            title="Cargar archivo Excel">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            <input id="excelInput" type="file" (change)="leerArchivoExcel($event)" accept=".xlsx, .xls" hidden>
+          </label>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- Loading de Excel -->
+  <div class="excel-loading-container" *ngIf="isUploadingExcel">
+    <div class="excel-loading-content">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+      <div class="loading-text">
+        <h3>📊 Cargando archivo Excel...</h3>
+        <p *ngIf="totalPreguntas > 0">
+          Procesando preguntas: {{ preguntasGuardadas }} / {{ totalPreguntas }}
+        </p>
+        <div class="progress-bar" *ngIf="totalPreguntas > 0">
+          <div class="progress-fill" [style.width.%]="(preguntasGuardadas / totalPreguntas) * 100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultado de Excel -->
+  <div class="excel-result-container" *ngIf="showExcelResult">
+    <div class="excel-result-content">
+      <div class="result-icon">✅</div>
+      <div class="result-text">
+        <h3>¡Excel cargado exitosamente!</h3>
+        <p>{{ excelResultMessage }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="stats-container" *ngIf="showStats">
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.totalEstudiantes }}</div>
+          <div class="stat-label">Total Estudiantes</div>
+        </div>
+      </div>
+
+      <div class="stat-card promedio">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.promedioGeneral }}%</div>
+          <div class="stat-label">Promedio General</div>
+        </div>
+      </div>
+
+      <div class="stat-card excelentes">
+        <div class="stat-icon">🎉</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.estudiantesExcelentes }}</div>
+          <div class="stat-label">Excelentes</div>
+        </div>
+      </div>
+
+      <div class="stat-card buenos">
+        <div class="stat-icon">👍</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.estudiantesBuenos }}</div>
+          <div class="stat-label">Buenos</div>
+        </div>
+      </div>
+
+      <div class="stat-card regulares">
+        <div class="stat-icon">📚</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.estudiantesRegulares }}</div>
+          <div class="stat-label">Regulares</div>
+        </div>
+      </div>
+
+      <div class="stat-card ayuda">
+        <div class="stat-icon">💪</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.estudiantesNecesitanAyuda }}</div>
+          <div class="stat-label">Necesitan Ayuda</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <!-- Filtros -->
+  <div class="filters-container">
+    <app-estudiante-filters
+      [grados]="grados"
+      [secciones]="secciones"
+      [filtro]="filtro"
+      (filtroChange)="onFiltroChange($event)">
+    </app-estudiante-filters>
+  </div>
+
+  <br>
+
+  <!-- Tabla de estudiantes -->
+  <div class="table-container">
+    <div class="table-header">
+      <div class="table-title">
+        <h3>Lista de Estudiantes</h3>
+        <span class="table-count">{{ estudiantesFiltrados.length }} estudiantes</span>
+      </div>
+
+      <div class="table-controls">
+        <select
+          class="page-size-select"
+          [value]="paginacion.pageSize"
+          (change)="onPageSizeChange($event)">
+          <option *ngFor="let size of getPageSizeOptions()" [value]="size">
+            {{ size }} por página
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <app-estudiante-table
+      [estudiantes]="estudiantesPaginados"
+      [loading]="loading"
+      [emptyMessage]="emptyMessage"
+      (verDetalles)="onVerDetalles($event)">
+    </app-estudiante-table>
+
+    <app-estudiante-pagination
+      [config]="paginacion"
+      (pageChange)="onPageChange($event)">
+    </app-estudiante-pagination>
+  </div>
+
+</div>

@@ -1,0 +1,36 @@
+<div *ngIf="showChat" class="chatgpt-container">
+  <div class="chat-header">
+    <h3>🤖 Asistente IA</h3>
+    <button class="close-button" (click)="onCloseChat()">✕</button>
+  </div>
+
+  <div class="chat-box">
+    <div *ngFor="let msg of messages" class="message" [ngClass]="msg.role">
+      <strong *ngIf="msg.role === 'user'">Tú:</strong>
+      <strong *ngIf="msg.role === 'assistant'">GPT:</strong>
+      {{ msg.content }}
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input
+      [(ngModel)]="userMessage"
+      placeholder="Escribe tu duda o habla..."
+      (keypress)="onKeyPress($event)"
+      [disabled]="isListening" />
+    <button (click)="sendMessage()" [disabled]="!userMessage.trim() || isListening">
+      Enviar
+    </button>
+    <button
+      (click)="onStartListening()"
+      [disabled]="isListening"
+      class="voice-button"
+      title="Habla tu duda">
+      🎤 {{ isListening ? 'Escuchando...' : '' }}
+    </button>
+  </div>
+
+  <div *ngIf="isListening" class="listening-indicator">
+    🎤 Escuchando...
+  </div>
+</div>

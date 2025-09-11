@@ -1,7 +1,10 @@
-@import './assets/scss/variables';
-@import './bootstrap/scss/bootstrap';
-@import './assets/scss/table';
-@import './assets/scss/button';
+@use './assets/scss/variables' as *;
+@use './bootstrap/scss/bootstrap';
+@use './assets/scss/table';
+@use './assets/scss/button';
+
+/* FontAwesome Icons */
+@import '@fortawesome/fontawesome-free/css/all.min.css';
 
 *,
 *::before,
@@ -11,9 +14,274 @@
   padding: 0 !important;
 }
 
+/* ===============================
+   📌 Starry Background Animation
+   =============================== */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes twinkle-dark {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.starry-background {
+  position: relative;
+  overflow: hidden;
+}
+
+.starry-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 160px 30px, #ddd, transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  animation: twinkle 4s ease-in-out infinite;
+  z-index: 1;
+}
+
+.starry-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(1px 1px at 50px 50px, #fff, transparent),
+    radial-gradient(1px 1px at 100px 100px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 150px 150px, #eee, transparent),
+    radial-gradient(1px 1px at 200px 200px, rgba(255,255,255,0.3), transparent);
+  background-repeat: repeat;
+  background-size: 300px 200px;
+  animation: twinkle 6s ease-in-out infinite reverse;
+  z-index: 1;
+}
+
+/* Dark theme stars */
+.starry-background.dark-theme::before {
+  background:
+    radial-gradient(4px 4px at 20px 30px, #ffffff, transparent),
+    radial-gradient(3px 3px at 40px 70px, #87ceeb, transparent),
+    radial-gradient(2px 2px at 90px 40px, #4a90e2, transparent),
+    radial-gradient(2px 2px at 130px 80px, #ffffff, transparent),
+    radial-gradient(4px 4px at 160px 30px, #87ceeb, transparent),
+    radial-gradient(2px 2px at 180px 60px, #4a90e2, transparent),
+    radial-gradient(3px 3px at 200px 90px, #ffffff, transparent),
+    radial-gradient(2px 2px at 220px 40px, #add8e6, transparent),
+    radial-gradient(1px 1px at 240px 100px, #ffffff, transparent),
+    radial-gradient(3px 3px at 260px 20px, #87ceeb, transparent);
+  animation: twinkle-dark 4s ease-in-out infinite;
+  filter: brightness(1.2) contrast(1.1);
+}
+
+.starry-background.dark-theme::after {
+  background:
+    radial-gradient(3px 3px at 50px 50px, #87ceeb, transparent),
+    radial-gradient(2px 2px at 100px 100px, #ffffff, transparent),
+    radial-gradient(2px 2px at 150px 150px, #4a90e2, transparent),
+    radial-gradient(2px 2px at 200px 200px, #87ceeb, transparent),
+    radial-gradient(2px 2px at 250px 50px, #ffffff, transparent),
+    radial-gradient(3px 3px at 300px 120px, #4a90e2, transparent),
+    radial-gradient(2px 2px at 350px 80px, #87ceeb, transparent),
+    radial-gradient(1px 1px at 380px 30px, #add8e6, transparent),
+    radial-gradient(2px 2px at 400px 150px, #ffffff, transparent),
+    radial-gradient(1px 1px at 420px 70px, #87ceeb, transparent);
+  animation: twinkle-dark 6s ease-in-out infinite reverse;
+  filter: brightness(1.2) contrast(1.1);
+}
+
+/* ===============================
+   📌 Content Above Stars
+   =============================== */
+.starry-background > * {
+  position: relative;
+  z-index: 2;
+}
+
+.starry-background .navbar-brand,
+.starry-background .user-controls,
+.starry-background .welcome-title,
+.starry-background .main-content,
+.starry-background .progress-container,
+.starry-background .admin-dashboard,
+.starry-background .dashboard-header,
+.starry-background .dashboard-content,
+.starry-background .no-data-container {
+  position: relative;
+  z-index: 2;
+}
+
 html, body {
   width: 100% !important;
-  height: 100% !important;
+  min-height: 100vh !important;
+  height: auto !important;
   overflow-x: hidden !important; /* ¡Obligatorio! */
+  overflow-y: auto !important; /* Controlar el scroll vertical */
   position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
+
+/* ===============================
+   📌 Navbar Spacing Fix
+   =============================== */
+body {
+  padding-top: 100px !important; /* Altura del navbar + 30px extra */
+  background: transparent !important; /* Sin fondo en el body */
+
+  @media (max-width: 768px) {
+    padding-top: 90px !important; /* Altura del navbar en móvil + 30px extra */
+  }
+}
+
+/* ===============================
+   📌 Login Exception - No Navbar Padding
+   =============================== */
+body.login-page {
+  padding-top: 0 !important;
+
+  @media (max-width: 768px) {
+    padding-top: 0 !important;
+  }
+}
+
+/* ===============================
+   📌 No Navbar Class
+   =============================== */
+.main-content.no-navbar {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ===============================
+   📌 Main Content Container
+   =============================== */
+.main-content {
+  min-height: 100vh !important;
+  padding-top: 0 !important;
+  width: 100% !important;
+  position: relative !important;
+  z-index: 2 !important; /* Asegurar que esté por encima de las estrellas */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background-attachment: fixed !important;
+
+  &.dark-theme {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  }
+
+  @media (max-width: 768px) {
+    min-height: 100vh !important;
+  }
+}
+
+/* ===============================
+   📌 Page Container Fix
+   =============================== */
+.page-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  background: transparent !important;
+}
+
+/* Excepción para home-container */
+.home-container.page-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background-image: none !important;
+  background-attachment: fixed !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-color: #667eea !important;
+}
+
+.home-container.page-container.dark-theme {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  background-image: none !important;
+  background-color: #0f172a !important;
+}
+
+/* ===============================
+   📌 Component Spacing Fix
+   =============================== */
+.component-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ===============================
+   📌 Login No Navbar Padding
+   =============================== */
+.no-navbar-padding {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ===============================
+   📌 Eliminar Líneas Blancas
+   =============================== */
+* {
+  box-sizing: border-box !important;
+}
+
+html, body, #root, app-root {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* Eliminar cualquier espacio entre elementos */
+.main-content, .page-container, .component-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+}
+
+/* Asegurar que no haya gaps entre el navbar y el contenido */
+.navbar-container + * {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* ===============================
+   📌 Asegurar Cobertura Completa del Fondo
+   =============================== */
+html, body, app-root, .main-content {
+  min-height: 100vh !important;
+  height: auto !important;
+}
+
+/* Asegurar que los contenedores de componentes ocupen toda la altura */
+.home-container, .admin-dashboard, .estudiantes-container {
+  min-height: 100vh !important;
+  height: auto !important;
+}
+
+/* Eliminar cualquier espacio en blanco al final */
+body::after {
+  display: none !important;
+}
+
+/* Asegurar que el fondo se extienda completamente */
+* {
+  box-sizing: border-box !important;
+}
+

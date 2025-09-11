@@ -1,138 +1,184 @@
-<app-navbar></app-navbar>
+<div class="estudiante-detail-container page-container starry-background" [class.dark-theme]="isDarkMode">
+  <!-- Botón de Atrás -->
+  <div class="back-button-container">
+    <button class="back-button" (click)="goBack()" [class.dark-theme]="isDarkMode">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+      <span>Volver</span>
+    </button>
+  </div>
 
-<div class="home-container">
-  <div class="estudiantes-container">
-    <div class="perfil-estudiante">
-      <img src="/assets/img/robot.png" alt="Avatar" class="avatar-grande" />
-      <div class="perfil-info">
-        <h1>Estudiante</h1>
-        <p class="usuario">Usuario 1</p>
-        <p>El estudiante ha completado su reforzamiento</p>
+  <!-- Header del estudiante -->
+  <div class="student-header">
+    <div class="student-info">
+      <img src="/assets/img/robot.png" alt="Avatar" class="student-avatar" />
+      <div class="student-details">
+        <h1 class="student-name">{{ usuarioNombre }}</h1>
+        <p class="student-user">{{ usuarioEmail || 'Usuario ' + usuarioid }}</p>
+        <p class="student-description" *ngIf="usuarioGrado && usuarioSeccion">
+          {{ usuarioGrado }} - {{ usuarioSeccion }}
+        </p>
+        <p class="student-description" *ngIf="!usuarioGrado || !usuarioSeccion">
+          El estudiante ha completado su reforzamiento
+        </p>
       </div>
-      <div class="radar-container">
-        <canvas id="radarChart" width="150" height="150"></canvas>
+    </div>
+    <div class="radar-container">
+      <canvas id="radarChart" width="150" height="150"></canvas>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- Loading de datos -->
+  <div class="loading-data-container" *ngIf="isLoadingData">
+    <div class="loading-data-content">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+      <div class="loading-text">
+        <h3>{{ loadingMessage }}</h3>
+        <p *ngIf="totalQuestions > 0">
+          Cargando preguntas: {{ loadedQuestions }} / {{ totalQuestions }}
+        </p>
+        <div class="progress-bar" *ngIf="totalQuestions > 0">
+          <div class="progress-fill" [style.width.%]="(loadedQuestions / totalQuestions) * 100"></div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="cursos-dominados">
-      Cursos dominados:
-      <span class="barra-progreso-fina">
-        <div class="relleno" style="width: 100%"></div>
-      </span>
-      3/3
+  <!-- Estadísticas del estudiante -->
+  <div class="student-stats">
+    <div class="stats-card">
+      <div class="stats-content">
+        <span class="stats-label">Cursos dominados:</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 100%"></div>
+        </div>
+        <span class="stats-value">3/3</span>
+      </div>
     </div>
+  </div>
 
-    <div class="puntaje-titulo">Puntaje Semanal</div>
+  <br>
 
-    <!-- 📅 Calendario -->
-    <div class="filtros-fechas">
-      <label>Fecha Inicio:</label>
-      <input type="date" [(ngModel)]="fechainicio" />
-
-      <label>Fecha Fin:</label>
-      <input type="date" [(ngModel)]="fechafin" />
+  <!-- Filtros de fechas -->
+  <div class="filters-container">
+    <div class="filters-header">
+      <h3>Filtros de Fecha</h3>
     </div>
+    <div class="filters-content">
+      <div class="filter-group">
+        <label>Fecha Inicio:</label>
+        <input type="date" [(ngModel)]="fechainicio" class="filter-input" />
+      </div>
+      <div class="filter-group">
+        <label>Fecha Fin:</label>
+        <input type="date" [(ngModel)]="fechafin" class="filter-input" />
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- Cursos -->
+  <div class="courses-container">
+    <h2 class="courses-title">Puntaje Semanal</h2>
 
     <!-- 📘 Matemáticas -->
-    <div class="curso" style="--color:#f9a825;">
-      <span class="nombre">📘 Matemáticas</span>
-      <div class="barra-horizontal">
-        <div class="relleno" style="width: 80%"></div>
+    <div class="course-card" style="--color:#f9a825;">
+      <div class="course-header">
+        <span class="course-name">📘 Matemáticas</span>
+        <span class="course-score">{{ calcularPuntaje(1) }}</span>
       </div>
-      <span class="puntaje">
-  {{ calcularPuntaje(1) }}
-</span>
-      <button class="btn-mas" (click)="mostrarResultados(1)">+</button>
-    </div>
-
-    <div *ngIf="resultados[1]?.length">
-      <button class="btn-excel" (click)="exportarExcel(1)">📥 Descargar Excel</button>
-      <table class="tabla-resultado">
-        <thead>
-          <tr>
-            <th>Tema</th>
-            <th>Evaluación</th>
-            <th>Respuestas</th>
-            <th>Tiempo (seg)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let r of resultados[1]">
-            <td>{{ r.tema }}</td>
-            <td>{{ r.evaluacion }}</td>
-            <td>{{ r.respuestas_buenas_sobre_totales }}</td>
-            <td>{{ r.total_tiempo }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="course-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 80%"></div>
+        </div>
+      </div>
+      <button class="course-btn" (click)="mostrarResultados(1)">Ver Detalles</button>
     </div>
 
     <!-- 📗 Comunicación -->
-    <div class="curso" style="--color:#4fc3f7;">
-      <span class="nombre">📗 Comunicación</span>
-      <div class="barra-horizontal">
-        <div class="relleno" style="width: 100%"></div>
+    <div class="course-card" style="--color:#4fc3f7;">
+      <div class="course-header">
+        <span class="course-name">📗 Comunicación</span>
+        <span class="course-score">{{ calcularPuntaje(2) }}</span>
       </div>
-      <span class="puntaje">
-  {{ calcularPuntaje(2) }}
-</span>
-      <button class="btn-mas" (click)="mostrarResultados(2)">+</button>
-    </div>
-
-    <div *ngIf="resultados[2]?.length">
-      <button class="btn-excel" (click)="exportarExcel(2)">📥 Descargar Excel</button>
-      <table class="tabla-resultado">
-        <thead>
-          <tr>
-            <th>Tema</th>
-            <th>Evaluación</th>
-            <th>Respuestas</th>
-            <th>Tiempo (seg)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let r of resultados[2]">
-            <td>{{ r.tema }}</td>
-            <td>{{ r.evaluacion }}</td>
-            <td>{{ r.respuestas_buenas_sobre_totales }}</td>
-            <td>{{ r.total_tiempo }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="course-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 100%"></div>
+        </div>
+      </div>
+      <button class="course-btn" (click)="mostrarResultados(2)">Ver Detalles</button>
     </div>
 
     <!-- 📙 Ciencias y Tecnología -->
-    <div class="curso" style="--color:#8bc34a;">
-      <span class="nombre">📙 Ciencias y Tecnología</span>
-      <div class="barra-horizontal">
-        <div class="relleno" style="width: 53%"></div>
+    <div class="course-card" style="--color:#8bc34a;">
+      <div class="course-header">
+        <span class="course-name">📙 Ciencias y Tecnología</span>
+        <span class="course-score">{{ calcularPuntaje(3) }}</span>
       </div>
-      <span class="puntaje">
-  {{ calcularPuntaje(3) }}
-</span>
-      <button class="btn-mas" (click)="mostrarResultados(3)">+</button>
+      <div class="course-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 53%"></div>
+        </div>
+      </div>
+      <button class="course-btn" (click)="mostrarResultados(3)">Ver Detalles</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para mostrar reportes o mensaje de no datos -->
+<div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" [class.dark-theme]="isDarkMode" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modalTitle }}</h3>
+      <button class="modal-close" (click)="closeModal()">×</button>
     </div>
 
-    <div *ngIf="resultados[3]?.length">
-      <button class="btn-excel" (click)="exportarExcel(3)">📥 Descargar Excel</button>
-      <table class="tabla-resultado">
-        <thead>
-          <tr>
-            <th>Tema</th>
-            <th>Evaluación</th>
-            <th>Respuestas</th>
-            <th>Tiempo (seg)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let r of resultados[3]">
-            <td>{{ r.tema }}</td>
-            <td>{{ r.evaluacion }}</td>
-            <td>{{ r.respuestas_buenas_sobre_totales }}</td>
-            <td>{{ r.total_tiempo }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="modal-body">
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-modal">
+        <div class="loading-spinner"></div>
+        <p>Buscando datos del estudiante...</p>
+      </div>
+
+      <!-- Mensaje de no datos -->
+      <div *ngIf="!loading && modalMessage" class="no-data-modal">
+        <div class="no-data-icon">📊</div>
+        <p>{{ modalMessage }}</p>
+      </div>
+
+      <!-- Reporte con datos -->
+      <div *ngIf="!loading && !modalMessage && hasData[modalCourseId]">
+        <div class="modal-actions">
+          <button class="btn-excel" (click)="exportarExcel(modalCourseId)">📥 Descargar Excel</button>
+        </div>
+
+        <div class="table-container">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Tema</th>
+                <th>Evaluación</th>
+                <th>Respuestas</th>
+                <th>Tiempo (seg)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of resultados[modalCourseId]">
+                <td>{{ r.tema }}</td>
+                <td>{{ r.evaluacion }}</td>
+                <td>{{ r.respuestas_buenas_sobre_totales }}</td>
+                <td>{{ r.total_tiempo }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

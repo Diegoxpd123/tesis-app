@@ -1,0 +1,124 @@
+<div class="filters-container" [class.dark-theme]="isDarkMode">
+  <div class="filters-header">
+    <h3 class="filters-title">
+      <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+      </svg>
+      Filtros y Ordenamiento
+    </h3>
+    <button
+      class="advanced-toggle"
+      (click)="toggleAdvancedFilters()"
+      [class.active]="showAdvancedFilters">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      Avanzado
+    </button>
+  </div>
+
+  <div class="filters-content">
+    <!-- Filtros básicos -->
+    <div class="basic-filters">
+      <div class="filter-group">
+        <label class="filter-label">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          Grado
+        </label>
+        <select
+          class="filter-select"
+          [value]="filtro.grado || ''"
+          (change)="onGradoChange($event)">
+          <option value="">Todos los grados</option>
+          <option *ngFor="let grado of grados" [value]="grado">
+            {{ grado }}° Grado
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 7H16c-.8 0-1.54.5-1.84 1.25L12.5 12H14v10h2v-6h2v6h2zM12.5 5.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 3.17 11 4s.67 1.5 1.5 1.5zM5.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm2 16v-7H9V9.5c0-.83.67-1.5 1.5-1.5S12 8.67 12 9.5V15h1.5v7h-6z"/>
+          </svg>
+          Sección
+        </label>
+        <select
+          class="filter-select"
+          [value]="filtro.seccion || ''"
+          (change)="onSeccionChange($event)">
+          <option value="">Todas las secciones</option>
+          <option *ngFor="let seccion of secciones" [value]="seccion">
+            Sección {{ seccion }}
+          </option>
+        </select>
+      </div>
+
+      <button
+        class="clear-filters-btn"
+        (click)="clearFilters()"
+        title="Limpiar todos los filtros">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+        Limpiar
+      </button>
+    </div>
+
+    <!-- Filtros avanzados -->
+    <div class="advanced-filters" [class.show]="showAdvancedFilters">
+      <div class="advanced-content">
+        <div class="filter-group">
+          <label class="filter-label">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 13h2l3-7 4 14 4-7h2l-5 7-4-14-3 7z"/>
+            </svg>
+            Ordenar por
+          </label>
+          <select
+            class="filter-select"
+            [value]="sortBy"
+            (change)="onSortChange($event)">
+            <option value="nombre">Nombre</option>
+            <option value="grado">Grado</option>
+            <option value="porcentaje">Progreso</option>
+            <option value="seccion">Sección</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
+            </svg>
+            Orden
+          </label>
+          <button
+            class="sort-order-btn"
+            (click)="onSortOrderChange()"
+            [title]="'Ordenar ' + (sortOrder === 'asc' ? 'descendente' : 'ascendente')">
+            <span class="sort-label">{{ getSortLabel() }}</span>
+            <span class="sort-icon">{{ getSortIcon() }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicadores de filtros activos -->
+  <div class="active-filters" *ngIf="filtro.grado || filtro.seccion">
+    <span class="active-filters-label">Filtros activos:</span>
+    <div class="filter-tags">
+      <span class="filter-tag" *ngIf="filtro.grado">
+        {{ filtro.grado }}° Grado
+        <button (click)="clearGrado()" class="tag-remove">×</button>
+      </span>
+      <span class="filter-tag" *ngIf="filtro.seccion">
+        Sección {{ filtro.seccion }}
+        <button (click)="clearSeccion()" class="tag-remove">×</button>
+      </span>
+    </div>
+  </div>
+</div>

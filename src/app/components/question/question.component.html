@@ -1,0 +1,24 @@
+<div class="question-container">
+  <div *ngIf="questionNumber" class="pregunta-numeros">
+    {{ questionNumber }}
+  </div>
+
+  <div *ngIf="showImage && question?.imagen && imageValid" class="question-image-container">
+    <img [src]="question?.imagen"
+         alt="pregunta"
+         class="pregunta-image"
+         (error)="onImageError()" />
+  </div>
+
+  <div *ngIf="question" class="question-content">
+    <p class="pregunta-subtitle">{{ question.descripcion }}</p>
+
+    <div class="options-container">
+      <button *ngFor="let option of shuffledOptions"
+              class="opcion-button"
+              (click)="onAnswerClick(option)">
+        {{ option }}
+      </button>
+    </div>
+  </div>
+</div>

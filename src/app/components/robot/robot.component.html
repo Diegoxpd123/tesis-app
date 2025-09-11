@@ -1,0 +1,20 @@
+<div class="robot-container">
+  <div class="timer-overlay" *ngIf="showTimer">
+    {{ timerMinutes }}:{{ timerSeconds | number: '2.0' }}
+  </div>
+
+  <p *ngIf="showQuestion" class="pregunta-subtitle-sobrerobot">
+    {{ message }}
+  </p>
+  <br>
+
+  <img *ngIf="showQuestion && imageValid && questionImage"
+       [src]="questionImage"
+       alt="pregunta"
+       class="pregunta-imagen"
+       (error)="onImageError()" />
+
+  <img src="/assets/img/robot.png"
+       alt="Gato robot"
+       class="robot-image" />
+</div>

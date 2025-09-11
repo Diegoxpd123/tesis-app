@@ -1,12 +1,10 @@
 .home-container {
   min-height: 100vh !important;
-height: auto !important;
-  padding-top: 60px !important;
+  height: auto !important;
+  padding-top: 100px !important; /* Altura del navbar + 30px extra */
   width: 100vw !important;
-  background-image: url('/assets/img/fondo.png') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background-attachment: fixed !important;
   font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif !important;
   display: flex !important;
   flex-direction: column !important;
@@ -17,6 +15,16 @@ height: auto !important;
   text-align: center !important;
   color: white !important;
   animation: fadeIn 1s ease-in-out;
+  position: relative !important;
+  z-index: 1 !important;
+
+  &.dark-theme {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  }
+
+  @media (max-width: 768px) {
+    padding-top: 90px !important; /* Altura del navbar en móvil + 30px extra */
+  }
 }
 
 .welcome-title {

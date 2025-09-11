@@ -1,9 +1,8 @@
 .home-container {
   min-height: 100vh !important;
   width: 100vw !important;
-  background-image: url('/assets/img/pantalladocente.png') !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background-attachment: fixed !important;
   font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif !important;
   display: flex !important;
   flex-direction: column !important;
@@ -12,6 +11,10 @@
   color: white !important;
   animation: fadeIn 1s ease-in-out !important;
   position: relative !important;
+
+  &.dark-theme {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  }
 }
 
 .estudiantes-container {

@@ -1,0 +1,126 @@
+<div class="excel-uploader-container" [class.dark-theme]="isDarkMode" *ngIf="showUploader">
+  <div class="uploader-header">
+    <h3 class="uploader-title">
+      <svg class="uploader-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+      </svg>
+      Cargar Archivo Excel
+    </h3>
+    <button class="close-btn" (click)="onToggleUploader()" title="Cerrar">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="uploader-content">
+    <!-- Drag & Drop Zone -->
+    <div
+      class="drop-zone"
+      [class.drag-over]="isDragOver"
+      [class.has-file]="selectedFile"
+      [class.processing]="processing"
+      (click)="fileInput.click()">
+
+      <input
+        #fileInput
+        type="file"
+        accept=".xlsx,.xls"
+        (change)="onFileSelected($event)"
+        style="display: none;">
+
+      <div class="drop-zone-content" *ngIf="!selectedFile && !processing">
+        <div class="drop-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+          </svg>
+        </div>
+        <h4>Arrastra tu archivo Excel aquí</h4>
+        <p>o haz clic para seleccionar</p>
+        <div class="file-types">
+          <span class="file-type">.xlsx</span>
+          <span class="file-type">.xls</span>
+        </div>
+        <p class="file-limit">Máximo 10MB</p>
+      </div>
+
+      <!-- File Selected State -->
+      <div class="file-selected" *ngIf="selectedFile && !processing">
+        <div class="file-info">
+          <div class="file-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+          </div>
+          <div class="file-details">
+            <h4>{{ getFileName(selectedFile) }}</h4>
+            <p>{{ getFileSize(selectedFile) }}</p>
+          </div>
+          <button class="remove-file-btn" (click)="onRemoveFile()" title="Eliminar archivo">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Processing State -->
+      <div class="processing-state" *ngIf="processing">
+        <div class="processing-icon">
+          <div class="spinner"></div>
+        </div>
+        <h4>Procesando archivo...</h4>
+        <p>Por favor espera mientras procesamos tu archivo Excel</p>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+        <span class="progress-text">{{ uploadProgress | number:'1.0-0' }}%</span>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+      <h4>Instrucciones:</h4>
+      <ul>
+        <li>El archivo debe estar en formato Excel (.xlsx o .xls)</li>
+        <li>La primera fila debe contener los encabezados</li>
+        <li>Incluye las columnas: Nombre, Grado, Sección</li>
+        <li>El tamaño máximo es de 10MB</li>
+      </ul>
+    </div>
+
+    <!-- Result -->
+    <div class="result-container" *ngIf="result">
+      <div class="result-card" [class]="getResultClass()">
+        <div class="result-icon">
+          <span>{{ getResultIcon() }}</span>
+        </div>
+        <div class="result-content">
+          <h4 [class]="getResultClass()">
+            {{ result.success ? '¡Archivo procesado exitosamente!' : 'Error al procesar archivo' }}
+          </h4>
+          <p>{{ result.message }}</p>
+          <div class="result-details" *ngIf="result.success">
+            <span class="detail-item">
+              <strong>{{ result.processedRows }}</strong> filas procesadas
+            </span>
+          </div>
+          <div class="result-errors" *ngIf="!result.success && result.errors && result.errors.length > 0">
+            <h5>Errores encontrados:</h5>
+            <ul>
+              <li *ngFor="let error of result.errors">{{ error }}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="result-actions" *ngIf="!result.success">
+          <button class="retry-btn" (click)="onRetry()">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            </svg>
+            Reintentar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

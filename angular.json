@@ -42,8 +42,9 @@
              "styles": [
               "src/styles.scss",
               "remixicon/fonts/remixicon.css",
-  "node_modules/toastify-js/src/toastify.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+              "node_modules/toastify-js/src/toastify.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
             "scripts": [
                "node_modules/jquery/dist/jquery.min.js",
@@ -111,5 +112,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "d04e2e6e-b22c-4947-9d91-9029171b14ee"
   }
 }

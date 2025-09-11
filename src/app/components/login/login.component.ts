@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsuarioService } from '../../services/usuario.service';
 import Toastify from 'toastify-js';
@@ -10,53 +10,275 @@ import Toastify from 'toastify-js';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   mensajeLogin: string = '';
-colorMensaje: string = '';
+  colorMensaje: string = '';
+  loading: boolean = false;
+  showPassword: boolean = false;
+  loginAttempts: number = 0;
+  maxAttempts: number = 3;
+  isBlocked: boolean = false;
+  blockTime: number = 0;
+  isDarkMode: boolean = false;
+  private themeListener?: () => void;
+
+  // Exponer Math y Date para el template
+  Math = Math;
+  Date = Date;
 
   loginForm: FormGroup = new FormGroup({
-
-    username: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required)
-
+    username: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(20),
+      this.noSpacesValidator
+    ]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(4),
+      Validators.maxLength(50)
+    ]),
+    rememberMe: new FormControl(false)
   });
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-  private usuarioService: UsuarioService
+    private usuarioService: UsuarioService
   ) { }
 
+  private loadTheme(): void {
+    const savedTheme = localStorage.getItem('theme');
+    this.isDarkMode = savedTheme === 'dark';
+  }
+
+  private addBodyClass(): void {
+    document.body.classList.add('login-page');
+  }
+
+  private removeBodyClass(): void {
+    document.body.classList.remove('login-page');
+  }
+
+  private setupThemeListener(): void {
+    // Escuchar cambios en el localStorage desde otros tabs
+    this.themeListener = () => {
+      this.loadTheme();
+    };
+    window.addEventListener('storage', this.themeListener);
+
+    // Escuchar cambios en el mismo tab usando un intervalo (más simple y confiable)
+    setInterval(() => {
+      const currentTheme = localStorage.getItem('theme');
+      const shouldBeDark = currentTheme === 'dark';
+      if (this.isDarkMode !== shouldBeDark) {
+        this.loadTheme();
+      }
+    }, 100); // Verificar cada 100ms
+  }
+
+  // Validador personalizado para espacios
+  noSpacesValidator(control: AbstractControl): {[key: string]: any} | null {
+    const hasSpaces = /\s/.test(control.value);
+    return hasSpaces ? {'hasSpaces': {value: control.value}} : null;
+  }
+
+  // Obtener mensaje de error para un campo
+  getFieldError(fieldName: string): string {
+    const field = this.loginForm.get(fieldName);
+    if (field?.errors && field.touched) {
+      if (field.errors['required']) {
+        return `${fieldName === 'username' ? 'Usuario' : 'Contraseña'} es requerido`;
+      }
+      if (field.errors['minlength']) {
+        const requiredLength = field.errors['minlength'].requiredLength;
+        return `${fieldName === 'username' ? 'Usuario' : 'Contraseña'} debe tener al menos ${requiredLength} caracteres`;
+      }
+      if (field.errors['maxlength']) {
+        const requiredLength = field.errors['maxlength'].requiredLength;
+        return `${fieldName === 'username' ? 'Usuario' : 'Contraseña'} no puede tener más de ${requiredLength} caracteres`;
+      }
+      if (field.errors['hasSpaces']) {
+        return 'El usuario no puede contener espacios';
+      }
+    }
+    return '';
+  }
+
+  // Verificar si un campo tiene error
+  hasFieldError(fieldName: string): boolean {
+    const field = this.loginForm.get(fieldName);
+    return !!(field?.errors && field.touched);
+  }
+
+  // Alternar visibilidad de contraseña
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  // Verificar si el usuario está bloqueado
+  checkIfBlocked(): boolean {
+    if (this.isBlocked && this.blockTime > 0) {
+      const now = Date.now();
+      if (now < this.blockTime) {
+        return true;
+      } else {
+        this.isBlocked = false;
+        this.blockTime = 0;
+        this.loginAttempts = 0;
+      }
+    }
+    return false;
+  }
+
+  // Bloquear usuario temporalmente
+  blockUser(): void {
+    this.isBlocked = true;
+    this.blockTime = Date.now() + (5 * 60 * 1000); // 5 minutos
+    this.showError('Demasiados intentos fallidos. Intenta de nuevo en 5 minutos.');
+  }
+
+  // Mostrar error con Toastify
+  showError(message: string): void {
+    Toastify({
+      text: message,
+      duration: 4000,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "#ef4444",
+      stopOnFocus: true
+    }).showToast();
+  }
+
+  // Mostrar éxito con Toastify
+  showSuccess(message: string): void {
+    Toastify({
+      text: message,
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "#10b981",
+      stopOnFocus: true
+    }).showToast();
+  }
+
   login(): void {
-  const username = this.loginForm.get('username')?.value;
-  const password = this.loginForm.get('password')?.value;
+    // Verificar si el formulario es válido
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      this.showError('Por favor, completa todos los campos correctamente');
+      return;
+    }
 
-  this.usuarioService.getUsuarios().subscribe(usuarios => {
-    const usuarioEncontrado = usuarios.find(u =>
-      u.usuario === username && u.contra === password
-    );
+    // Verificar si el usuario está bloqueado
+    if (this.checkIfBlocked()) {
+      const remainingTime = Math.ceil((this.blockTime - Date.now()) / 1000 / 60);
+      this.showError(`Usuario bloqueado. Intenta de nuevo en ${remainingTime} minutos`);
+      return;
+    }
 
-    if (usuarioEncontrado) {
+    // Mostrar loading
+    this.loading = true;
+    this.mensajeLogin = '';
+    this.colorMensaje = '';
 
-      localStorage.setItem('usuario_id', usuarioEncontrado.id.toString());
-      localStorage.setItem('alumno_id', usuarioEncontrado.aludocenid.toString());
-       this.mensajeLogin = 'Bienvenido ' + usuarioEncontrado.usuario;
-  this.colorMensaje = 'green';
+    const username = this.loginForm.get('username')?.value?.trim();
+    const password = this.loginForm.get('password')?.value;
+    const rememberMe = this.loginForm.get('rememberMe')?.value;
 
-      if (usuarioEncontrado.tipousuarioid === 1) {
+    this.usuarioService.getUsuarios().subscribe({
+      next: (usuarios) => {
+        const usuarioEncontrado = usuarios.find(u =>
+          u.usuario === username && u.contra === password
+        );
+
+        if (usuarioEncontrado) {
+          // Login exitoso
+          this.loginAttempts = 0;
+          this.isBlocked = false;
+          this.blockTime = 0;
+
+          // Guardar datos en localStorage
+          localStorage.setItem('usuario_id', usuarioEncontrado.id.toString());
+          localStorage.setItem('alumno_id', usuarioEncontrado.aludocenid.toString());
+          localStorage.setItem('usuario_tipo', usuarioEncontrado.tipousuarioid.toString());
+          localStorage.setItem('usuario_nombre', usuarioEncontrado.usuario);
+
+          // Recordar usuario si está marcado
+          if (rememberMe) {
+            localStorage.setItem('remembered_username', username);
+          } else {
+            localStorage.removeItem('remembered_username');
+          }
+
+          this.mensajeLogin = `¡Bienvenido ${usuarioEncontrado.usuario}!`;
+          this.colorMensaje = 'green';
+          this.showSuccess(`¡Bienvenido ${usuarioEncontrado.usuario}!`);
+
+          // Navegar según el tipo de usuario
+          setTimeout(() => {
+            if (usuarioEncontrado.tipousuarioid === 1) {
+              this.router.navigate(['/home']);
+            } else {
+              this.router.navigate(['/estudiantes']);
+            }
+          }, 1000);
+
+        } else {
+          // Login fallido
+          this.loginAttempts++;
+          this.mensajeLogin = 'Credenciales incorrectas';
+          this.colorMensaje = 'red';
+          this.showError('Usuario o contraseña incorrectos');
+
+          // Bloquear después de 3 intentos
+          if (this.loginAttempts >= this.maxAttempts) {
+            this.blockUser();
+          }
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        this.loading = false;
+        this.mensajeLogin = 'Error al conectar con el servidor';
+        this.colorMensaje = 'red';
+        this.showError('Error de conexión. Intenta de nuevo');
+        console.error('Error en login:', error);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.removeBodyClass();
+    if (this.themeListener) {
+      window.removeEventListener('storage', this.themeListener);
+    }
+  }
+
+  ngOnInit(): void {
+    this.loadTheme();
+    this.addBodyClass();
+    this.setupThemeListener();
+
+    // Cargar usuario recordado si existe
+    const rememberedUsername = localStorage.getItem('remembered_username');
+    if (rememberedUsername) {
+      this.loginForm.patchValue({
+        username: rememberedUsername,
+        rememberMe: true
+      });
+    }
+
+    // Verificar si ya está logueado
+    const usuarioId = localStorage.getItem('usuario_id');
+    if (usuarioId) {
+      const usuarioTipo = localStorage.getItem('usuario_tipo');
+      if (usuarioTipo === '1') {
         this.router.navigate(['/home']);
       } else {
         this.router.navigate(['/estudiantes']);
       }
-    } else {
-       this.mensajeLogin = 'Credenciales incorrectas';
-  this.colorMensaje = 'red';
     }
-  });
-}
-
-
-  ngOnInit(): void {
   }
 }

@@ -1,0 +1,120 @@
+
+<div class="home-container page-container starry-background" [class.dark-theme]="isDarkMode">
+  <h1 id="titulo" class="welcome-title">
+    {{ tituloMessage }}
+  </h1>
+
+  <div class="main-content">
+    <!-- Robot Component -->
+    <app-robot
+      [message]="preguntaMessageenviar"
+      [showTimer]="timerisactive"
+      [timerMinutes]="timerMinutes"
+      [timerSeconds]="timerSeconds"
+      [showQuestion]="stateService.getUI().showQuestion"
+      [questionImage]="imagenpregunta"
+      [imageValid]="imagenValida"
+      (imageError)="onImageError()"
+      (speakComplete)="onSpeakComplete()">
+    </app-robot>
+
+    <div class="text-content">
+      <p id="mensaje" class="welcome-subtitle">
+        {{ welcomeMessage }}
+      </p>
+      <p id="pregunta" class="pregunta-subtitle">
+        {{ preguntaMessage }}
+      </p>
+
+      <!-- Start Button -->
+      <button *ngIf="stateService.getUI().showStartButton"
+              class="start-button"
+              (click)="startClicked()">
+        🎮 ¡EMPEZAR!
+      </button>
+
+      <!-- Course Selector -->
+      <app-course-selector
+        [showCourseButtons]="stateService.getUI().showCourseButtons"
+        [showEvaluations]="stateService.getUI().showEvaluations"
+        [evaluations]="evaluacionesDisponibles"
+        [selectedCourse]="cursoNombre"
+        (courseSelected)="onCourseSelected($event)"
+        (evaluationSelected)="onEvaluationSelected($event)"
+        (goBack)="onGoBack()">
+      </app-course-selector>
+
+      <!-- Question Component -->
+      <app-question
+        *ngIf="stateService.getUI().showQuestion && stateService.getCurrentQuestion()"
+        [question]="stateService.getCurrentQuestion()"
+        [questionNumber]="preguntaNumeros"
+        [showImage]="!!imagenpregunta"
+        [imageValid]="imagenValida"
+        (answerSelected)="onAnswerSelected($event)"
+        (imageError)="onImageError()">
+      </app-question>
+
+      <!-- Progress Component -->
+      <app-progress
+        *ngIf="stateService.getUI().showProgress"
+        [progressData]="{
+          mathematics: pormate,
+          communication: porcomu,
+          science: porcien
+        }"
+        [showBars]="true"
+        [showRadar]="false"
+        [showDetails]="false"
+        [resultsByCourse]="resultadosPorCurso"
+        (viewMoreDetails)="onViewMoreDetails($event)"
+        (goHome)="onGoHome()">
+      </app-progress>
+
+      <!-- ChatGPT Component -->
+      <app-chat-gpt
+        [messages]="messages"
+        [isListening]="isListening"
+        [showChat]="stateService.getUI().showChat"
+        (messageSent)="onMessageSent($event)"
+        (startListening)="onStartListening()"
+        (closeChat)="onCloseChat()">
+      </app-chat-gpt>
+
+      <!-- Action Buttons -->
+      <div *ngIf="stateService.getUI().showQuestion" class="action-buttons">
+        <button class="start-button course-button entendi"
+                (click)="runPreguntas('Matematicas', evaluacionidnumber)">
+          Entendi
+        </button>
+        <button class="start-button course-button noentendi"
+                (click)="preguntargpt()">
+          No Entendi
+        </button>
+      </div>
+
+      <div *ngIf="stateService.getUI().showProgress" class="progress-actions">
+        <img src="/assets/img/trofeo.png" alt="trofeo" class="trofeo-image" />
+        <button class="start-button course-button terminar"
+                (click)="showDetalleProgreso()">
+          Ver mi progreso
+        </button>
+        <button class="start-button course-button terminar"
+                (click)="toggleHome()">
+          Iniciar otra evaluacion
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de pausa -->
+<div *ngIf="modalInicioVisible" class="modal-inicio">
+  <div class="modal-contenido">
+    <h2>¡Pausa!</h2>
+    <h3>¿Estás listo para continuar con las siguientes preguntas?</h3>
+    <button (click)="continuarEvaluacionDesdeModal()">
+      ¡Continuar!
+    </button>
+  </div>
+</div>

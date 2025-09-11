@@ -1,0 +1,186 @@
+.chatgpt-container {
+  width: 100% !important;
+  max-width: 600px !important;
+  margin: 2rem auto !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border: 2px solid #ffd700 !important;
+  border-radius: 1.5rem !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(4px) !important;
+  color: #fff !important;
+  position: relative !important;
+}
+
+.chat-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.chat-header h3 {
+  margin: 0 !important;
+  color: #ffd700 !important;
+  font-size: 1.5rem !important;
+  text-shadow: 1px 1px 3px #000 !important;
+}
+
+.close-button {
+  background: none !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 1.5rem !important;
+  cursor: pointer !important;
+  padding: 0.5rem !important;
+  border-radius: 50% !important;
+  transition: background-color 0.3s ease !important;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+  }
+}
+
+.chat-box {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  margin-bottom: 1rem !important;
+  padding: 0.5rem !important;
+  border-radius: 0.5rem !important;
+  background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.message {
+  margin-bottom: 1rem !important;
+  padding: 0.8rem 1rem !important;
+  border-radius: 1rem !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  word-wrap: break-word !important;
+  line-height: 1.4 !important;
+}
+
+.message.user {
+  background-color: #4ade80 !important;
+  color: #000 !important;
+  margin-left: 2rem !important;
+}
+
+.message.assistant {
+  background-color: #3b82f6 !important;
+  margin-right: 2rem !important;
+}
+
+.chat-input {
+  display: flex !important;
+  gap: 0.5rem !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+
+  input {
+    flex: 1 !important;
+    padding: 0.8rem 1rem !important;
+    border-radius: 1rem !important;
+    border: none !important;
+    font-size: 1rem !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #333 !important;
+    min-width: 200px !important;
+
+    &:focus {
+      outline: none !important;
+      box-shadow: 0 0 5px #ffd700 !important;
+    }
+
+    &:disabled {
+      background-color: rgba(255, 255, 255, 0.5) !important;
+      cursor: not-allowed !important;
+    }
+  }
+
+  button {
+    padding: 0.8rem 1.2rem !important;
+    background-color: #22c55e !important;
+    border: none !important;
+    border-radius: 1rem !important;
+    color: white !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important;
+    white-space: nowrap !important;
+
+    &:hover:not(:disabled) {
+      background-color: #16a34a !important;
+    }
+
+    &:disabled {
+      background-color: #6b7280 !important;
+      cursor: not-allowed !important;
+    }
+  }
+
+  .voice-button {
+    background-color: #f59e0b !important;
+
+    &:hover:not(:disabled) {
+      background-color: #d97706 !important;
+    }
+  }
+}
+
+.listening-indicator {
+  color: #ffd700 !important;
+  font-weight: bold !important;
+  margin-top: 0.5rem !important;
+  text-align: center !important;
+  animation: blink 1s infinite !important;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .chatgpt-container {
+    margin: 1rem auto !important;
+    padding: 1rem !important;
+  }
+
+  .chat-input {
+    flex-direction: column !important;
+
+    input {
+      width: 100% !important;
+      min-width: unset !important;
+    }
+
+    button {
+      width: 100% !important;
+    }
+  }
+
+  .message.user {
+    margin-left: 0.5rem !important;
+  }
+
+  .message.assistant {
+    margin-right: 0.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-header h3 {
+    font-size: 1.2rem !important;
+  }
+
+  .chat-box {
+    max-height: 200px !important;
+  }
+
+  .message {
+    padding: 0.6rem 0.8rem !important;
+    font-size: 0.9rem !important;
+  }
+}

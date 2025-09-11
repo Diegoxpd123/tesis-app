@@ -28,4 +28,19 @@ export class ChatGptService {
 
     return this.http.post(this.apiUrl, body, { headers });
   }
+
+  sendMessage(messages: any[]): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.apiKey}`
+    });
+
+    const body = {
+      model: 'gpt-3.5-turbo',
+      messages: messages,
+      temperature: 0.7
+    };
+
+    return this.http.post(this.apiUrl, body, { headers });
+  }
 }
