@@ -238,6 +238,43 @@
         }
       }
 
+      // Botón "Olvidé mi contraseña"
+      .forgot-password-link {
+        margin-top: 1rem;
+        text-align: center;
+
+        .forgot-password-btn {
+          background: transparent !important;
+          color: #667eea !important;
+          border: 2px solid #667eea !important;
+          padding: 0.75rem 1.5rem !important;
+          border-radius: 12px !important;
+          font-size: 0.9rem !important;
+          font-weight: 600 !important;
+          cursor: pointer !important;
+          transition: all 0.3s ease !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+          width: auto !important;
+
+          &:hover {
+            background: #667eea !important;
+            color: white !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+          }
+
+          &:active {
+            transform: translateY(0) !important;
+          }
+
+          i {
+            font-size: 0.9rem !important;
+          }
+        }
+      }
+
       .status-message {
         padding: 1rem !important;
         border-radius: 12px !important;

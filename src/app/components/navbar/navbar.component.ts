@@ -23,12 +23,16 @@ interface Usuario {
 export class NavbarComponent implements OnInit, OnDestroy {
   showProgressButton: boolean = false;
   showHomeButton: boolean = false; // Agregar control para botón inicio
+  showCargaButton: boolean = false; // Control para botón de carga
+  showSesionesButton: boolean = false; // Control para botón de sesiones
+  showRegisterButton: boolean = false; // Control para botón de registrar usuario
   userType: string = '';
   currentUser: Usuario | null = null;
   isMobileMenuOpen: boolean = false;
   currentRoute: string = '';
   isDarkMode: boolean = false;
   showLogoutModal: boolean = false; // Modal de confirmación de cerrar sesión
+  isInExam: boolean = false; // Variable para detectar si está en examen
 
   constructor(
     private comunicacionService: ComunicacionService,
@@ -40,6 +44,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.checkUserType();
     this.trackCurrentRoute();
     this.loadTheme();
+    this.checkExamStatus();
   }
 
   ngOnDestroy(): void {
@@ -53,11 +58,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
         next: (usuario) => {
           this.currentUser = usuario;
           this.userType = usuario.usuario;
-          // Solo mostrar botones para estudiantes (tipousuarioid === 1)
+          // Solo mostrar botones para estudiantes (tipousuarioid === 1) y si no está en examen
           const isStudent = usuario.tipousuarioid === 1;
-          this.showProgressButton = isStudent;
-          this.showHomeButton = isStudent;
-          console.log('Usuario tipo:', usuario.tipousuarioid, 'Es estudiante:', isStudent, 'Mostrar botón inicio:', this.showHomeButton);
+          const isAdmin = usuario.tipousuarioid === 3; // Administrador
+          this.showProgressButton = isStudent && !this.isInExam;
+          this.showHomeButton = isStudent && !this.isInExam;
+          this.showCargaButton = isAdmin && !this.isInExam;
+          this.showSesionesButton = isAdmin && !this.isInExam;
+          this.showRegisterButton = isAdmin && !this.isInExam;
+          console.log('Usuario tipo:', usuario.tipousuarioid, 'Es estudiante:', isStudent, 'Es admin:', isAdmin, 'En examen:', this.isInExam, 'Mostrar botones:', this.showProgressButton);
         },
         error: (error) => {
           console.error('Error al obtener tipo de usuario:', error);
@@ -66,6 +75,37 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.currentUser = null;
         }
       });
+    }
+  }
+
+  private checkExamStatus(): void {
+    // Verificar si está en examen basado en variables del localStorage o estado de la aplicación
+    const isExamActive = localStorage.getItem('isExamActive') === 'true';
+    const isexamen = localStorage.getItem('isexamen') === '1';
+
+    this.isInExam = isExamActive || isexamen;
+
+    // Actualizar visibilidad de botones
+    this.updateButtonVisibility();
+
+    // Escuchar cambios en el estado del examen
+    setInterval(() => {
+      const currentExamStatus = localStorage.getItem('isExamActive') === 'true' || localStorage.getItem('isexamen') === '1';
+      if (this.isInExam !== currentExamStatus) {
+        this.isInExam = currentExamStatus;
+        this.updateButtonVisibility();
+      }
+    }, 1000); // Verificar cada segundo
+  }
+
+  private updateButtonVisibility(): void {
+    if (this.currentUser) {
+      const isStudent = this.currentUser.tipousuarioid === 1;
+      const isAdmin = this.currentUser.tipousuarioid === 3;
+      this.showProgressButton = isStudent && !this.isInExam;
+      this.showHomeButton = isStudent && !this.isInExam;
+      this.showCargaButton = isAdmin && !this.isInExam;
+      this.showSesionesButton = isAdmin && !this.isInExam;
     }
   }
 
@@ -188,6 +228,36 @@ export class NavbarComponent implements OnInit, OnDestroy {
       window.location.hash = 'progress';
     }).catch(error => {
       console.error('Error en navegación a home:', error);
+    });
+    this.closeMobileMenu();
+  }
+
+  navigateToCarga(): void {
+    console.log('Navegando a carga de contenido...');
+    this.router.navigate(['/carga']).then(success => {
+      console.log('Navegación exitosa a carga:', success);
+    }).catch(error => {
+      console.error('Error en navegación a carga:', error);
+    });
+    this.closeMobileMenu();
+  }
+
+  navigateToSesiones(): void {
+    console.log('Navegando a sesiones y tiempos...');
+    this.router.navigate(['/estudiantes']).then(success => {
+      console.log('Navegación exitosa a estudiantes:', success);
+    }).catch(error => {
+      console.error('Error en navegación a estudiantes:', error);
+    });
+    this.closeMobileMenu();
+  }
+
+  navigateToRegister(): void {
+    console.log('Navegando a registrar usuario...');
+    this.router.navigate(['/admin/registrar-usuario']).then(success => {
+      console.log('Navegación exitosa a registrar usuario:', success);
+    }).catch(error => {
+      console.error('Error en navegación a registrar usuario:', error);
     });
     this.closeMobileMenu();
   }

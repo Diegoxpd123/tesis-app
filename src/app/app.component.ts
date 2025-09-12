@@ -18,7 +18,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        this.isLoginPage = event.url === '/login' || event.url === '/';
+        this.isLoginPage = event.url === '/login' || event.url === '/' || event.url === '/forgot-password';
       });
 
     // Verificar la ruta inicial
@@ -30,6 +30,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private checkCurrentRoute(): void {
-    this.isLoginPage = this.router.url === '/login' || this.router.url === '/';
+    this.isLoginPage = this.router.url === '/login' || this.router.url === '/' || this.router.url === '/forgot-password';
   }
 }

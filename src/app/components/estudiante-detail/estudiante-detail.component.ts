@@ -19,14 +19,13 @@ Chart.register(...registerables, ChartDataLabels);
 })
 export class EstudianteDetailComponent implements OnInit, OnDestroy {
   resultados: { [cursoid: number]: any[] } = {};
+  reporteDetallado: { [cursoid: number]: any[] } = {};
   usuarioid: number = 5;
   hasData: { [cursoid: number]: boolean } = {};
-  showModal: boolean = false;
-  modalTitle: string = '';
-  modalMessage: string = '';
-  modalCourseId: number = 0;
+  hasDetailedData: { [cursoid: number]: boolean } = {};
   loading: boolean = false;
   isDarkMode: boolean = false;
+  tipoReporte: 'examen' | 'practica' = 'examen';
   private themeListener?: () => void;
 
   fechainicio: string = '';
@@ -45,6 +44,13 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
   totalQuestions: number = 0;
   loadingMessage: string = '';
 
+  // Porcentajes para el gráfico radar
+  porcentajesRadar: { [cursoid: number]: number } = {
+    1: 0, // Matemáticas
+    2: 0, // Comunicación
+    3: 0  // Ciencias y Tecnología
+  };
+
   constructor(
     private usuarioService: UsuarioService,
     private alumnoService: AlumnoService,
@@ -62,8 +68,21 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
   // Cargar información del usuario
   this.loadUserInfo();
 
-  // No cargar datos automáticamente, solo cuando el usuario haga clic
+  // No cargar datos automáticamente, esperar a que el usuario haga clic en "Buscar"
+  // this.loadAllCourseData();
 }
+
+  // Método para cargar datos de todos los cursos automáticamente
+  loadAllCourseData(): void {
+    const cursos = [1, 2, 3]; // Matemáticas, Comunicación, Ciencias y Tecnología
+
+    cursos.forEach(cursoId => {
+      this.mostrarResultados(cursoId);
+    });
+
+    // También cargar reporte detallado
+    this.cargarReporteDetallado();
+  }
 
   ngAfterViewInit(): void {
     // Esperar un poco para asegurar que el DOM esté completamente renderizado
@@ -136,70 +155,103 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
       existingChart.destroy();
     }
 
+    const dataValues = [
+      this.porcentajesRadar[1] || 0, // Matemáticas
+      this.porcentajesRadar[2] || 0, // Comunicación
+      this.porcentajesRadar[3] || 0  // Ciencias y Tecnología
+    ];
+
+    console.log('=== CREANDO GRÁFICO RADAR ===');
+    console.log('Datos para el gráfico:', dataValues);
+    console.log('Matemáticas:', dataValues[0]);
+    console.log('Comunicación:', dataValues[1]);
+    console.log('Ciencias y Tecnología:', dataValues[2]);
+
     new Chart(ctx, {
       type: 'radar',
       data: {
         labels: ['Matemáticas', 'Comunicación', 'Ciencias y Tecnología'],
         datasets: [{
-          label: 'Progreso',
-          data: [8, 10, 8],
-          backgroundColor: 'rgba(25, 118, 210, 0.2)',
-          borderColor: '#1976d2',
-          pointBackgroundColor: '#1976d2',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: '#1976d2',
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6
+          label: 'Progreso (%)',
+          data: dataValues,
+          backgroundColor: 'rgba(255, 215, 0, 0.4)',
+          borderColor: '#ffd700',
+          borderWidth: 3,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#ffd700',
+          pointHoverRadius: 8,
+          pointRadius: 6,
         }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
+        aspectRatio: 1,
+        layout: {
+          padding: {
+            top: 60,
+            right: 60,
+            bottom: 60,
+            left: 60
+          }
+        },
         animation: {
           duration: 1000,
           easing: 'easeInOutQuart'
         },
         plugins: {
           legend: {
-            display: false
+            labels: {
+              color: 'white',
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            }
           },
           datalabels: {
             color: 'white',
             font: {
               weight: 'bold',
-              size: 12
+              size: 14,
             },
-            formatter: (value: number) => `${value}`,
+            formatter: function (value: number) {
+              return value + '%';
+            },
             anchor: 'center',
-            align: 'center'
+            align: 'center',
+            offset: 0
           }
         },
         scales: {
           r: {
-            beginAtZero: true,
-            suggestedMax: 15,
-            min: 0,
-            max: 15,
-            grid: {
-              color: 'rgba(255, 255, 255, 0.3)',
-              lineWidth: 1
-            },
+            suggestedMin: 0,
+            suggestedMax: 100,
             pointLabels: {
-              color: 'white',
               font: {
-                size: 12,
-                family: 'Arial, sans-serif',
-                weight: 'bold'
+                size: 16,
+                weight: 'bold',
+                family: "'Comic Sans MS', cursive"
+              },
+              color: 'white',
+              padding: 20,
+              callback: function(label: string) {
+                return label;
               }
+            },
+            ticks: {
+              backdropColor: 'transparent',
+              color: 'white',
+              stepSize: 20,
+              display: false
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.2)',
+              lineWidth: 1
             },
             angleLines: {
               color: 'rgba(255, 255, 255, 0.3)',
               lineWidth: 1
-            },
-            ticks: {
-              display: false
             }
           }
         },
@@ -213,22 +265,71 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  mostrarResultados(cursoid: number) {
-    if (!this.fechainicio || !this.fechafin) {
-      alert('Selecciona fechas válidas');
-      return;
+  private calcularPorcentajesRadar(): void {
+    console.log('=== CALCULANDO PORCENTAJES DEL RADAR ===');
+    console.log('Datos de reporte detallado:', this.reporteDetallado);
+    console.log('Datos de resultados:', this.resultados);
+
+    // Inicializar porcentajes
+    this.porcentajesRadar = { 1: 0, 2: 0, 3: 0 };
+
+    // Calcular porcentaje para cada curso
+    for (let cursoid = 1; cursoid <= 3; cursoid++) {
+      let porcentaje = 0;
+      let fuenteDatos = 'ninguna';
+
+      // Intentar con reporte detallado primero
+      if (this.reporteDetallado[cursoid] && this.reporteDetallado[cursoid].length > 0) {
+        const datos = this.reporteDetallado[cursoid];
+        const totalPreguntas = datos.length;
+        const respuestasCorrectas = datos.filter(r => r.estado_respuesta === 'Correcta').length;
+
+        console.log(`Curso ${cursoid} (detallado): ${respuestasCorrectas}/${totalPreguntas} correctas`);
+
+        if (totalPreguntas > 0) {
+          porcentaje = Math.round((respuestasCorrectas / totalPreguntas) * 100);
+          fuenteDatos = 'detallado';
+        }
+      }
+      // Si no hay datos detallados, usar resultados
+      else if (this.resultados[cursoid] && this.resultados[cursoid].length > 0) {
+        const datos = this.resultados[cursoid];
+        let totalBuenas = 0;
+        let totalPreguntas = 0;
+
+        datos.forEach((r) => {
+          totalPreguntas++;
+          if (r.respuesta === 'correcta') {
+            totalBuenas++;
+          }
+        });
+
+        console.log(`Curso ${cursoid} (resultados): ${totalBuenas}/${totalPreguntas} correctas`);
+
+        if (totalPreguntas > 0) {
+          porcentaje = Math.round((totalBuenas / totalPreguntas) * 100);
+          fuenteDatos = 'resultados';
+        }
+      } else {
+        console.log(`Curso ${cursoid}: Sin datos en ninguna fuente`);
+      }
+
+      this.porcentajesRadar[cursoid] = porcentaje;
+      console.log(`Curso ${cursoid}: ${porcentaje}% (fuente: ${fuenteDatos})`);
     }
 
-    // Mostrar loading
-    this.loading = true;
-    this.isLoadingData = true;
-    this.loadedQuestions = 0;
-    this.totalQuestions = 0;
-    this.loadingMessage = `Cargando datos de ${this.getCursoNombre(cursoid)}...`;
-    this.showModal = true;
-    this.modalTitle = 'Buscando datos...';
-    this.modalMessage = '';
-    this.modalCourseId = cursoid;
+    console.log('=== PORCENTAJES FINALES ===');
+    console.log('Matemáticas (1):', this.porcentajesRadar[1] + '%');
+    console.log('Comunicación (2):', this.porcentajesRadar[2] + '%');
+    console.log('Ciencias y Tecnología (3):', this.porcentajesRadar[3] + '%');
+    console.log('=====================================');
+  }
+
+  mostrarResultados(cursoid: number) {
+    if (!this.fechainicio || !this.fechafin) {
+      console.warn('Fechas no seleccionadas');
+      return;
+    }
 
     this.usuarioService.getResultadosCurso({
       cursoid: cursoid,
@@ -239,32 +340,12 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.resultados[cursoid] = data;
         this.checkHasData(cursoid);
-        this.loading = false;
-        this.isLoadingData = false;
-
-        // Actualizar contadores
-        if (data && data.length > 0) {
-          this.loadedQuestions = data.length;
-          this.totalQuestions = data.length;
-          this.loadingMessage = `Datos cargados: ${data.length} preguntas encontradas`;
-        } else {
-          this.loadingMessage = 'No se encontraron datos';
-        }
-
-        // Si hay datos, mostrar el reporte en el modal
-        if (this.hasData[cursoid]) {
-          this.showReportModal(cursoid);
-        } else {
-          // Si no hay datos, mostrar el modal de "no hay datos"
-          this.showNoDataModal(cursoid);
-        }
+        console.log(`Datos cargados para curso ${cursoid}:`, data);
       },
       error: (error) => {
-        this.loading = false;
-        this.isLoadingData = false;
-        this.loadingMessage = 'Error al cargar los datos';
-        this.showNoDataModal(cursoid);
         console.error('Error al obtener datos:', error);
+        this.resultados[cursoid] = [];
+        this.hasData[cursoid] = false;
       }
     });
   }
@@ -279,37 +360,106 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
     [1, 2, 3].forEach(cursoid => this.mostrarResultados(cursoid));
   }
 
-  private showReportModal(cursoid: number): void {
-    const courseNames = {
-      1: 'Matemáticas',
-      2: 'Comunicación',
-      3: 'Ciencias y Tecnología'
-    };
+  cargarReporteDetallado(): void {
+    console.log('Cargando reporte detallado...');
+    // Cargar reporte detallado para todos los cursos
+    [1, 2, 3].forEach(cursoid => this.mostrarReporteDetallado(cursoid));
 
-    this.modalTitle = `Reporte de ${courseNames[cursoid as keyof typeof courseNames]}`;
-    this.modalMessage = '';
-    this.modalCourseId = cursoid;
-    this.showModal = true;
+    // Calcular porcentajes y actualizar gráfico después de cargar todos los datos
+    setTimeout(() => {
+      console.log('Actualizando gráfico desde cargarReporteDetallado...');
+      this.calcularPorcentajesRadar();
+      this.refreshRadarChart();
+    }, 1000);
   }
 
-  private showNoDataModal(cursoid: number): void {
-    const courseNames = {
-      1: 'Matemáticas',
-      2: 'Comunicación',
-      3: 'Ciencias y Tecnología'
-    };
+  mostrarReporteDetallado(cursoid: number) {
+    if (!this.fechainicio || !this.fechafin) {
+      console.warn('Fechas no seleccionadas');
+      return;
+    }
 
-    this.modalTitle = `No hay datos de ${courseNames[cursoid as keyof typeof courseNames]}`;
-    this.modalMessage = `El estudiante no ha completado evaluaciones de ${courseNames[cursoid as keyof typeof courseNames]} en las fechas seleccionadas.`;
-    this.modalCourseId = cursoid;
-    this.showModal = true;
+    this.usuarioService.getReporteDetallado({
+      cursoid: cursoid,
+      usuarioid: this.usuarioid,
+      fechainicio: this.fechainicio,
+      fechafin: this.fechafin,
+      tipo: this.tipoReporte
+    }).subscribe({
+      next: (data) => {
+        this.reporteDetallado[cursoid] = data;
+        this.hasDetailedData[cursoid] = data && data.length > 0;
+        console.log(`Reporte detallado cargado para curso ${cursoid}:`, data);
+      },
+      error: (error) => {
+        console.error('Error al obtener reporte detallado:', error);
+        this.reporteDetallado[cursoid] = [];
+        this.hasDetailedData[cursoid] = false;
+      }
+    });
   }
 
-  closeModal(): void {
-    this.showModal = false;
-    this.modalTitle = '';
-    this.modalMessage = '';
-    this.modalCourseId = 0;
+  onTipoReporteChange(): void {
+    this.cargarReporteDetallado();
+  }
+
+  onFechasChange(): void {
+    // Recargar tanto el reporte resumido como el detallado cuando cambien las fechas
+    this.cargarDatos();
+    this.cargarReporteDetallado();
+  }
+
+  buscarReportes(): void {
+    if (!this.fechainicio || !this.fechafin) {
+      alert('Por favor selecciona ambas fechas');
+      return;
+    }
+
+    console.log('Iniciando búsqueda de reportes...');
+
+    // Activar loading
+    this.isLoadingData = true;
+    this.loadingMessage = 'Buscando reportes...';
+    this.loadedQuestions = 0;
+    this.totalQuestions = 0;
+
+    // Limpiar datos anteriores
+    this.resultados = {};
+    this.reporteDetallado = {};
+    this.hasData = {};
+    this.hasDetailedData = {};
+    this.porcentajesRadar = { 1: 0, 2: 0, 3: 0 };
+
+    // Cargar datos con loading
+    this.cargarDatos();
+    this.cargarReporteDetallado();
+
+    // Actualizar gráfico múltiples veces para asegurar que se actualice
+    setTimeout(() => {
+      console.log('Primera actualización del gráfico...');
+      this.calcularPorcentajesRadar();
+      this.refreshRadarChart();
+    }, 1000);
+
+    setTimeout(() => {
+      console.log('Segunda actualización del gráfico...');
+      this.calcularPorcentajesRadar();
+      this.refreshRadarChart();
+    }, 2000);
+
+    setTimeout(() => {
+      console.log('Tercera actualización del gráfico...');
+      this.calcularPorcentajesRadar();
+      this.refreshRadarChart();
+    }, 3000);
+
+    // Finalizar loading
+    setTimeout(() => {
+      this.isLoadingData = false;
+      console.log('Datos cargados completamente, actualización final del gráfico...');
+      this.calcularPorcentajesRadar();
+      this.refreshRadarChart();
+    }, 4000);
   }
 
   goBack(): void {
@@ -355,9 +505,30 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
   }
 
   public refreshRadarChart(): void {
+    console.log('=== REFRESCANDO GRÁFICO RADAR ===');
+    console.log('Porcentajes actuales:', this.porcentajesRadar);
+
+    // Destruir gráfico existente si existe
+    const canvas = document.getElementById('radarChart') as HTMLCanvasElement;
+    if (canvas) {
+      const existingChart = Chart.getChart(canvas);
+      if (existingChart) {
+        console.log('Destruyendo gráfico anterior...');
+        existingChart.destroy();
+      }
+    } else {
+      console.error('Canvas no encontrado!');
+      return;
+    }
+
+    // Crear nuevo gráfico con los datos actualizados
     setTimeout(() => {
+      console.log('Creando nuevo gráfico con datos:', this.porcentajesRadar);
+      console.log('Matemáticas:', this.porcentajesRadar[1]);
+      console.log('Comunicación:', this.porcentajesRadar[2]);
+      console.log('Ciencias y Tecnología:', this.porcentajesRadar[3]);
       this.createRadarChart();
-    }, 50);
+    }, 200);
   }
 
   private getCursoNombre(cursoid: number): string {
@@ -393,17 +564,38 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
 
 
   exportarExcel(cursoid: number) {
-    const data = this.resultados[cursoid];
-    if (!data || data.length === 0) {
-      alert('No hay datos para exportar.');
+    const cursoNombre = this.getCursoNombre(cursoid);
+    const datosDetallados = this.reporteDetallado[cursoid] || [];
+
+    if (datosDetallados.length === 0) {
+      alert('No hay datos para exportar');
       return;
     }
 
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    const workbook: XLSX.WorkBook = {
-      Sheets: { [`Curso_${cursoid}`]: worksheet },
-      SheetNames: [`Curso_${cursoid}`]
-    };
-    XLSX.writeFile(workbook, `resultados_curso_${cursoid}.xlsx`);
+    // Crear datos para Excel
+    const datosExcel = datosDetallados.map(item => ({
+      'Usuario ID': item.usuario_id,
+      'Nombre Usuario': item.nombre_usuario,
+      'Alumno ID': item.alumno_id,
+      'Nombre Alumno': item.nombre_alumno,
+      'Grado': item.grado,
+      'Evaluación': item.evaluacion,
+      'Pregunta': item.pregunta,
+      'Respuesta Correcta': item.respuesta_correcta,
+      'Estado': item.estado_respuesta,
+      'Tiempo Respuesta (s)': item.tiempo_respuesta,
+      'Tiempo Reforzamiento (s)': item.tiemporeforzamiento,
+      'Fecha Respuesta': item.fecha_respuesta
+    }));
+
+    // Crear libro de Excel
+    const ws = XLSX.utils.json_to_sheet(datosExcel);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `${cursoNombre} - ${this.tipoReporte === 'examen' ? 'Exámenes' : 'Prácticas'}`);
+
+    // Descargar archivo
+    const fecha = new Date().toISOString().split('T')[0];
+    const tipoReporte = this.tipoReporte === 'examen' ? 'Examenes' : 'Practicas';
+    XLSX.writeFile(wb, `reporte_${cursoNombre.toLowerCase().replace(/\s+/g, '_')}_${tipoReporte}_${fecha}.xlsx`);
   }
 }

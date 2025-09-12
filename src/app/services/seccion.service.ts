@@ -15,22 +15,22 @@ export class SeccionService {
   ) { }
 
   getSeccions(): Observable<Seccion[]> {
-    return this.http.get<Seccion[]>(`${this.API_URL}/seccions`);
+    return this.http.get<Seccion[]>(`${this.API_URL}/secciones`);
   }
 
   getSeccion(id: number): Observable<Seccion> {
-    return this.http.get<Seccion>(`${this.API_URL}/seccions/${id}`);
+    return this.http.get<Seccion>(`${this.API_URL}/secciones/${id}`);
   }
 
   createSeccion(data: Seccion): Observable<Seccion> {
-    return this.http.post<Seccion>(`${this.API_URL}/seccions`, data);
+    return this.http.post<Seccion>(`${this.API_URL}/secciones`, data);
   }
 
   updateSeccion(id: number, data: Seccion): Observable<Seccion> {
-    return this.http.put<Seccion>(`${this.API_URL}/seccions/${id}`, data);
+    return this.http.put<Seccion>(`${this.API_URL}/secciones/${id}`, data);
   }
 
   deleteSeccion(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL}/seccions/${id}`);
+    return this.http.delete<any>(`${this.API_URL}/secciones/${id}`);
   }
 }

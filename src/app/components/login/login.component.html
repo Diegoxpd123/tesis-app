@@ -84,6 +84,14 @@
         </span>
       </button>
 
+      <!-- Olvidé mi contraseña -->
+      <div class="forgot-password-link">
+        <button type="button" class="forgot-password-btn" (click)="goToForgotPassword()">
+          <i class="fas fa-key"></i>
+          ¿Olvidaste tu contraseña?
+        </button>
+      </div>
+
       <!-- Mensaje de Estado -->
       <div *ngIf="mensajeLogin" class="status-message" [class.error]="colorMensaje === 'red'">
         <i class="fas" [class.fa-check-circle]="colorMensaje === 'green'" [class.fa-exclamation-circle]="colorMensaje === 'red'"></i>
@@ -104,3 +112,10 @@
     <img src="assets/img/plantilla.png" alt="Decoración divertida para niños" />
   </div>
 </div>
+
+<!-- Modal de Términos y Políticas (Primer Login) -->
+<app-terms-privacy-modal
+  *ngIf="showTermsModal"
+  (accepted)="onTermsAccepted()"
+  (rejected)="onTermsRejected()">
+</app-terms-privacy-modal>

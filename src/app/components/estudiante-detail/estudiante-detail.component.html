@@ -25,11 +25,44 @@
       </div>
     </div>
     <div class="radar-container">
-      <canvas id="radarChart" width="150" height="150"></canvas>
+      <canvas id="radarChart" width="400" height="400"></canvas>
     </div>
   </div>
 
   <br>
+
+  <!-- Selector de fechas -->
+  <div class="date-selector-container">
+    <div class="date-selector">
+      <label for="fechainicio">Fecha Inicio:</label>
+      <input
+        type="date"
+        id="fechainicio"
+        [(ngModel)]="fechainicio"
+        class="date-input"
+      />
+    </div>
+    <div class="date-selector">
+      <label for="fechafin">Fecha Fin:</label>
+      <input
+        type="date"
+        id="fechafin"
+        [(ngModel)]="fechafin"
+        class="date-input"
+      />
+    </div>
+    <div class="search-button-container">
+      <button
+        class="search-button"
+        (click)="buscarReportes()"
+        [disabled]="isLoadingData"
+        [class.dark-theme]="isDarkMode"
+      >
+        <span *ngIf="!isLoadingData">🔍 Buscar</span>
+        <span *ngIf="isLoadingData">⏳ Buscando...</span>
+      </button>
+    </div>
+  </div>
 
   <!-- Loading de datos -->
   <div class="loading-data-container" *ngIf="isLoadingData">
@@ -49,39 +82,7 @@
     </div>
   </div>
 
-  <!-- Estadísticas del estudiante -->
-  <div class="student-stats">
-    <div class="stats-card">
-      <div class="stats-content">
-        <span class="stats-label">Cursos dominados:</span>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width: 100%"></div>
-        </div>
-        <span class="stats-value">3/3</span>
-      </div>
-    </div>
-  </div>
 
-  <br>
-
-  <!-- Filtros de fechas -->
-  <div class="filters-container">
-    <div class="filters-header">
-      <h3>Filtros de Fecha</h3>
-    </div>
-    <div class="filters-content">
-      <div class="filter-group">
-        <label>Fecha Inicio:</label>
-        <input type="date" [(ngModel)]="fechainicio" class="filter-input" />
-      </div>
-      <div class="filter-group">
-        <label>Fecha Fin:</label>
-        <input type="date" [(ngModel)]="fechafin" class="filter-input" />
-      </div>
-    </div>
-  </div>
-
-  <br>
 
   <!-- Cursos -->
   <div class="courses-container">
@@ -98,7 +99,61 @@
           <div class="progress-fill" style="width: 80%"></div>
         </div>
       </div>
-      <button class="course-btn" (click)="mostrarResultados(1)">Ver Detalles</button>
+
+        <!-- Reporte de Matemáticas -->
+        <div class="course-report" *ngIf="hasDetailedData[1]">
+          <div class="report-header">
+            <h4>Reporte de Matemáticas - {{ tipoReporte === 'examen' ? 'Exámenes' : 'Prácticas' }}</h4>
+            <div class="report-controls">
+              <select [(ngModel)]="tipoReporte" (change)="onTipoReporteChange()" class="report-type-select">
+                <option value="examen">Exámenes</option>
+                <option value="practica">Prácticas</option>
+              </select>
+              <button class="btn-excel" (click)="exportarExcel(1)">📥 Descargar Excel</button>
+            </div>
+          </div>
+
+          <!-- Reporte detallado -->
+          <div class="detailed-report">
+            <div class="table-container">
+              <table class="detailed-table">
+                <thead>
+                  <tr>
+                    <th>Evaluación</th>
+                    <th>Pregunta</th>
+                    <th>Respuesta Correcta</th>
+                    <th>Estado</th>
+                    <th>Tiempo Respuesta</th>
+                    <th>Tiempo Reforzamiento</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let r of reporteDetallado[1]">
+                    <td>{{ r.evaluacion }}</td>
+                    <td class="question-cell">{{ r.pregunta }}</td>
+                    <td>{{ r.respuesta_correcta }}</td>
+                    <td>
+                      <span class="status-badge" [class.correct]="r.estado_respuesta === 'Correcta'"
+                            [class.incorrect]="r.estado_respuesta === 'Incorrecta'">
+                        {{ r.estado_respuesta }}
+                      </span>
+                    </td>
+                    <td>{{ r.tiempo_respuesta }}s</td>
+                    <td>{{ r.tiemporeforzamiento }}s</td>
+                    <td>{{ r.fecha_respuesta | date:'short' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje de no datos para Matemáticas -->
+        <div class="no-data-report" *ngIf="!hasDetailedData[1] && !loading">
+          <div class="no-data-icon">📊</div>
+          <p>No hay datos disponibles para Matemáticas en el rango de fechas seleccionado</p>
+        </div>
     </div>
 
     <!-- 📗 Comunicación -->
@@ -112,7 +167,61 @@
           <div class="progress-fill" style="width: 100%"></div>
         </div>
       </div>
-      <button class="course-btn" (click)="mostrarResultados(2)">Ver Detalles</button>
+
+        <!-- Reporte de Comunicación -->
+        <div class="course-report" *ngIf="hasDetailedData[2]">
+          <div class="report-header">
+            <h4>Reporte de Comunicación - {{ tipoReporte === 'examen' ? 'Exámenes' : 'Prácticas' }}</h4>
+            <div class="report-controls">
+              <select [(ngModel)]="tipoReporte" (change)="onTipoReporteChange()" class="report-type-select">
+                <option value="examen">Exámenes</option>
+                <option value="practica">Prácticas</option>
+              </select>
+              <button class="btn-excel" (click)="exportarExcel(2)">📥 Descargar Excel</button>
+            </div>
+          </div>
+
+          <!-- Reporte detallado -->
+          <div class="detailed-report">
+            <div class="table-container">
+              <table class="detailed-table">
+                <thead>
+                  <tr>
+                    <th>Evaluación</th>
+                    <th>Pregunta</th>
+                    <th>Respuesta Correcta</th>
+                    <th>Estado</th>
+                    <th>Tiempo Respuesta</th>
+                    <th>Tiempo Reforzamiento</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let r of reporteDetallado[2]">
+                    <td>{{ r.evaluacion }}</td>
+                    <td class="question-cell">{{ r.pregunta }}</td>
+                    <td>{{ r.respuesta_correcta }}</td>
+                    <td>
+                      <span class="status-badge" [class.correct]="r.estado_respuesta === 'Correcta'"
+                            [class.incorrect]="r.estado_respuesta === 'Incorrecta'">
+                        {{ r.estado_respuesta }}
+                      </span>
+                    </td>
+                    <td>{{ r.tiempo_respuesta }}s</td>
+                    <td>{{ r.tiemporeforzamiento }}s</td>
+                    <td>{{ r.fecha_respuesta | date:'short' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje de no datos para Comunicación -->
+        <div class="no-data-report" *ngIf="!hasDetailedData[2] && !loading">
+          <div class="no-data-icon">📊</div>
+          <p>No hay datos disponibles para Comunicación en el rango de fechas seleccionado</p>
+        </div>
     </div>
 
     <!-- 📙 Ciencias y Tecnología -->
@@ -126,59 +235,62 @@
           <div class="progress-fill" style="width: 53%"></div>
         </div>
       </div>
-      <button class="course-btn" (click)="mostrarResultados(3)">Ver Detalles</button>
+
+        <!-- Reporte de Ciencias y Tecnología -->
+        <div class="course-report" *ngIf="hasDetailedData[3]">
+          <div class="report-header">
+            <h4>Reporte de Ciencias y Tecnología - {{ tipoReporte === 'examen' ? 'Exámenes' : 'Prácticas' }}</h4>
+            <div class="report-controls">
+              <select [(ngModel)]="tipoReporte" (change)="onTipoReporteChange()" class="report-type-select">
+                <option value="examen">Exámenes</option>
+                <option value="practica">Prácticas</option>
+              </select>
+              <button class="btn-excel" (click)="exportarExcel(3)">📥 Descargar Excel</button>
+            </div>
+          </div>
+
+          <!-- Reporte detallado -->
+          <div class="detailed-report">
+            <div class="table-container">
+              <table class="detailed-table">
+                <thead>
+                  <tr>
+                    <th>Evaluación</th>
+                    <th>Pregunta</th>
+                    <th>Respuesta Correcta</th>
+                    <th>Estado</th>
+                    <th>Tiempo Respuesta</th>
+                    <th>Tiempo Reforzamiento</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let r of reporteDetallado[3]">
+                    <td>{{ r.evaluacion }}</td>
+                    <td class="question-cell">{{ r.pregunta }}</td>
+                    <td>{{ r.respuesta_correcta }}</td>
+                    <td>
+                      <span class="status-badge" [class.correct]="r.estado_respuesta === 'Correcta'"
+                            [class.incorrect]="r.estado_respuesta === 'Incorrecta'">
+                        {{ r.estado_respuesta }}
+                      </span>
+                    </td>
+                    <td>{{ r.tiempo_respuesta }}s</td>
+                    <td>{{ r.tiemporeforzamiento }}s</td>
+                    <td>{{ r.fecha_respuesta | date:'short' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje de no datos para Ciencias y Tecnología -->
+        <div class="no-data-report" *ngIf="!hasDetailedData[3] && !loading">
+          <div class="no-data-icon">📊</div>
+          <p>No hay datos disponibles para Ciencias y Tecnología en el rango de fechas seleccionado</p>
+        </div>
     </div>
   </div>
 </div>
 
-<!-- Modal para mostrar reportes o mensaje de no datos -->
-<div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
-  <div class="modal-content" [class.dark-theme]="isDarkMode" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>{{ modalTitle }}</h3>
-      <button class="modal-close" (click)="closeModal()">×</button>
-    </div>
-
-    <div class="modal-body">
-      <!-- Loading -->
-      <div *ngIf="loading" class="loading-modal">
-        <div class="loading-spinner"></div>
-        <p>Buscando datos del estudiante...</p>
-      </div>
-
-      <!-- Mensaje de no datos -->
-      <div *ngIf="!loading && modalMessage" class="no-data-modal">
-        <div class="no-data-icon">📊</div>
-        <p>{{ modalMessage }}</p>
-      </div>
-
-      <!-- Reporte con datos -->
-      <div *ngIf="!loading && !modalMessage && hasData[modalCourseId]">
-        <div class="modal-actions">
-          <button class="btn-excel" (click)="exportarExcel(modalCourseId)">📥 Descargar Excel</button>
-        </div>
-
-        <div class="table-container">
-          <table class="results-table">
-            <thead>
-              <tr>
-                <th>Tema</th>
-                <th>Evaluación</th>
-                <th>Respuestas</th>
-                <th>Tiempo (seg)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let r of resultados[modalCourseId]">
-                <td>{{ r.tema }}</td>
-                <td>{{ r.evaluacion }}</td>
-                <td>{{ r.respuestas_buenas_sobre_totales }}</td>
-                <td>{{ r.total_tiempo }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>

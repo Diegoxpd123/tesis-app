@@ -35,6 +35,39 @@
           </svg>
           <span>Inicio</span>
         </button>
+
+        <button
+          *ngIf="showCargaButton"
+          class="nav-button carga-button"
+          (click)="navigateToCarga()"
+          title="Carga de contenido académico">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+          </svg>
+          <span>Carga</span>
+        </button>
+
+        <button
+          *ngIf="showSesionesButton"
+          class="nav-button sesiones-button"
+          (click)="navigateToSesiones()"
+          title="Sesiones y Tiempos">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/>
+          </svg>
+          <span>Sesiones y Tiempos</span>
+        </button>
+
+        <button
+          *ngIf="showRegisterButton"
+          class="nav-button register-button"
+          (click)="navigateToRegister()"
+          title="Registrar nuevo usuario">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15,14C12.33,14 7,15.33 7,18V20H23V18C23,15.33 17.67,14 15,14M15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12M5,9.59L7.12,7.46L8.54,8.88L6.41,11L8.54,13.12L7.12,14.54L5,12.41L2.88,14.54L1.46,13.12L3.59,11L1.46,8.88L2.88,7.46L5,9.59Z"/>
+          </svg>
+          <span>Registrar Usuario</span>
+        </button>
       </nav>
 
       <!-- Tema -->
@@ -65,6 +98,7 @@
 
       <!-- Botón de cerrar sesión -->
       <button
+        *ngIf="!isInExam"
         class="logout-button"
         (click)="cerrarSesion()"
         title="Cerrar sesión">
@@ -123,6 +157,36 @@
         </button>
 
         <button
+          *ngIf="showCargaButton"
+          class="mobile-nav-button carga-button"
+          (click)="navigateToCarga()">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+          </svg>
+          <span>Carga</span>
+        </button>
+
+        <button
+          *ngIf="showSesionesButton"
+          class="mobile-nav-button sesiones-button"
+          (click)="navigateToSesiones()">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/>
+          </svg>
+          <span>Sesiones y Tiempos</span>
+        </button>
+
+        <button
+          *ngIf="showRegisterButton"
+          class="mobile-nav-button register-button"
+          (click)="navigateToRegister()">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15,14C12.33,14 7,15.33 7,18V20H23V18C23,15.33 17.67,14 15,14M15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12M5,9.59L7.12,7.46L8.54,8.88L6.41,11L8.54,13.12L7.12,14.54L5,12.41L2.88,14.54L1.46,13.12L3.59,11L1.46,8.88L2.88,7.46L5,9.59Z"/>
+          </svg>
+          <span>Registrar Usuario</span>
+        </button>
+
+        <button
           class="mobile-nav-button"
           (click)="navigateTo('/estudiantes')">
           <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
@@ -132,6 +196,7 @@
         </button>
 
         <button
+          *ngIf="!isInExam"
           class="mobile-nav-button logout-button"
           (click)="cerrarSesion()">
           <svg class="icon" viewBox="0 0 24 24" fill="currentColor">

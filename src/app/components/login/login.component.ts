@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsuarioService } from '../../services/usuario.service';
+import { TermsPrivacyService } from '../../services/terms-privacy.service';
 import Toastify from 'toastify-js';
 
 @Component({
@@ -23,29 +24,26 @@ export class LoginComponent implements OnInit, OnDestroy {
   isDarkMode: boolean = false;
   private themeListener?: () => void;
 
+  // Estado para mostrar modal de términos
+  showTermsModal: boolean = false;
+
   // Exponer Math y Date para el template
   Math = Math;
   Date = Date;
 
   loginForm: FormGroup = new FormGroup({
     username: new FormControl('', [
-      Validators.required,
-      Validators.minLength(3),
-      Validators.maxLength(20),
       this.noSpacesValidator
     ]),
-    password: new FormControl('', [
-      Validators.required,
-      Validators.minLength(4),
-      Validators.maxLength(50)
-    ]),
+    password: new FormControl('', []),
     rememberMe: new FormControl(false)
   });
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private termsPrivacyService: TermsPrivacyService
   ) { }
 
   private loadTheme(): void {
@@ -88,17 +86,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   getFieldError(fieldName: string): string {
     const field = this.loginForm.get(fieldName);
     if (field?.errors && field.touched) {
-      if (field.errors['required']) {
-        return `${fieldName === 'username' ? 'Usuario' : 'Contraseña'} es requerido`;
-      }
-      if (field.errors['minlength']) {
-        const requiredLength = field.errors['minlength'].requiredLength;
-        return `${fieldName === 'username' ? 'Usuario' : 'Contraseña'} debe tener al menos ${requiredLength} caracteres`;
-      }
-      if (field.errors['maxlength']) {
-        const requiredLength = field.errors['maxlength'].requiredLength;
-        return `${fieldName === 'username' ? 'Usuario' : 'Contraseña'} no puede tener más de ${requiredLength} caracteres`;
-      }
       if (field.errors['hasSpaces']) {
         return 'El usuario no puede contener espacios';
       }
@@ -164,10 +151,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
-    // Verificar si el formulario es válido
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      this.showError('Por favor, completa todos los campos correctamente');
+    // Verificar si los campos están vacíos
+    const username = this.loginForm.get('username')?.value?.trim();
+    const password = this.loginForm.get('password')?.value?.trim();
+
+    if (!username || !password) {
+      this.mensajeLogin = '¡Completa todos los campos!';
+      this.colorMensaje = 'red';
       return;
     }
 
@@ -183,27 +173,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.mensajeLogin = '';
     this.colorMensaje = '';
 
-    const username = this.loginForm.get('username')?.value?.trim();
-    const password = this.loginForm.get('password')?.value;
     const rememberMe = this.loginForm.get('rememberMe')?.value;
 
-    this.usuarioService.getUsuarios().subscribe({
-      next: (usuarios) => {
-        const usuarioEncontrado = usuarios.find(u =>
-          u.usuario === username && u.contra === password
-        );
-
-        if (usuarioEncontrado) {
+    this.usuarioService.login(username, password).subscribe({
+      next: (response) => {
+        if (response.success) {
           // Login exitoso
           this.loginAttempts = 0;
           this.isBlocked = false;
           this.blockTime = 0;
 
+          const usuario = response.usuario;
           // Guardar datos en localStorage
-          localStorage.setItem('usuario_id', usuarioEncontrado.id.toString());
-          localStorage.setItem('alumno_id', usuarioEncontrado.aludocenid.toString());
-          localStorage.setItem('usuario_tipo', usuarioEncontrado.tipousuarioid.toString());
-          localStorage.setItem('usuario_nombre', usuarioEncontrado.usuario);
+          localStorage.setItem('usuario_id', usuario.id.toString());
+          localStorage.setItem('alumno_id', usuario.aludocenid.toString());
+          localStorage.setItem('usuario_tipo', usuario.tipousuarioid.toString());
+          localStorage.setItem('usuario_nombre', usuario.usuario);
 
           // Recordar usuario si está marcado
           if (rememberMe) {
@@ -212,16 +197,16 @@ export class LoginComponent implements OnInit, OnDestroy {
             localStorage.removeItem('remembered_username');
           }
 
-          this.mensajeLogin = `¡Bienvenido ${usuarioEncontrado.usuario}!`;
+          this.mensajeLogin = `¡Bienvenido ${usuario.usuario}!`;
           this.colorMensaje = 'green';
-          this.showSuccess(`¡Bienvenido ${usuarioEncontrado.usuario}!`);
+          this.showSuccess(`¡Bienvenido ${usuario.usuario}!`);
 
-          // Navegar según el tipo de usuario
+          // Verificar si es el primer login y mostrar términos
           setTimeout(() => {
-            if (usuarioEncontrado.tipousuarioid === 1) {
-              this.router.navigate(['/home']);
+            if (this.termsPrivacyService.isFirstLogin()) {
+              this.showTermsModal = true;
             } else {
-              this.router.navigate(['/estudiantes']);
+              this.navigateToUserHome(usuario.tipousuarioid);
             }
           }, 1000);
 
@@ -280,5 +265,37 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.router.navigate(['/estudiantes']);
       }
     }
+  }
+
+  goToForgotPassword(): void {
+    this.router.navigate(['/forgot-password']);
+  }
+
+  // Método para navegar según el tipo de usuario
+  private navigateToUserHome(tipousuarioid: number): void {
+    if (tipousuarioid === 1) {
+      this.router.navigate(['/home']);
+    } else {
+      this.router.navigate(['/estudiantes']);
+    }
+  }
+
+  // Métodos para manejar el modal de términos
+  onTermsAccepted(): void {
+    this.showTermsModal = false;
+    // Navegar después de aceptar los términos
+    const usuarioTipo = localStorage.getItem('usuario_tipo');
+    const tipousuarioid = usuarioTipo ? parseInt(usuarioTipo) : 1;
+    this.navigateToUserHome(tipousuarioid);
+  }
+
+  onTermsRejected(): void {
+    this.showTermsModal = false;
+    // Cerrar sesión si rechaza los términos
+    localStorage.removeItem('usuario_id');
+    localStorage.removeItem('usuario_tipo');
+    localStorage.removeItem('userData');
+    this.mensajeLogin = 'Debes aceptar los términos y condiciones para continuar';
+    this.colorMensaje = 'red';
   }
 }

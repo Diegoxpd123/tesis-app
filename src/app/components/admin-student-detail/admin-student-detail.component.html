@@ -1,0 +1,133 @@
+<div class="admin-student-detail-container page-container starry-background" [class.dark-theme]="isDarkMode">
+  <!-- Botón de Atrás -->
+  <div class="back-button-container">
+    <button class="back-button" (click)="goBack()" [class.dark-theme]="isDarkMode">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+      <span>Volver</span>
+    </button>
+  </div>
+
+  <!-- Header del estudiante -->
+  <div class="student-header">
+    <div class="student-info">
+      <img src="/assets/img/robot.png" alt="Avatar" class="student-avatar" />
+      <div class="student-details">
+        <h1 class="student-name">Estudiante</h1>
+        <p class="student-user">{{ '@' + (estudianteInfo?.usuario || 'usuario') }}</p>
+        <p class="student-description">
+          Vista de administrador - Reporte de uso por curso
+        </p>
+      </div>
+    </div>
+
+    <!-- Selector de curso -->
+    <div class="course-selector-section">
+      <div class="course-selector">
+        <label class="selector-label">Seleccione un curso:</label>
+        <select
+          class="course-dropdown"
+          [(ngModel)]="cursoSeleccionado"
+          (change)="onCursoChange()">
+          <option value="">Cursos</option>
+          <option *ngFor="let curso of cursos" [value]="curso.id">
+            {{ curso.icono }} {{ curso.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Curso actual -->
+      <div class="current-course-display" *ngIf="cursoSeleccionado">
+        <span class="course-label">Curso:</span>
+        <div class="course-button">
+          <span class="course-icon">{{ getCursoIcono() }}</span>
+          <span class="course-name">{{ getCursoNombre() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- Selector de tipo de reporte -->
+  <div class="report-type-selector">
+    <div class="selector-container">
+      <label class="selector-label">Tipo de reporte:</label>
+      <select
+        class="type-dropdown"
+        [(ngModel)]="tipoReporte"
+        (change)="onTipoReporteChange()">
+        <option value="examen">📝 Exámenes</option>
+        <option value="practica">📚 Prácticas</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Reporte Agrupado -->
+  <div class="table-section">
+    <h2 class="table-title">
+      {{ tipoReporte === 'examen' ? '📝 Reporte de Exámenes' : '📚 Reporte de Prácticas' }}
+    </h2>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Cargando reporte...</p>
+      </div>
+    </div>
+
+    <!-- Reporte detallado -->
+    <div class="detailed-report" *ngIf="!loading && hasData()">
+      <div class="table-container">
+        <table class="detailed-table">
+          <thead>
+            <tr>
+              <th class="th-group">Grupo</th>
+              <th class="th-evaluation">Evaluación</th>
+              <th class="th-topic">Tema</th>
+              <th class="th-date">Fecha</th>
+              <th class="th-time">Tiempo Examen</th>
+              <th class="th-reinforcement">Tiempo Ref.</th>
+              <th class="th-score">Puntuación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let grupo of getReporteActual(); let i = index"
+              class="table-row"
+              [class.odd]="i % 2 === 0">
+              <td class="td-group">
+                <span class="status-badge">{{ grupo.grupo }}</span>
+              </td>
+              <td class="td-evaluation">{{ grupo.evaluacion }}</td>
+              <td class="td-topic">{{ grupo.tema }}</td>
+              <td class="td-date">{{ grupo.fecha }}</td>
+              <td class="td-time">{{ grupo.tiempoExamen }}</td>
+              <td class="td-reinforcement">{{ grupo.tiempoReforzamiento }}</td>
+              <td class="td-score">
+                <span class="status-badge"
+                      [class.correct]="grupo.porcentaje >= 60"
+                      [class.incorrect]="grupo.porcentaje < 60">
+                  {{ grupo.respuestasCorrectas }}/{{ grupo.totalPreguntas }} ({{ grupo.porcentaje }}%)
+                  <br>
+                  <small>{{ grupo.totalIntentos }} intentos</small>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-container" *ngIf="!loading && !hasData()">
+      <div class="empty-content">
+        <div class="empty-icon">📊</div>
+        <h3>No hay datos disponibles</h3>
+        <p>No se encontraron registros de {{ tipoReporte === 'examen' ? 'exámenes' : 'prácticas' }} para este curso</p>
+      </div>
+    </div>
+  </div>
+</div>

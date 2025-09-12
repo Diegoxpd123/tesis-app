@@ -99,6 +99,8 @@ export class HomeComponent implements OnInit {
   modalInicioVisible: boolean = false;
   evaluacionPendiente: { titulo: string, id: number } | null = null;
   imagenValida = true;
+  modalEvaluacionIncompletaVisible: boolean = false;
+  evaluacionIncompleta: { titulo: string, id: number, preguntaActual: number } | null = null;
 
   constructor(
     private router: Router,
@@ -119,6 +121,10 @@ export class HomeComponent implements OnInit {
     if (!userId) {
       this.router.navigate(['/login']);
     }
+
+    // Verificar evaluación incompleta ANTES de cargar el usuario
+    this.verificarEvaluacionIncompleta();
+
     const usuarioId = localStorage.getItem('usuario_id');
     if (usuarioId) {
       this.usuaoservice.getUsuario(Number(usuarioId)).subscribe(usuario => {
@@ -134,6 +140,7 @@ export class HomeComponent implements OnInit {
         this.comunicacionService.toggleCerrarSesion$.subscribe(() => {
           this.toggleCerrarSesion();
         });
+
         this.speakWelcomeMessage(this.tituloMessage + this.welcomeMessage);
 
       });
@@ -145,6 +152,87 @@ export class HomeComponent implements OnInit {
 
     // Escuchar evento personalizado para mostrar progreso
     this.setupProgressListener();
+  }
+
+  verificarEvaluacionIncompleta(): void {
+    const preguntasGuardadas = localStorage.getItem('preguntasEvaluacion');
+    const evaluacionId = localStorage.getItem('evaluacionId');
+    const preguntaActual = localStorage.getItem('preguntaActual');
+    const isExamActive = localStorage.getItem('isExamActive');
+
+    if (preguntasGuardadas && evaluacionId && preguntaActual && isExamActive === 'true') {
+      // Hay una evaluación incompleta
+      this.evaluacionIncompleta = {
+        titulo: 'Evaluación Incompleta',
+        id: Number(evaluacionId),
+        preguntaActual: Number(preguntaActual)
+      };
+      this.modalEvaluacionIncompletaVisible = true;
+
+      // Ocultar el botón de empezar para evitar bugs
+      this.showStartButton = false;
+
+      // Ocultar otros elementos que puedan interferir
+      this.showCourseButtons = false;
+      this.showCourseButtonsb = false;
+    } else {
+      // No hay evaluación incompleta, mostrar botón de empezar
+      this.showStartButton = true;
+    }
+  }
+
+  continuarEvaluacionIncompleta(): void {
+    this.modalEvaluacionIncompletaVisible = false;
+
+    if (this.evaluacionIncompleta) {
+      // Ocultar el botón de empezar para evitar bugs
+      this.showStartButton = false;
+
+      // Cargar las preguntas guardadas
+      const preguntasGuardadas = localStorage.getItem('preguntasEvaluacion');
+      if (preguntasGuardadas) {
+        this.preguntasEncontradas = JSON.parse(preguntasGuardadas);
+        this.preguntaActual = this.evaluacionIncompleta.preguntaActual;
+        this.evaluacionidnumber = this.evaluacionIncompleta.id;
+
+        // Restaurar el tiempo guardado
+        const tiempoTotal = localStorage.getItem('tiempoTotal');
+        const timerMinutes = localStorage.getItem('timerMinutes');
+        const timerSeconds = localStorage.getItem('timerSeconds');
+
+        if (tiempoTotal) {
+          this.tiempototal = Number(tiempoTotal);
+        }
+        if (timerMinutes) {
+          this.timerMinutes = Number(timerMinutes);
+        }
+        if (timerSeconds) {
+          this.timerSeconds = Number(timerSeconds);
+        }
+
+        // Obtener información de la evaluación
+        this.evaluacionserice.getEvaluacion(this.evaluacionIncompleta.id).subscribe(evaluacion => {
+          this.tituloMessage = this.cursoNombre + " - " + evaluacion.nombre;
+          this.runPreguntas(evaluacion.nombre, evaluacion.id);
+        });
+      }
+    }
+  }
+
+  cancelarEvaluacionIncompleta(): void {
+    this.modalEvaluacionIncompletaVisible = false;
+    // Limpiar datos de evaluación incompleta
+    localStorage.removeItem('preguntasEvaluacion');
+    localStorage.removeItem('evaluacionId');
+    localStorage.removeItem('preguntaActual');
+    localStorage.removeItem('isExamActive');
+    localStorage.removeItem('isexamen');
+    localStorage.removeItem('tiempoTotal');
+    localStorage.removeItem('timerMinutes');
+    localStorage.removeItem('timerSeconds');
+
+    // Mostrar el botón de empezar para que pueda empezar de nuevo
+    this.showStartButton = true;
   }
 
   MostrarEvaluaciones(cursoId: number): void {
@@ -308,6 +396,11 @@ export class HomeComponent implements OnInit {
         this.timerSeconds = 0;
         this.timerMinutes++;
       }
+
+      // Guardar el tiempo en localStorage cada segundo
+      localStorage.setItem('tiempoTotal', this.tiempototal.toString());
+      localStorage.setItem('timerMinutes', this.timerMinutes.toString());
+      localStorage.setItem('timerSeconds', this.timerSeconds.toString());
     }, 1000);
   }
 
@@ -408,6 +501,11 @@ export class HomeComponent implements OnInit {
     this.showStartButton = false;
     this.showCourseButtons = false;
     this.showCourseButtonsb = false;
+
+    // Marcar que está en examen desde que se selecciona la evaluación
+    localStorage.setItem('isExamActive', 'true');
+    localStorage.setItem('isexamen', this.isexamen.toString());
+
     this.speakWelcomeMessage(this.welcomeMessage);
     // Espera 3 segundos (3000 milisegundos)
     setTimeout(() => {
@@ -590,6 +688,7 @@ export class HomeComponent implements OnInit {
     console.clear();
     console.log("el resultado", this.resultadopregunta);
     console.log("el tiempo", this.timerIntervalr);
+
     //aca guardamos el tiempo de reforzamiento
     if (this.resultadopregunta) {
 
@@ -623,6 +722,14 @@ export class HomeComponent implements OnInit {
           .sort(() => Math.random() - 0.5)
           .slice(0, 10);
 
+        // Guardar las preguntas en localStorage
+        localStorage.setItem('preguntasEvaluacion', JSON.stringify(this.preguntasEncontradas));
+        localStorage.setItem('evaluacionId', evaluacioid.toString());
+        localStorage.setItem('preguntaActual', '0'); // Iniciar en pregunta 0
+        localStorage.setItem('tiempoTotal', '0'); // Iniciar tiempo en 0
+        localStorage.setItem('timerMinutes', '0');
+        localStorage.setItem('timerSeconds', '0');
+
         this.runPreguntas(titulo, evaluacioid);
       });
       return;
@@ -636,6 +743,7 @@ export class HomeComponent implements OnInit {
       this.showTimer = false;
 
       this.isexamen = 1;
+
       // Que el robot diga el mensaje del modal
       this.speakWelcomeMessage("¿Estás listo para continuar con las siguientes preguntas?");
       return;
@@ -650,6 +758,17 @@ export class HomeComponent implements OnInit {
       const tiempoFormateado = `${minutos} minutos y ${segundos < 10 ? '0' : ''}${segundos}`;
       this.welcomeMessage = "¡Felicitaciones! Has logrado completar el tema del día de hoy en " + this.tiempototal + " segundos";
       this.speakWelcomeMessage(this.welcomeMessage);
+
+      // Limpiar estado de examen y preguntas del localStorage
+      localStorage.removeItem('isExamActive');
+      localStorage.removeItem('isexamen');
+      localStorage.removeItem('preguntasEvaluacion');
+      localStorage.removeItem('evaluacionId');
+      localStorage.removeItem('preguntaActual');
+      localStorage.removeItem('tiempoTotal');
+      localStorage.removeItem('timerMinutes');
+      localStorage.removeItem('timerSeconds');
+
       this.showCourseOpciones = false;
       this.showCourseOpcionesImg = false;
       this.preguntaNumeros = "";
@@ -747,6 +866,8 @@ export class HomeComponent implements OnInit {
         });
 
       this.preguntaActual++;
+      // Guardar la pregunta actual en localStorage
+      localStorage.setItem('preguntaActual', this.preguntaActual.toString());
       this.runPreguntas("MATEMATICAS - CONJUNTOS", this.evaluacionidnumber);
     } else {
 
@@ -910,6 +1031,15 @@ export class HomeComponent implements OnInit {
 
 
   toggleHome() {
+    // Limpiar estado de examen y preguntas antes de recargar
+    localStorage.removeItem('isExamActive');
+    localStorage.removeItem('isexamen');
+    localStorage.removeItem('preguntasEvaluacion');
+    localStorage.removeItem('evaluacionId');
+    localStorage.removeItem('preguntaActual');
+    localStorage.removeItem('tiempoTotal');
+    localStorage.removeItem('timerMinutes');
+    localStorage.removeItem('timerSeconds');
     window.location.reload();
   }
 
@@ -946,6 +1076,14 @@ export class HomeComponent implements OnInit {
   cerrar() {
     // Aquí puedes validar usuario/contraseña si lo deseas
     localStorage.removeItem('usuario_id');
+    localStorage.removeItem('isExamActive');
+    localStorage.removeItem('isexamen');
+    localStorage.removeItem('preguntasEvaluacion');
+    localStorage.removeItem('evaluacionId');
+    localStorage.removeItem('preguntaActual');
+    localStorage.removeItem('tiempoTotal');
+    localStorage.removeItem('timerMinutes');
+    localStorage.removeItem('timerSeconds');
     this.router.navigate(['/login']);
   }
 

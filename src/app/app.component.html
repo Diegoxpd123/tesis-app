@@ -2,3 +2,4 @@
 <div class="main-content" [class.no-navbar]="isLoginPage">
   <router-outlet></router-outlet>
 </div>
+<app-footer *ngIf="!isLoginPage"></app-footer>

@@ -4,6 +4,9 @@ export interface Estudiante {
   porcentaje: number;
   grado: number;
   seccionid: number;
+  usuario_id?: number;
+  usuario?: string;
+  seccion_nombre?: string;
 }
 
 export interface EstudianteFiltro {

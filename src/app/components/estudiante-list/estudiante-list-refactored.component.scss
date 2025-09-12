@@ -6,7 +6,7 @@
   padding-top: 100px !important;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   background-attachment: fixed !important;
-  padding: 100px 2.5rem 3rem !important;
+  padding: 100px 0 3rem 0 !important;
   transition: all 0.3s ease;
   position: relative !important;
   z-index: 1 !important;
@@ -18,7 +18,7 @@
 
   @media (max-width: 768px) {
     min-height: calc(100vh - 90px) !important; /* Altura total menos el padding del body en móvil */
-    padding: 90px 1.5rem 2.5rem !important;
+    padding: 90px 0 2.5rem 0 !important;
   }
 
 }
@@ -32,7 +32,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(20px);
-  margin-bottom: 3rem;
+  margin: 0 2.5rem 3rem 2.5rem;
   overflow: hidden;
   transition: all 0.3s ease;
 
@@ -744,10 +744,12 @@
    =============================== */
 @media (max-width: 1024px) {
   .admin-dashboard {
-    padding: 1.5rem;
+    padding: 1.5rem 0;
   }
 
   .dashboard-header {
+    margin: 0 1.5rem 3rem 1.5rem;
+
     .header-content {
       flex-direction: column;
       align-items: stretch;
@@ -781,10 +783,12 @@
 
 @media (max-width: 768px) {
   .admin-dashboard {
-    padding: 1rem;
+    padding: 1rem 0;
   }
 
   .dashboard-header {
+    margin: 0 1rem 3rem 1rem;
+
     .header-content {
       padding: 1.5rem;
     }
@@ -857,10 +861,12 @@
 
 @media (max-width: 480px) {
   .admin-dashboard {
-    padding: 0.75rem;
+    padding: 0.75rem 0;
   }
 
   .dashboard-header {
+    margin: 0 0.75rem 3rem 0.75rem;
+
     .header-content {
       padding: 1rem;
     }

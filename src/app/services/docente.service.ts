@@ -33,4 +33,22 @@ export class DocenteService {
   deleteDocente(id: number): Observable<any> {
     return this.http.delete<any>(`${this.API_URL}/docentes/${id}`);
   }
+
+  /**
+   * Obtener las secciones asignadas a un docente
+   */
+  getSeccionesDocente(docenteId: number): Observable<any[]> {
+    return this.http.post<any[]>(`${this.API_URL}/docentes/secciones`, {
+      docente_id: docenteId
+    });
+  }
+
+  /**
+   * Obtener estudiantes de las secciones asignadas a un docente
+   */
+  getEstudiantesPorDocente(docenteId: number): Observable<any[]> {
+    return this.http.post<any[]>(`${this.API_URL}/docentes/estudiantes`, {
+      docente_id: docenteId
+    });
+  }
 }

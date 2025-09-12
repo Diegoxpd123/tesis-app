@@ -1,0 +1,77 @@
+<app-navbar></app-navbar>
+
+<div class="admin-dashboard page-container starry-background" [class.dark-theme]="isDarkMode">
+  <h1 class="welcome-title">
+    {{ tituloMessage }}
+  </h1>
+
+  <div class="main-content">
+    <div class="carga-container">
+      <!-- Información del usuario -->
+      <div class="user-info-section">
+        <div class="user-avatar">
+          <img src="/assets/img/robot.png" alt="Avatar" class="avatar-image">
+        </div>
+        <div class="user-details">
+          <h3 class="user-role">Administrador</h3>
+          <p class="user-name">{{ '@' + (usuarioActual?.usuario || 'usuario') }}</p>
+        </div>
+      </div>
+
+      <!-- Sección de carga -->
+      <div class="upload-section">
+        <div class="upload-header">
+          <h2>Subir Archivo:</h2>
+        </div>
+
+        <div class="upload-content">
+          <label for="excelInput" class="upload-button">
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            <span>Seleccionar Excel</span>
+            <input id="excelInput" type="file" (change)="onFileSelected($event)" accept=".xlsx, .xls" hidden>
+          </label>
+
+          <button class="save-button" (click)="guardar()" [disabled]="!archivoSeleccionado || isLoading">
+            <svg class="save-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z"/>
+            </svg>
+            <span>{{ isLoading ? 'Procesando...' : 'Procesar Excel' }}</span>
+          </button>
+        </div>
+
+        <!-- Información del archivo seleccionado -->
+        <div *ngIf="archivoSeleccionado" class="file-info">
+          <div class="file-details">
+            <svg class="file-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            <div class="file-text">
+              <p class="file-name">{{ archivoSeleccionado.name }}</p>
+              <p class="file-size">{{ formatFileSize(archivoSeleccionado.size) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div *ngIf="isLoading" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p *ngIf="totalPreguntas > 0">
+            Procesando preguntas: {{ preguntasGuardadas }} / {{ totalPreguntas }}
+          </p>
+          <div class="progress-bar" *ngIf="totalPreguntas > 0">
+            <div class="progress-fill" [style.width.%]="(preguntasGuardadas / totalPreguntas) * 100"></div>
+          </div>
+        </div>
+
+        <!-- Result message -->
+        <div *ngIf="showResult" class="result-container">
+          <div class="result-content">
+            <h3>{{ excelResultMessage }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

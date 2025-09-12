@@ -37,7 +37,7 @@
       </div>
 
       <div *ngIf="showCourseButtons" class="evaluaciones-dropdown">
-        <label>Selecciona una evaluación disponibles:</label>
+        <label>Selecciona una evaluación disponible:</label>
         <select (change)="startMath($event)">
           <option value="">-- Selecciona --</option>
           <option *ngFor="let evaluacion of evaluacionesDisponibles" [value]="evaluacion.id">
@@ -187,5 +187,16 @@
     <h2>¡Perfecto!</h2>
     <h3>Ya estas listo para demostrar lo que aprendiste, Tú puedes!</h3>
     <button (click)="continuarEvaluacionDesdeModal()">Continuar</button>
+  </div>
+</div>
+
+<div *ngIf="modalEvaluacionIncompletaVisible" class="modal-inicio">
+  <div class="modal-contenido">
+    <h2>¡Hola!</h2>
+    <h3>Parece que no terminaste tu evaluación. ¿Quieres seguir donde te quedaste y terminarla ahora?</h3>
+    <div class="modal-buttons">
+      <button class="btn-continuar" (click)="continuarEvaluacionIncompleta()">Sí, continuar</button>
+      <button class="btn-cancelar" (click)="cancelarEvaluacionIncompleta()">No, empezar de nuevo</button>
+    </div>
   </div>
 </div>

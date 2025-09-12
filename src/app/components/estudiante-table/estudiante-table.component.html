@@ -26,8 +26,8 @@
             <th class="th-name">Estudiante</th>
             <th class="th-grade">Grado</th>
             <th class="th-section">Sección</th>
-            <th class="th-progress">Progreso</th>
-            <th class="th-status">Estado</th>
+            <th class="th-progress" *ngIf="showProgressColumns">Progreso</th>
+            <th class="th-status" *ngIf="showProgressColumns">Estado</th>
             <th class="th-actions">Acciones</th>
           </tr>
         </thead>
@@ -75,7 +75,7 @@
             </td>
 
             <!-- Progreso -->
-            <td class="td-progress">
+            <td class="td-progress" *ngIf="showProgressColumns">
               <div class="progress-container">
                 <div class="progress-info">
                   <span class="progress-percentage">{{ estudiante.porcentaje }}%</span>
@@ -92,7 +92,7 @@
             </td>
 
             <!-- Estado -->
-            <td class="td-status">
+            <td class="td-status" *ngIf="showProgressColumns">
               <div class="status-badge" [class]="getEstadoClass(estudiante.porcentaje)">
                 <span class="status-icon">{{ getProgressIcon(estudiante.porcentaje) }}</span>
                 <span class="status-text">{{ getEstadoText(estudiante.porcentaje) }}</span>

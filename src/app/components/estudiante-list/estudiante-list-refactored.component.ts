@@ -52,6 +52,7 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   usuarioid: string = '';
   userType: string = '';
   currentUser: any = null;
+  isAdmin: boolean = false; // Para determinar si es administrador (usuario 4)
 
   // Configuración
   grados: string[] = ['4', '5', '6'];
@@ -114,6 +115,10 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
     }
 
     this.usuarioid = usuarioId;
+
+    // Determinar si es administrador (usuario 4)
+    this.isAdmin = Number(usuarioId) === 4;
+
     this.loadUserData(Number(usuarioId));
   }
 
@@ -145,23 +150,35 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   }
 
   private setUserTitle(usuario: string): void {
-    if (usuario === 'admin') {
+    const usuarioTipo = localStorage.getItem('usuario_tipo');
+
+    if (usuario === 'admin' || usuarioTipo === '4') {
       this.tituloMessage = `¡Bienvenido! Administrador ${usuario}`;
-    } else {
+    } else if (usuarioTipo === '2') {
       this.tituloMessage = `¡Bienvenido! Docente ${usuario}`;
+    } else {
+      this.tituloMessage = `¡Bienvenido! ${usuario}`;
     }
   }
 
   private loadEstudiantes(usuario: any): void {
-    if (usuario.usuario === 'admin') {
+    const usuarioTipo = localStorage.getItem('usuario_tipo');
+
+    if (usuario.usuario === 'admin' || usuarioTipo === '4') {
+      // Administrador - cargar todos los estudiantes
       this.loadAllEstudiantes();
-    } else {
+    } else if (usuarioTipo === '2') {
+      // Docente - cargar solo estudiantes de sus secciones
       this.loadEstudiantesByDocente(usuario.aludocenid);
+    } else {
+      // Estudiante u otro tipo - no debería llegar aquí desde esta vista
+      console.warn('Tipo de usuario no válido para esta vista:', usuarioTipo);
+      this.loading = false;
     }
   }
 
   private loadAllEstudiantes(): void {
-    this.alumnoService.getAlumnos()
+    this.alumnoService.getAlumnosConUsuario()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (alumnos) => {
@@ -177,23 +194,38 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   }
 
   private loadEstudiantesByDocente(docenteId: number): void {
-    this.docenteSesionService.getDocentesesions()
+    // Usar el nuevo servicio para obtener estudiantes directamente
+    this.docenteService.getEstudiantesPorDocente(docenteId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (sesiones) => {
-          const sesionesDocente = sesiones.filter(s => s.docenteid === docenteId);
+        next: (estudiantesData) => {
+          console.log('Estudiantes cargados para docente:', estudiantesData);
 
-          if (sesionesDocente.length === 0) {
-            console.warn('Este docente no tiene secciones asignadas.');
+          if (estudiantesData.length === 0) {
+            console.warn('Este docente no tiene estudiantes asignados.');
+            this.estudiantes = [];
+            this.applyFilters();
             this.loading = false;
             return;
           }
 
-          const seccionesIds = sesionesDocente.map(s => s.seccionid);
-          this.loadEstudiantesBySecciones(seccionesIds);
+          // Mapear los datos del API a la estructura esperada
+          this.estudiantes = estudiantesData.map((estudiante: any) => ({
+            id: estudiante.id,
+            nombre: estudiante.nombre,
+            grado: estudiante.grado,
+            seccionid: estudiante.seccionid,
+            porcentaje: estudiante.porcentaje || 0,
+            usuario: estudiante.usuario,
+            usuario_id: estudiante.usuario_id,
+            seccion_nombre: estudiante.seccion_nombre
+          }));
+
+          this.applyFilters();
+          this.loading = false;
         },
         error: (error) => {
-          console.error('Error al cargar secciones del docente:', error);
+          console.error('Error al cargar estudiantes del docente:', error);
           this.loading = false;
         }
       });
@@ -220,9 +252,12 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
     return alumnos.map(alumno => ({
       id: alumno.id,
       nombre: alumno.nombre,
-      porcentaje: 50, // TODO: Calcular porcentaje real basado en evaluaciones
+      porcentaje: alumno.porcentaje || 0,
       grado: alumno.grado,
-      seccionid: alumno.seccionid
+      seccionid: alumno.seccionid,
+      usuario_id: alumno.usuario_id,
+      usuario: alumno.usuario,
+      seccion_nombre: alumno.seccion_nombre
     }));
   }
 
@@ -273,7 +308,24 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
 
   // Métodos de navegación
   onVerDetalles(estudianteId: number): void {
-    this.router.navigate(['/estudiantes/detail', estudianteId]);
+    // Buscar el estudiante para obtener su usuario_id
+    const estudiante = this.estudiantes.find(e => e.id === estudianteId);
+    if (estudiante && estudiante.usuario_id) {
+      // Si es administrador, usar la vista especial de admin
+      if (this.isAdmin) {
+        this.router.navigate(['/admin/estudiantes/detail', estudiante.usuario_id]);
+      } else {
+        this.router.navigate(['/estudiantes/detail', estudiante.usuario_id]);
+      }
+    } else {
+      console.error('No se encontró usuario_id para el estudiante:', estudianteId);
+      // Fallback: usar el id del estudiante
+      if (this.isAdmin) {
+        this.router.navigate(['/admin/estudiantes/detail', estudianteId]);
+      } else {
+        this.router.navigate(['/estudiantes/detail', estudianteId]);
+      }
+    }
   }
 
   toggleCerrarSesion(): void {
@@ -343,9 +395,6 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
     this.paginacion.currentPage = 1;
   }
 
-  get isAdmin(): boolean {
-    return this.userType === 'admin';
-  }
 
   get isDocente(): boolean {
     return this.userType !== 'admin';

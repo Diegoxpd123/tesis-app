@@ -25,6 +25,17 @@ export class UsuarioService {
     return this.http.post<Usuario>(`${this.API_URL}/usuarios`, data);
   }
 
+  createUsuarioWithPassword(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/usuarios/create`, data);
+  }
+
+  login(usuario: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/usuarios/login`, {
+      usuario,
+      password
+    });
+  }
+
   updateUsuario(id: number, data: Usuario): Observable<Usuario> {
     return this.http.put<Usuario>(`${this.API_URL}/usuarios/${id}`, data);
   }
@@ -41,6 +52,25 @@ export class UsuarioService {
     fechafin: string;
   }): Observable<any[]> {
     return this.http.post<any[]>(`${this.API_URL}/resultados-curso`, params);
+  }
+
+  // ✅ Nueva función: obtener reporte detallado con preguntas y respuestas
+  getReporteDetallado(params: {
+    cursoid: number;
+    usuarioid: number;
+    fechainicio: string;
+    fechafin: string;
+    tipo: 'examen' | 'practica';
+  }): Observable<any[]> {
+    return this.http.post<any[]>(`${this.API_URL}/reporte-detallado`, params);
+  }
+
+  // ✅ Nueva función: obtener reporte de uso por curso para administradores
+  getReporteUsoPorCurso(params: {
+    usuarioid: number;
+    cursoid: number;
+  }): Observable<any[]> {
+    return this.http.post<any[]>(`${this.API_URL}/reporte-uso-por-curso`, params);
   }
 
 }

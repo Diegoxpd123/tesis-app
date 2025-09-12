@@ -15,6 +15,7 @@ export class EstudianteTableComponent implements OnInit {
   @Input() loading: boolean = false;
   @Input() emptyMessage: string = 'No hay estudiantes disponibles';
   @Input() isDarkMode: boolean = false;
+  @Input() showProgressColumns: boolean = true; // Para ocultar progreso y estado para admins
 
   @Output() verDetalles = new EventEmitter<number>();
 

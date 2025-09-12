@@ -1,0 +1,229 @@
+<div class="register-user-container page-container starry-background" [class.dark-theme]="isDarkMode">
+  <!-- Botón de regreso -->
+  <div class="back-button-container">
+    <button class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+      Volver
+    </button>
+  </div>
+
+  <!-- Header del formulario -->
+  <div class="register-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="register-title">
+          <i class="fas fa-user-plus title-icon"></i>
+          Registrar Usuario
+        </h1>
+        <p class="register-subtitle">Registro de nuevo alumno en el sistema</p>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <i class="fas fa-user-circle user-icon"></i>
+          <div class="user-details">
+            <span class="user-name">admin</span>
+            <span class="user-role">Administrador</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de registro -->
+  <div class="register-form-container">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+
+      <!-- Información de usuario -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="fas fa-user"></i>
+          Información de Usuario
+        </h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="usuario">Usuario *</label>
+            <input
+              type="text"
+              id="usuario"
+              formControlName="usuario"
+              class="form-input"
+              [class.error]="isFieldInvalid('usuario')"
+              placeholder="Ingrese nombre de usuario">
+            <div class="error-message" *ngIf="isFieldInvalid('usuario')">
+              {{ getErrorMessage('usuario') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña *</label>
+            <input
+              type="password"
+              id="password"
+              formControlName="password"
+              class="form-input"
+              [class.error]="isFieldInvalid('password')"
+              placeholder="Mínimo 6 caracteres">
+            <div class="error-message" *ngIf="isFieldInvalid('password')">
+              {{ getErrorMessage('password') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="confirmPassword">Confirmar Contraseña *</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              class="form-input"
+              [class.error]="isFieldInvalid('confirmPassword')"
+              placeholder="Repita la contraseña">
+            <div class="error-message" *ngIf="isFieldInvalid('confirmPassword')">
+              {{ getErrorMessage('confirmPassword') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información personal -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="fas fa-id-card"></i>
+          Información Personal
+        </h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre *</label>
+            <input
+              type="text"
+              id="nombre"
+              formControlName="nombre"
+              class="form-input"
+              [class.error]="isFieldInvalid('nombre')"
+              placeholder="Ingrese nombre completo">
+            <div class="error-message" *ngIf="isFieldInvalid('nombre')">
+              {{ getErrorMessage('nombre') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dni">DNI *</label>
+            <input
+              type="text"
+              id="dni"
+              formControlName="dni"
+              class="form-input"
+              [class.error]="isFieldInvalid('dni')"
+              placeholder="Ingrese DNI (8 dígitos)"
+              maxlength="8">
+            <div class="error-message" *ngIf="isFieldInvalid('dni')">
+              {{ getErrorMessage('dni') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="grado">Grado *</label>
+            <select
+              id="grado"
+              formControlName="grado"
+              class="form-select"
+              [class.error]="isFieldInvalid('grado')">
+              <option value="">Seleccione grado</option>
+              <option value="1">1° Grado</option>
+              <option value="2">2° Grado</option>
+              <option value="3">3° Grado</option>
+              <option value="4">4° Grado</option>
+              <option value="5">5° Grado</option>
+              <option value="6">6° Grado</option>
+            </select>
+            <div class="error-message" *ngIf="isFieldInvalid('grado')">
+              {{ getErrorMessage('grado') }}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Información académica -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="fas fa-graduation-cap"></i>
+          Información Académica
+        </h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="institucionid">Institución *</label>
+            <select
+              id="institucionid"
+              formControlName="institucionid"
+              class="form-select"
+              [class.error]="isFieldInvalid('institucionid')"
+              (change)="onInstitucionChange()">
+              <option value="">Seleccione institución</option>
+              <option *ngFor="let institucion of instituciones" [value]="institucion.id">
+                {{ institucion.nombre }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="isFieldInvalid('institucionid')">
+              {{ getErrorMessage('institucionid') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="seccionid">Sección *</label>
+            <select
+              id="seccionid"
+              formControlName="seccionid"
+              class="form-select"
+              [class.error]="isFieldInvalid('seccionid')"
+              [disabled]="!registerForm.get('institucionid')?.value">
+              <option value="">Seleccione sección</option>
+              <option *ngFor="let seccion of secciones" [value]="seccion.id">
+                {{ seccion.nombre }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="isFieldInvalid('seccionid')">
+              {{ getErrorMessage('seccionid') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensajes de estado -->
+      <div class="form-messages" *ngIf="successMessage || errorMessage">
+        <div class="success-message" *ngIf="successMessage">
+          <i class="fas fa-check-circle"></i>
+          {{ successMessage }}
+        </div>
+        <div class="error-message" *ngIf="errorMessage">
+          <i class="fas fa-exclamation-circle"></i>
+          {{ errorMessage }}
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="goBack()"
+          [disabled]="loading">
+          <i class="fas fa-times"></i>
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="loading || registerForm.invalid">
+          <i class="fas fa-user-plus" *ngIf="!loading"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+          {{ loading ? 'Registrando...' : 'Registrar Usuario' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

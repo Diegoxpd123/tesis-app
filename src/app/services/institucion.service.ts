@@ -15,22 +15,22 @@ export class InstitucionService {
   ) { }
 
   getInstitucions(): Observable<Institucion[]> {
-    return this.http.get<Institucion[]>(`${this.API_URL}/institucions`);
+    return this.http.get<Institucion[]>(`${this.API_URL}/instituciones`);
   }
 
   getInstitucion(id: number): Observable<Institucion> {
-    return this.http.get<Institucion>(`${this.API_URL}/institucions/${id}`);
+    return this.http.get<Institucion>(`${this.API_URL}/instituciones/${id}`);
   }
 
   createInstitucion(data: Institucion): Observable<Institucion> {
-    return this.http.post<Institucion>(`${this.API_URL}/institucions`, data);
+    return this.http.post<Institucion>(`${this.API_URL}/instituciones`, data);
   }
 
   updateInstitucion(id: number, data: Institucion): Observable<Institucion> {
-    return this.http.put<Institucion>(`${this.API_URL}/institucions/${id}`, data);
+    return this.http.put<Institucion>(`${this.API_URL}/instituciones/${id}`, data);
   }
 
   deleteInstitucion(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL}/institucions/${id}`);
+    return this.http.delete<any>(`${this.API_URL}/instituciones/${id}`);
   }
 }

@@ -1,0 +1,138 @@
+<!-- Modal de Términos y Condiciones (Primer Login) -->
+<div class="modal-overlay" *ngIf="showTermsModal" [class.dark-theme]="isDarkMode">
+  <div class="modal-container" [class.dark-theme]="isDarkMode">
+    <div class="modal-header">
+      <h2>Términos y Condiciones de Uso</h2>
+      <div class="modal-progress">
+        <span class="progress-text">Paso 1 de 2</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 50%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-content">
+      <div class="welcome-message">
+        <h3>¡Bienvenido a DREAN Teach Me!</h3>
+        <p>Para continuar usando nuestra plataforma, necesitamos que aceptes nuestros términos y condiciones de uso.</p>
+      </div>
+
+      <h4>TÉRMINOS Y CONDICIONES DEL SERVICIO GRATUITO "CONOCE AQUÍ"</h4>
+
+      <p>El presente documento contiene los términos y condiciones que regulan el acceso y uso del servicio gratuito denominado "CONOCE AQUÍ"; de observancia por el usuario.</p>
+
+      <h5>PRIMERA: DESCRIPCIÓN DEL SERVICIO</h5>
+      <p>El servicio "CONOCE AQUÍ" permite al usuario acceder de manera gratuita a las inscripciones registradas en cualquiera de los registros jurídicos de Sunarp a través de su portal web institucional (www.gob.pe/sunarp), con excepción de aquella información que, por disposición legal, solo puede ser conocida por el titular registral.</p>
+
+      <p>Asimismo, no se permitirá el acceso al registro de Testamentos ni a otra información de registros públicos que por ley tenga restricciones.</p>
+
+      <p><strong>IMPORTANTE:</strong> La información obtenida a través del presente servicio es de carácter referencial y NO constituye publicidad registral, por lo que carece de valor para procedimientos administrativos o judiciales.</p>
+
+      <h5>SEGUNDA: DEL ACCESO AL SERVICIO</h5>
+      <p><strong>2.1</strong> El servicio "CONOCE AQUÍ" se encuentra disponible dentro de los servicios gratuitos en el portal web de la Sunarp (www.gob.pe/sunarp).</p>
+
+      <h5>TERCERA: CONDICIONES DE USO</h5>
+      <p><strong>3.1</strong> El usuario se compromete a utilizar el servicio de manera responsable y conforme a la legislación vigente.</p>
+      <p><strong>3.2</strong> Queda prohibido el uso del servicio para fines ilegales o que puedan perjudicar a terceros.</p>
+      <p><strong>3.3</strong> La información obtenida debe ser utilizada únicamente para fines informativos y de consulta.</p>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-reject" (click)="rejectTerms()">
+        <i class="fas fa-times"></i>
+        No Acepto
+      </button>
+      <button type="button" class="btn-accept" (click)="acceptTerms()">
+        <i class="fas fa-arrow-right"></i>
+        Aceptar y Continuar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Política de Privacidad (Primer Login) -->
+<div class="modal-overlay" *ngIf="showPrivacyModal" [class.dark-theme]="isDarkMode">
+  <div class="modal-container" [class.dark-theme]="isDarkMode">
+    <div class="modal-header">
+      <h2>Política de Privacidad</h2>
+      <div class="modal-progress">
+        <span class="progress-text">Paso 2 de 2</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 100%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-content">
+      <div class="welcome-message">
+        <h3>Política de Privacidad de DREAN Teach Me</h3>
+        <p><strong>Versión v1.0 — Fecha de publicación: 10/09/2025</strong></p>
+      </div>
+
+      <h4>1. Responsable del tratamiento</h4>
+      <p>I.E.P Cristo de la Redención, con domicilio en Jiron Los Tamarindos 186, San Martín de Porres, correo de contacto: iepcristodelaredencion&#64;gmail.com, es responsable del tratamiento de los datos personales gestionados en esta aplicación web educativa.</p>
+
+      <h4>2. Datos personales tratados</h4>
+      <ul>
+        <li><strong>Identificación y acceso:</strong> código de usuario, nombres y apellidos, rol (estudiante/docente/admin), estado de cuenta.</li>
+        <li><strong>Uso académico:</strong> cursos, actividades y reforzamientos, calificaciones, retroalimentaciones, métricas de progreso.</li>
+        <li><strong>Registros técnicos:</strong> fechas/horas de acceso, IP aproximada, eventos de sesión y acciones relevantes para auditoría.</li>
+        <li><strong>Menores:</strong> nombre y documento del apoderado (cuando corresponda para acreditar consentimiento).</li>
+      </ul>
+      <p>No se recaban categorías especiales de datos (salud, opiniones políticas, etc.) a través de la aplicación.</p>
+
+      <h4>3. Finalidades</h4>
+      <ul>
+        <li>Autenticación y gestión de acceso a la plataforma.</li>
+        <li>Prestación de reforzamientos académicos y seguimiento del aprendizaje.</li>
+        <li>Reportes y estadísticas para docentes.</li>
+        <li>Seguridad de la información, prevención de fraudes y auditoría.</li>
+        <li>Atención de derechos ARCO y gestión de consentimientos.</li>
+      </ul>
+
+      <h4>4. Base legal</h4>
+      <ul>
+        <li>Ejecución de la relación educativa.</li>
+        <li>Interés legítimo en seguridad y mejora del servicio.</li>
+        <li>Consentimiento, especialmente para menores y funcionalidades que lo requieran.</li>
+      </ul>
+      <p>Conforme a la Ley N.º 29733 (Ley de Protección de Datos Personales del Perú) y su Reglamento (D.S. 003-2013-JUS).</p>
+
+      <!-- Términos específicos para administradores -->
+      <div *ngIf="isAdmin" class="admin-terms-section">
+        <h4>5. Términos Específicos para Administradores</h4>
+        <div class="admin-terms-box">
+          <h5>AUR — Administradores de [DREAN Teach Me]</h5>
+          <p><strong>Versión v1.0 — Fecha: 10/09/2025 — Vigencia: 12 meses</strong></p>
+
+          <p>Como administrador de la plataforma DREAN Teach Me, me comprometo a:</p>
+
+          <ul class="admin-terms-list">
+            <li>Usar los datos solo para fines académicos operativos autorizados.</li>
+            <li>No compartir credenciales ni permitir accesos no autorizados.</li>
+            <li>No exportar ni descargar PII salvo necesidad justificada y autorización.</li>
+            <li>Aplicar mínimo privilegio y bloquear mi sesión cuando me ausente.</li>
+            <li>Aceptar auditoría de mi actividad (accesos, descargas, cambios).</li>
+            <li>Notificar de inmediato incidentes de seguridad por los canales definidos.</li>
+            <li>Cumplir la Política de Privacidad, la Ley 29733 y actualizaciones que se comuniquen.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-back" (click)="goBackToTerms()">
+        <i class="fas fa-arrow-left"></i>
+        Volver
+      </button>
+      <button type="button" class="btn-reject" (click)="rejectPrivacy()">
+        <i class="fas fa-times"></i>
+        No Acepto
+      </button>
+      <button type="button" class="btn-accept" (click)="acceptPrivacy()">
+        <i class="fas fa-check"></i>
+        Aceptar y Finalizar
+      </button>
+    </div>
+  </div>
+</div>

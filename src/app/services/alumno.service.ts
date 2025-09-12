@@ -18,12 +18,20 @@ export class AlumnoService {
     return this.http.get<Alumno[]>(`${this.API_URL}/alumnos`);
   }
 
+  getAlumnosConUsuario(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/alumnos-con-usuario`);
+  }
+
   getAlumno(id: number): Observable<Alumno> {
     return this.http.get<Alumno>(`${this.API_URL}/alumnos/${id}`);
   }
 
   createAlumno(data: Alumno): Observable<Alumno> {
     return this.http.post<Alumno>(`${this.API_URL}/alumnos`, data);
+  }
+
+  createAlumnoWithData(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/alumnos/create`, data);
   }
 
   updateAlumno(id: number, data: Alumno): Observable<Alumno> {
