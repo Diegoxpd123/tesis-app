@@ -169,17 +169,45 @@ export class HomeComponent implements OnInit {
     const hoy = new Date();
 
     this.temaservice.getTemas().subscribe(temas => {
+      console.log("Todos los temas:", temas);
       const temasIds = temas
         .filter(t => t.cursoid === cursoId)
         .map(t => t.id); // extraemos los IDs de temas que coinciden
       console.clear();
-      console.log(temasIds);
+      console.log("Temas filtrados para curso", cursoId, ":", temas.filter(t => t.cursoid === cursoId));
+      console.log("IDs de temas para curso", cursoId, ":", temasIds);
       this.evaluacionserice.getEvaluacions().subscribe(evaluaciones => {
+        console.log("Todas las evaluaciones:", evaluaciones);
+        console.log("Temas IDs para el curso", cursoId, ":", temasIds);
+        console.log("Grado actual del usuario:", this.gradoactual);
+        console.log("Fecha actual:", hoy);
+
         this.evaluacionesDisponibles = evaluaciones.filter(e => {
-          const inicio = new Date(e.fechainicio);
-          const fin = new Date(e.fechafin);
-          return temasIds.includes(e.temaid) &&
-            hoy >= inicio && hoy <= fin && e.grado === this.gradoactual;
+          // Normalizar fechas para comparar solo la parte de fecha (sin hora)
+          const inicio = new Date(e.fechainicio + 'T00:00:00');
+          const fin = new Date(e.fechafin + 'T23:59:59');
+          const hoyNormalizado = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+          const inicioNormalizado = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate());
+          const finNormalizado = new Date(fin.getFullYear(), fin.getMonth(), fin.getDate());
+
+          const temaMatch = temasIds.includes(e.temaid);
+          const fechaMatch = hoyNormalizado >= inicioNormalizado && hoyNormalizado <= finNormalizado;
+          const gradoMatch = e.grado === this.gradoactual;
+
+          console.log(`Evaluación ${e.id} (${e.nombre}):`, {
+            temaMatch,
+            fechaMatch,
+            gradoMatch,
+            temaId: e.temaid,
+            grado: e.grado,
+            fechainicio: e.fechainicio,
+            fechafin: e.fechafin,
+            hoyNormalizado: hoyNormalizado.toISOString().split('T')[0],
+            inicioNormalizado: inicioNormalizado.toISOString().split('T')[0],
+            finNormalizado: finNormalizado.toISOString().split('T')[0]
+          });
+
+          return temaMatch && fechaMatch && gradoMatch;
         });
 
        // this.evaluacionesDisponibles.forEach(evaluacion => {
@@ -187,10 +215,11 @@ export class HomeComponent implements OnInit {
           //  evaluacion.nombre = tema.nombre;
          // });
        // });
-        console.log("sadsa", this.evaluacionesDisponibles);
+        console.log("Evaluaciones disponibles encontradas:", this.evaluacionesDisponibles);
+        console.log("Número de evaluaciones:", this.evaluacionesDisponibles.length);
 
         if (this.evaluacionesDisponibles.length > 0) {
-          this.showCourseOpciones = true; // mostrar el desplegable
+          this.showCourseButtons = true; // mostrar el desplegable
         } else {
           this.welcomeMessage = 'No hay evaluaciones disponibles para hoy.';
           this.speakWelcomeMessage(this.welcomeMessage);

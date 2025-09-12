@@ -37,7 +37,7 @@
       </div>
 
       <div *ngIf="showCourseButtons" class="evaluaciones-dropdown">
-        <label>Selecciona una evaluación disponible:</label>
+        <label>Selecciona una evaluación disponibles:</label>
         <select (change)="startMath($event)">
           <option value="">-- Selecciona --</option>
           <option *ngFor="let evaluacion of evaluacionesDisponibles" [value]="evaluacion.id">
