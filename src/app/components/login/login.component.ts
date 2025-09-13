@@ -35,8 +35,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     username: new FormControl('', [
       this.noSpacesValidator
     ]),
-    password: new FormControl('', []),
-    rememberMe: new FormControl(false)
+    password: new FormControl('', [])
   });
 
   constructor(
@@ -173,8 +172,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.mensajeLogin = '';
     this.colorMensaje = '';
 
-    const rememberMe = this.loginForm.get('rememberMe')?.value;
-
     this.usuarioService.login(username, password).subscribe({
       next: (response) => {
         if (response.success) {
@@ -190,12 +187,6 @@ export class LoginComponent implements OnInit, OnDestroy {
           localStorage.setItem('usuario_tipo', usuario.tipousuarioid.toString());
           localStorage.setItem('usuario_nombre', usuario.usuario);
 
-          // Recordar usuario si está marcado
-          if (rememberMe) {
-            localStorage.setItem('remembered_username', username);
-          } else {
-            localStorage.removeItem('remembered_username');
-          }
 
           this.mensajeLogin = `¡Bienvenido ${usuario.usuario}!`;
           this.colorMensaje = 'green';
@@ -226,9 +217,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.loading = false;
-        this.mensajeLogin = 'Error al conectar con el servidor';
+        this.mensajeLogin = 'Credenciales incorrectas';
         this.colorMensaje = 'red';
-        this.showError('Error de conexión. Intenta de nuevo');
+        this.showError('Usuario o contraseña incorrectos');
         console.error('Error en login:', error);
       }
     });
@@ -246,14 +237,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.addBodyClass();
     this.setupThemeListener();
 
-    // Cargar usuario recordado si existe
-    const rememberedUsername = localStorage.getItem('remembered_username');
-    if (rememberedUsername) {
-      this.loginForm.patchValue({
-        username: rememberedUsername,
-        rememberMe: true
-      });
-    }
 
     // Verificar si ya está logueado
     const usuarioId = localStorage.getItem('usuario_id');
@@ -295,7 +278,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     localStorage.removeItem('usuario_id');
     localStorage.removeItem('usuario_tipo');
     localStorage.removeItem('userData');
-    this.mensajeLogin = 'Debes aceptar los términos y condiciones para continuar';
+    this.mensajeLogin = 'Debes aceptar los términos y condiciones y la política de privacidad para continuar';
     this.colorMensaje = 'red';
   }
 }

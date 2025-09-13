@@ -11,7 +11,7 @@ import { EstudianteFiltro } from '../../models/estudiante.model';
   imports: [CommonModule, FormsModule]
 })
 export class EstudianteFiltersComponent implements OnInit {
-  @Input() grados: string[] = ['4', '5', '6'];
+  @Input() grados: string[] = ['5', '6'];
   @Input() secciones: string[] = ['A', 'B', 'C'];
   @Input() filtro: EstudianteFiltro = { grado: null, seccion: null };
   @Input() isDarkMode: boolean = false;

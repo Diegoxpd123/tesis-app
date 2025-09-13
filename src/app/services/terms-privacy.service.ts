@@ -26,9 +26,10 @@ export class TermsPrivacyService {
 
   /**
    * Verifica si es la primera vez que el usuario se loguea
+   * Modificado para mostrar términos en cada login
    */
   isFirstLogin(): boolean {
-    return !this.areTermsAndPrivacyAccepted();
+    return true; // Siempre mostrar términos y condiciones en cada login
   }
 
   /**
@@ -89,4 +90,16 @@ export class TermsPrivacyService {
   getPrivacyAccepted(): boolean {
     return this.privacyAcceptedSubject.value;
   }
+
+  /**
+   * Limpia la aceptación de términos para el próximo login
+   * Se debe llamar al cerrar sesión
+   */
+  clearTermsForNextLogin(): void {
+    localStorage.removeItem('termsAccepted');
+    localStorage.removeItem('privacyAccepted');
+    this.termsAcceptedSubject.next(false);
+    this.privacyAcceptedSubject.next(false);
+  }
 }
+

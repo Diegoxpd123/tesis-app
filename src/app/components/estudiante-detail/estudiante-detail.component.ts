@@ -480,7 +480,7 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
             this.usuarioApellido = ''; // El modelo Alumno no tiene apellido
             this.usuarioEmail = alumno.correo || '';
             this.usuarioGrado = alumno.grado ? `Grado ${alumno.grado}` : '';
-            this.usuarioSeccion = alumno.seccionid ? `Sección ${alumno.seccionid}` : '';
+            this.usuarioSeccion = alumno.seccionid ? `Sección ${this.getSeccionLetra(alumno.seccionid)}` : '';
           } else {
             console.log('Alumno no encontrado, usando valores por defecto');
             this.setDefaultUserInfo();
@@ -597,5 +597,14 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
     const fecha = new Date().toISOString().split('T')[0];
     const tipoReporte = this.tipoReporte === 'examen' ? 'Examenes' : 'Practicas';
     XLSX.writeFile(wb, `reporte_${cursoNombre.toLowerCase().replace(/\s+/g, '_')}_${tipoReporte}_${fecha}.xlsx`);
+  }
+
+  getSeccionLetra(seccionId: number): string {
+    switch (seccionId) {
+      case 1: return 'A';
+      case 2: return 'B';
+      case 3: return 'C';
+      default: return '?';
+    }
   }
 }

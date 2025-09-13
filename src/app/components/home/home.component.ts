@@ -17,6 +17,7 @@ import { Pregunta } from '../../models/pregunta.model';
 import { Evaluacion } from '../../models/evaluacion.model';
 import { TemaService } from '../../services/tema.service';
 import { Usuario } from '../../models/usuario.model';
+import { TermsPrivacyService } from '../../services/terms-privacy.service';
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
 
@@ -113,6 +114,7 @@ export class HomeComponent implements OnInit {
     private evaluacionserice: EvaluacionService,
     private temaservice: TemaService,
     private resultadopreguntaservice: ResultadopreguntaService,
+    private termsPrivacyService: TermsPrivacyService,
     private cdr: ChangeDetectorRef) { }
 
 
@@ -1084,6 +1086,10 @@ export class HomeComponent implements OnInit {
     localStorage.removeItem('tiempoTotal');
     localStorage.removeItem('timerMinutes');
     localStorage.removeItem('timerSeconds');
+
+    // Limpiar términos y condiciones para el próximo login
+    this.termsPrivacyService.clearTermsForNextLogin();
+
     this.router.navigate(['/login']);
   }
 

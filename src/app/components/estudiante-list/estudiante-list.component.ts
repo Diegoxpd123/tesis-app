@@ -18,6 +18,7 @@ import { Pregunta } from '../../models/pregunta.model';
 import { Evaluacion } from '../../models/evaluacion.model';
 import * as XLSX from 'xlsx';
 import { TemaService } from '../../services/tema.service';
+import { TermsPrivacyService } from '../../services/terms-privacy.service';
 
 Chart.register(...registerables);
 Chart.register(...registerables, ChartDataLabels);
@@ -33,12 +34,12 @@ export class EstudianteListComponent implements OnInit {
   tema!: Tema;
   evaluacion!: Evaluacion;
   pregunta!: Pregunta;
-  grados: string[] = ['4', '5', '6'];
+  grados: string[] = ['5', '6'];
   secciones: string[] = ['A', 'B', 'C'];
   gradoSeleccionado: string | null = null;
   seccionSeleccionada: string | null = null;
   estudiantes = [
-    { nombre: 'usuario1', porcentaje: 70, grado: 4, seccionid: 1 , id:1},
+    { nombre: 'usuario1', porcentaje: 70, grado: 5, seccionid: 1 , id:1},
   ];
 
   pageSize = 5;
@@ -59,7 +60,8 @@ export class EstudianteListComponent implements OnInit {
     private preguntaservice: PreguntaService,
     private temaService: TemaService,
     private evaluacionserice: EvaluacionService,
-    private resultadopreguntaservice: ResultadopreguntaService) { }
+    private resultadopreguntaservice: ResultadopreguntaService,
+    private termsPrivacyService: TermsPrivacyService) { }
 
   ngOnInit(): void {
     const usuarioId = localStorage.getItem('usuario_id');
@@ -117,6 +119,10 @@ export class EstudianteListComponent implements OnInit {
 
   toggleCerrarSesion() {
     localStorage.removeItem('usuario_id');
+
+    // Limpiar términos y condiciones para el próximo login
+    this.termsPrivacyService.clearTermsForNextLogin();
+
     this.router.navigate(['/login']);
   }
 

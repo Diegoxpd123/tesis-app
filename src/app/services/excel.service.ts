@@ -165,7 +165,7 @@ export class ExcelService {
       is_actived: 1,
       fechainicio,
       fechafin,
-      grado: Number(data.grado) || 4
+      grado: Number(data.grado) || 5
     };
 
     const evaluacionCreada = await this.evaluacionService.createEvaluacion(evaluacion).toPromise();

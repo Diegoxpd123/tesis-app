@@ -114,3 +114,4 @@ export class TermsPrivacyModalComponent implements OnInit, OnDestroy {
     this.rejected.emit();
   }
 }
+

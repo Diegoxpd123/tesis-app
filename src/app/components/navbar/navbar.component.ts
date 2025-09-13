@@ -3,6 +3,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ComunicacionService } from '../../services/comunicacion.service';
 import { UsuarioService } from '../../services/usuario.service';
+import { TermsPrivacyService } from '../../services/terms-privacy.service';
+import { SpeechService } from '../../services/speech.service';
 import { filter } from 'rxjs/operators';
 
 interface Usuario {
@@ -37,6 +39,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(
     private comunicacionService: ComunicacionService,
     private usuarioService: UsuarioService,
+    private termsPrivacyService: TermsPrivacyService,
+    private speechService: SpeechService,
     private router: Router
   ) {}
 
@@ -146,6 +150,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   cerrarSesion(): void {
     this.showLogoutModal = true;
     this.closeMobileMenu(); // Cerrar menú móvil si está abierto
+
+    // Hacer que el robot hable
+    setTimeout(() => {
+      this.speechService.speak('Fue un gusto haberte ayudado el día de hoy');
+    }, 300); // Pequeño delay para que el modal se abra primero
   }
 
   // Método para confirmar cerrar sesión
@@ -156,6 +165,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     localStorage.removeItem('usuario_tipo');
     localStorage.removeItem('usuario_nombre');
     localStorage.removeItem('remembered_username');
+
+    // Limpiar términos y condiciones para el próximo login
+    this.termsPrivacyService.clearTermsForNextLogin();
 
     // Limpiar variables del componente
     this.currentUser = null;

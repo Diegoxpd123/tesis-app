@@ -132,10 +132,6 @@
               class="form-select"
               [class.error]="isFieldInvalid('grado')">
               <option value="">Seleccione grado</option>
-              <option value="1">1° Grado</option>
-              <option value="2">2° Grado</option>
-              <option value="3">3° Grado</option>
-              <option value="4">4° Grado</option>
               <option value="5">5° Grado</option>
               <option value="6">6° Grado</option>
             </select>
@@ -155,22 +151,9 @@
         </h3>
 
         <div class="form-row">
-          <div class="form-group">
-            <label for="institucionid">Institución *</label>
-            <select
-              id="institucionid"
-              formControlName="institucionid"
-              class="form-select"
-              [class.error]="isFieldInvalid('institucionid')"
-              (change)="onInstitucionChange()">
-              <option value="">Seleccione institución</option>
-              <option *ngFor="let institucion of instituciones" [value]="institucion.id">
-                {{ institucion.nombre }}
-              </option>
-            </select>
-            <div class="error-message" *ngIf="isFieldInvalid('institucionid')">
-              {{ getErrorMessage('institucionid') }}
-            </div>
+          <!-- Institución oculta - siempre será ID 1 -->
+          <div class="form-group" style="display: none;">
+            <input type="hidden" formControlName="institucionid" value="1">
           </div>
 
           <div class="form-group">

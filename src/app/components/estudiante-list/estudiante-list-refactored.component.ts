@@ -14,6 +14,7 @@ import { ComunicacionService } from '../../services/comunicacion.service';
 import { PreguntaService } from '../../services/pregunta.service';
 import { TemaService } from '../../services/tema.service';
 import { EvaluacionService } from '../../services/evaluacion.service';
+import { TermsPrivacyService } from '../../services/terms-privacy.service';
 // Modelos
 import { Estudiante, EstudianteFiltro, PaginacionConfig } from '../../models/estudiante.model';
 import { Pregunta } from '../../models/pregunta.model';
@@ -55,7 +56,7 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false; // Para determinar si es administrador (usuario 4)
 
   // Configuración
-  grados: string[] = ['4', '5', '6'];
+  grados: string[] = ['5', '6'];
   secciones: string[] = ['A', 'B', 'C'];
   filtro: EstudianteFiltro = { grado: null, seccion: null };
   paginacion: PaginacionConfig = {
@@ -92,7 +93,8 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
     private comunicacionService: ComunicacionService,
     private preguntaService: PreguntaService,
     private temaService: TemaService,
-    private evaluacionService: EvaluacionService
+    private evaluacionService: EvaluacionService,
+    private termsPrivacyService: TermsPrivacyService
   ) {}
 
   ngOnInit(): void {
@@ -149,22 +151,23 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
       });
   }
 
-  private setUserTitle(usuario: string): void {
+  private setUserTitle(userType: string): void {
     const usuarioTipo = localStorage.getItem('usuario_tipo');
+    const usuarioNombre = this.currentUser?.usuario || 'Usuario';
 
-    if (usuario === 'admin' || usuarioTipo === '4') {
-      this.tituloMessage = `¡Bienvenido! Administrador ${usuario}`;
+    if (userType === 'admin' || usuarioTipo === '1') {
+      this.tituloMessage = `¡Bienvenido! Administrador ${usuarioNombre}`;
     } else if (usuarioTipo === '2') {
-      this.tituloMessage = `¡Bienvenido! Docente ${usuario}`;
+      this.tituloMessage = `¡Bienvenido! Docente ${usuarioNombre}`;
     } else {
-      this.tituloMessage = `¡Bienvenido! ${usuario}`;
+      this.tituloMessage = `¡Bienvenido! ${usuarioNombre}`;
     }
   }
 
   private loadEstudiantes(usuario: any): void {
     const usuarioTipo = localStorage.getItem('usuario_tipo');
 
-    if (usuario.usuario === 'admin' || usuarioTipo === '4') {
+    if (usuario.usuario === 'admin' || usuarioTipo === '1') {
       // Administrador - cargar todos los estudiantes
       this.loadAllEstudiantes();
     } else if (usuarioTipo === '2') {
@@ -330,6 +333,10 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
 
   toggleCerrarSesion(): void {
     localStorage.removeItem('usuario_id');
+
+    // Limpiar términos y condiciones para el próximo login
+    this.termsPrivacyService.clearTermsForNextLogin();
+
     this.router.navigate(['/login']);
   }
 

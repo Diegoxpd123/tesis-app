@@ -6,8 +6,6 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UsuarioService } from '../../services/usuario.service';
 import { AlumnoService } from '../../services/alumno.service';
-import { InstitucionService } from '../../services/institucion.service';
-import { CursoService } from '../../services/curso.service';
 import { SeccionService } from '../../services/seccion.service';
 
 @Component({
@@ -25,12 +23,7 @@ export class RegisterUserComponent implements OnInit, OnDestroy {
   isDarkMode = false;
 
   // Datos para dropdowns
-  instituciones: any[] = [];
-  cursos: any[] = [];
   secciones: any[] = [];
-
-  // Institución por defecto (se puede cambiar)
-  defaultInstitutionId = 1;
 
   // Mensajes
   successMessage = '';
@@ -41,8 +34,6 @@ export class RegisterUserComponent implements OnInit, OnDestroy {
     private router: Router,
     private usuarioService: UsuarioService,
     private alumnoService: AlumnoService,
-    private institucionService: InstitucionService,
-    private cursoService: CursoService,
     private seccionService: SeccionService
   ) {
     this.registerForm = this.fb.group({
@@ -52,15 +43,14 @@ export class RegisterUserComponent implements OnInit, OnDestroy {
       nombre: ['', [Validators.required]],
       dni: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
       grado: ['', [Validators.required]],
-      institucionid: ['', [Validators.required]], // Institución seleccionable
+      institucionid: [1, [Validators.required]], // Institución fija ID 1
       seccionid: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
 
   ngOnInit(): void {
     this.loadTheme();
-    this.loadInstituciones();
-    this.loadSecciones(); // Cargar secciones directamente
+    this.loadSecciones(); // Cargar secciones directamente para institución ID 1
     this.setupThemeListener();
   }
 
@@ -114,40 +104,18 @@ export class RegisterUserComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  loadInstituciones(): void {
-    this.institucionService.getInstitucions()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.instituciones = data || [];
-        },
-        error: (error: any) => {
-          console.error('Error al cargar instituciones:', error);
-        }
-      });
-  }
 
-  onInstitucionChange(): void {
-    const institucionId = this.registerForm.get('institucionid')?.value;
-    console.log('Institución seleccionada:', institucionId);
-    if (institucionId) {
-      this.loadSecciones(institucionId);
-      // Limpiar selección de sección
-      this.registerForm.patchValue({ seccionid: '' });
-    }
-  }
 
-  loadSecciones(institucionId?: number): void {
-    const targetInstitucionId = institucionId || this.defaultInstitutionId;
-    console.log('Cargando secciones para institución:', targetInstitucionId);
+  loadSecciones(): void {
+    console.log('Cargando secciones para institución ID 1');
 
     this.seccionService.getSeccions()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           console.log('Secciones recibidas:', data);
-          // Filtrar secciones por institución
-          this.secciones = (data || []).filter((seccion: any) => Number(seccion.institucionid) === Number(targetInstitucionId));
+          // Filtrar secciones por institución ID 1
+          this.secciones = (data || []).filter((seccion: any) => Number(seccion.institucionid) === 1);
           console.log('Secciones filtradas:', this.secciones);
         },
         error: (error: any) => {
@@ -205,7 +173,6 @@ export class RegisterUserComponent implements OnInit, OnDestroy {
                   this.loading = false;
 
                   // Limpiar dropdowns
-                  this.cursos = [];
                   this.secciones = [];
                 },
                 error: (error) => {
