@@ -1,6 +1,7 @@
 export interface Usuario {
   id: number;
   usuario: string;
+  numero?: string;
   contra: string;
   tipousuarioid: number;
   aludocenid: number;

@@ -115,3 +115,4 @@ export class TermsPrivacyModalComponent implements OnInit, OnDestroy {
   }
 }
 
+

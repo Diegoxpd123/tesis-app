@@ -146,6 +146,7 @@ export class RegisterUserComponent implements OnInit, OnDestroy {
       // Preparar datos del usuario
       const usuarioData: any = {
         usuario: formData.usuario,
+        numero: formData.dni, // Agregar el DNI al usuario
         password: formData.password, // Se encriptará en el backend
         tipousuarioid: 1, // Tipo alumno
         grado: formData.grado,
