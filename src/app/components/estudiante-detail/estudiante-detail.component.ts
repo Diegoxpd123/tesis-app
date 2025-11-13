@@ -23,6 +23,7 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
   usuarioid: number = 5;
   hasData: { [cursoid: number]: boolean } = {};
   hasDetailedData: { [cursoid: number]: boolean } = {};
+  cursoExpandido: { [cursoid: number]: boolean } = { 1: false, 2: false, 3: false };
   loading: boolean = false;
   isDarkMode: boolean = false;
   tipoReporte: 'examen' | 'practica' = 'examen';
@@ -282,7 +283,13 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
       if (this.reporteDetallado[cursoid] && this.reporteDetallado[cursoid].length > 0) {
         const datos = this.reporteDetallado[cursoid];
         const totalPreguntas = datos.length;
-        const respuestasCorrectas = datos.filter(r => r.estado_respuesta === 'Correcta').length;
+        const respuestasCorrectas = datos.filter(r => {
+          const esCorrecta = r.estado_respuesta === 'Correcta';
+          if (!esCorrecta && cursoid === 1) {
+            console.log('Pregunta incorrecta:', r.pregunta, 'Estado:', r.estado_respuesta);
+          }
+          return esCorrecta;
+        }).length;
 
         console.log(`Curso ${cursoid} (detallado): ${respuestasCorrectas}/${totalPreguntas} correctas`);
 
@@ -298,9 +305,10 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
         let totalPreguntas = 0;
 
         datos.forEach((r) => {
-          totalPreguntas++;
-          if (r.respuesta === 'correcta') {
-            totalBuenas++;
+          const partes = r.respuestas_buenas_sobre_totales?.split('/');
+          if (partes && partes.length === 2) {
+            totalBuenas += parseInt(partes[0], 10);
+            totalPreguntas += parseInt(partes[1], 10);
           }
         });
 
@@ -387,9 +395,43 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
       tipo: this.tipoReporte
     }).subscribe({
       next: (data) => {
+        console.log(`📊 Datos recibidos para curso ${cursoid} (ANTES de ordenar):`, data);
+
+        // Ordenar los datos: Evaluación > Intento > Pregunta
+        if (data && data.length > 0) {
+          data.sort((a: any, b: any) => {
+            // Log para ver los valores que estamos comparando (solo para matemáticas)
+            if (cursoid === 1 && data.indexOf(a) < 5) {
+              console.log(`Ordenando:
+                A: eval=${a.evaluacion_id}, intento=${a.intento}, preg=${a.pregunta_id}
+                B: eval=${b.evaluacion_id}, intento=${b.intento}, preg=${b.pregunta_id}`);
+            }
+
+            // 1️⃣ Por evaluación ID (ascendente)
+            if (a.evaluacion_id !== b.evaluacion_id) {
+              return a.evaluacion_id - b.evaluacion_id;
+            }
+            // 2️⃣ Por INTENTO (1, 2, 3...) - AHORA SEGUNDO
+            const intentoA = parseInt(a.intento) || 1;
+            const intentoB = parseInt(b.intento) || 1;
+            if (intentoA !== intentoB) {
+              return intentoA - intentoB;
+            }
+            // 3️⃣ Por pregunta ID (ascendente) - AHORA TERCERO
+            return a.pregunta_id - b.pregunta_id;
+          });
+
+          console.log(`✅ Datos DESPUÉS de ordenar (primeros 12):`, data.slice(0, 12).map((d: any) => ({
+            eval: d.evaluacion_id,
+            intento: d.intento,
+            preg: d.pregunta_id,
+            pregunta: d.pregunta?.substring(0, 30)
+          })));
+        }
+
         this.reporteDetallado[cursoid] = data;
         this.hasDetailedData[cursoid] = data && data.length > 0;
-        console.log(`Reporte detallado cargado para curso ${cursoid}:`, data);
+        console.log(`Reporte detallado guardado para curso ${cursoid}. Total registros:`, data?.length || 0);
       },
       error: (error) => {
         console.error('Error al obtener reporte detallado:', error);
@@ -541,26 +583,34 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
   }
 
   calcularPuntaje(cursoid: number): string {
-  const datos = this.resultados[cursoid];
-  if (!datos || datos.length === 0) return '0%';
+    // Usar el porcentaje ya calculado para el radar
+    const porcentaje = this.porcentajesRadar[cursoid] || 0;
+    return `${porcentaje}%`;
+  }
 
-  let totalBuenas = 0;
-  let totalPreguntas = 0;
-
-
-  datos.forEach((r) => {
-    const partes = r.respuestas_buenas_sobre_totales.split('/');
-    if (partes.length === 2) {
-      totalBuenas += parseInt(partes[0], 10);
-      totalPreguntas += parseInt(partes[1], 10);
+  // Método auxiliar para obtener datos ordenados garantizando el orden correcto
+  getReporteOrdenado(cursoid: number): any[] {
+    const datos = this.reporteDetallado[cursoid];
+    if (!datos || datos.length === 0) {
+      return [];
     }
-  });
 
-  if (totalPreguntas === 0) return '0%';
-
-  const porcentaje = (totalBuenas / totalPreguntas) * 100;
-  return `${porcentaje.toFixed(1)}%`;
-}
+    // Crear una copia y ordenar: Evaluación > Intento > Pregunta
+    return [...datos].sort((a, b) => {
+      // 1️⃣ Primero por evaluación ID
+      if (a.evaluacion_id !== b.evaluacion_id) {
+        return a.evaluacion_id - b.evaluacion_id;
+      }
+      // 2️⃣ Luego por INTENTO (agrupa todos los intentos juntos)
+      const intentoA = parseInt(a.intento) || 1;
+      const intentoB = parseInt(b.intento) || 1;
+      if (intentoA !== intentoB) {
+        return intentoA - intentoB;
+      }
+      // 3️⃣ Finalmente por pregunta ID (dentro del mismo intento)
+      return a.pregunta_id - b.pregunta_id;
+    });
+  }
 
 
   exportarExcel(cursoid: number) {
@@ -581,6 +631,7 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
       'Grado': item.grado,
       'Evaluación': item.evaluacion,
       'Pregunta': item.pregunta,
+      'Intento': item.intento || 1,
       'Respuesta Correcta': item.respuesta_correcta,
       'Estado': item.estado_respuesta,
       'Tiempo Respuesta (s)': item.tiempo_respuesta,
@@ -606,5 +657,9 @@ export class EstudianteDetailComponent implements OnInit, OnDestroy {
       case 3: return 'C';
       default: return '?';
     }
+  }
+
+  toggleCurso(cursoid: number): void {
+    this.cursoExpandido[cursoid] = !this.cursoExpandido[cursoid];
   }
 }

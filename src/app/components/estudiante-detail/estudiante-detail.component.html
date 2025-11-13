@@ -91,6 +91,9 @@
     <!-- 📘 Matemáticas -->
     <div class="course-card" style="--color:#f9a825;">
       <div class="course-header">
+        <button class="expand-btn" (click)="toggleCurso(1)" [class.expanded]="cursoExpandido[1]">
+          {{ cursoExpandido[1] ? '−' : '+' }}
+        </button>
         <span class="course-name">📘 Matemáticas</span>
         <span class="course-score">{{ calcularPuntaje(1) }}</span>
       </div>
@@ -101,7 +104,7 @@
       </div>
 
         <!-- Reporte de Matemáticas -->
-        <div class="course-report" *ngIf="hasDetailedData[1]">
+        <div class="course-report" *ngIf="hasDetailedData[1] && cursoExpandido[1]">
           <div class="report-header">
             <h4>Reporte de Matemáticas - {{ tipoReporte === 'examen' ? 'Evaluación Continua' : 'Evaluación Inicial' }}</h4>
             <div class="report-controls">
@@ -123,13 +126,14 @@
                     <th>Pregunta</th>
                     <th>Respuesta Correcta</th>
                     <th>Estado</th>
+                    <th>Intento</th>
                     <th>Tiempo Respuesta</th>
                     <th>Tiempo Reforzamiento</th>
                     <th>Fecha</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let r of reporteDetallado[1]">
+                  <tr *ngFor="let r of getReporteOrdenado(1)">
                     <td>{{ r.evaluacion }}</td>
                     <td class="question-cell">{{ r.pregunta }}</td>
                     <td>{{ r.respuesta_correcta }}</td>
@@ -139,6 +143,7 @@
                         {{ r.estado_respuesta }}
                       </span>
                     </td>
+                    <td><span class="intento-badge">{{ r.intento || 1 }}</span></td>
                     <td>{{ r.tiempo_respuesta }}s</td>
                     <td>{{ r.tiemporeforzamiento }}s</td>
                     <td>{{ r.fecha_respuesta | date:'short' }}</td>
@@ -159,6 +164,9 @@
     <!-- 📗 Comunicación -->
     <div class="course-card" style="--color:#4fc3f7;">
       <div class="course-header">
+        <button class="expand-btn" (click)="toggleCurso(2)" [class.expanded]="cursoExpandido[2]">
+          {{ cursoExpandido[2] ? '−' : '+' }}
+        </button>
         <span class="course-name">📗 Comunicación</span>
         <span class="course-score">{{ calcularPuntaje(2) }}</span>
       </div>
@@ -169,7 +177,7 @@
       </div>
 
         <!-- Reporte de Comunicación -->
-        <div class="course-report" *ngIf="hasDetailedData[2]">
+        <div class="course-report" *ngIf="hasDetailedData[2] && cursoExpandido[2]">
           <div class="report-header">
             <h4>Reporte de Comunicación - {{ tipoReporte === 'examen' ? 'Evaluación Continua' : 'Evaluación Inicial' }}</h4>
             <div class="report-controls">
@@ -191,13 +199,14 @@
                     <th>Pregunta</th>
                     <th>Respuesta Correcta</th>
                     <th>Estado</th>
+                    <th>Intento</th>
                     <th>Tiempo Respuesta</th>
                     <th>Tiempo Reforzamiento</th>
                     <th>Fecha</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let r of reporteDetallado[2]">
+                  <tr *ngFor="let r of getReporteOrdenado(2)">
                     <td>{{ r.evaluacion }}</td>
                     <td class="question-cell">{{ r.pregunta }}</td>
                     <td>{{ r.respuesta_correcta }}</td>
@@ -207,6 +216,7 @@
                         {{ r.estado_respuesta }}
                       </span>
                     </td>
+                    <td><span class="intento-badge">{{ r.intento || 1 }}</span></td>
                     <td>{{ r.tiempo_respuesta }}s</td>
                     <td>{{ r.tiemporeforzamiento }}s</td>
                     <td>{{ r.fecha_respuesta | date:'short' }}</td>
@@ -227,6 +237,9 @@
     <!-- 📙 Ciencias y Tecnología -->
     <div class="course-card" style="--color:#8bc34a;">
       <div class="course-header">
+        <button class="expand-btn" (click)="toggleCurso(3)" [class.expanded]="cursoExpandido[3]">
+          {{ cursoExpandido[3] ? '−' : '+' }}
+        </button>
         <span class="course-name">📙 Ciencias y Tecnología</span>
         <span class="course-score">{{ calcularPuntaje(3) }}</span>
       </div>
@@ -237,7 +250,7 @@
       </div>
 
         <!-- Reporte de Ciencias y Tecnología -->
-        <div class="course-report" *ngIf="hasDetailedData[3]">
+        <div class="course-report" *ngIf="hasDetailedData[3] && cursoExpandido[3]">
           <div class="report-header">
             <h4>Reporte de Ciencias y Tecnología - {{ tipoReporte === 'examen' ? 'Evaluación Continua' : 'Evaluación Inicial' }}</h4>
             <div class="report-controls">

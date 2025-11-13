@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ComunicacionService } from '../../services/comunicacion.service';
 import { UsuarioService } from '../../services/usuario.service';
+import { AlumnoService } from '../../services/alumno.service';
 import { TermsPrivacyService } from '../../services/terms-privacy.service';
 import { SpeechService } from '../../services/speech.service';
 import { filter } from 'rxjs/operators';
@@ -35,10 +36,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isDarkMode: boolean = false;
   showLogoutModal: boolean = false; // Modal de confirmación de cerrar sesión
   isInExam: boolean = false; // Variable para detectar si está en examen
+  
+  // Información del estudiante
+  estudianteGrado: number = 0;
+  estudianteSeccion: number = 0;
 
   constructor(
     private comunicacionService: ComunicacionService,
     private usuarioService: UsuarioService,
+    private alumnoService: AlumnoService,
     private termsPrivacyService: TermsPrivacyService,
     private speechService: SpeechService,
     private router: Router
@@ -70,6 +76,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.showCargaButton = isAdmin && !this.isInExam;
           this.showSesionesButton = isAdmin && !this.isInExam;
           this.showRegisterButton = isAdmin && !this.isInExam;
+          
+          // Si es estudiante, cargar información del alumno
+          if (isStudent) {
+            this.cargarInfoEstudiante(Number(usuarioId));
+          }
+          
           console.log('Usuario tipo:', usuario.tipousuarioid, 'Es estudiante:', isStudent, 'Es admin:', isAdmin, 'En examen:', this.isInExam, 'Mostrar botones:', this.showProgressButton);
         },
         error: (error) => {
@@ -288,12 +300,43 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Verificar por tipousuarioid
     if (this.currentUser.tipousuarioid === 3) return 'Administrador';
     if (this.currentUser.tipousuarioid === 2) return 'Docente';
-    if (this.currentUser.tipousuarioid === 1) return 'Estudiante';
+    if (this.currentUser.tipousuarioid === 1) {
+      // Si es estudiante y tenemos grado/sección, mostrarlo
+      if (this.estudianteGrado && this.estudianteSeccion) {
+        return `Estudiante - ${this.estudianteGrado}° ${this.getSeccionLetra(this.estudianteSeccion)}`;
+      }
+      return 'Estudiante';
+    }
 
     // Fallback: verificar si es docente por aludocenid
     if (this.isDocente(this.currentUser)) return 'Docente';
 
     return 'Usuario';
+  }
+
+  private cargarInfoEstudiante(usuarioId: number): void {
+    this.alumnoService.getAlumnosConUsuario().subscribe({
+      next: (alumnos: any[]) => {
+        const alumno = alumnos.find((a: any) => a.usuario_id === usuarioId);
+        if (alumno) {
+          this.estudianteGrado = alumno.grado || 0;
+          this.estudianteSeccion = alumno.seccionid || 0;
+          console.log('Info estudiante cargada:', { grado: this.estudianteGrado, seccion: this.estudianteSeccion });
+        }
+      },
+      error: (error: any) => {
+        console.error('Error al cargar información del estudiante:', error);
+      }
+    });
+  }
+
+  private getSeccionLetra(seccionId: number): string {
+    switch (seccionId) {
+      case 1: return 'A';
+      case 2: return 'B';
+      case 3: return 'C';
+      default: return '?';
+    }
   }
 
   getRouteTitle(): string {
