@@ -36,7 +36,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isDarkMode: boolean = false;
   showLogoutModal: boolean = false; // Modal de confirmación de cerrar sesión
   isInExam: boolean = false; // Variable para detectar si está en examen
-  
+
   // Información del estudiante
   estudianteGrado: number = 0;
   estudianteSeccion: number = 0;
@@ -76,12 +76,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.showCargaButton = isAdmin && !this.isInExam;
           this.showSesionesButton = isAdmin && !this.isInExam;
           this.showRegisterButton = isAdmin && !this.isInExam;
-          
+
           // Si es estudiante, cargar información del alumno
           if (isStudent) {
             this.cargarInfoEstudiante(Number(usuarioId));
           }
-          
+
           console.log('Usuario tipo:', usuario.tipousuarioid, 'Es estudiante:', isStudent, 'Es admin:', isAdmin, 'En examen:', this.isInExam, 'Mostrar botones:', this.showProgressButton);
         },
         error: (error) => {

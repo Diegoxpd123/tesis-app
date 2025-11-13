@@ -56,7 +56,7 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false; // Para determinar si es administrador (usuario 4)
 
   // Configuración
-  grados: string[] = ['1', '2', '3', '4', '5', '6'];
+  grados: string[] = ['5', '6'];
   secciones: string[] = ['A', 'B', 'C'];
   filtro: EstudianteFiltro = {
     grado: null,
