@@ -83,44 +83,15 @@ export class EstudiantePaginationComponent implements OnInit, OnChanges {
   }
 
   private calculatePages(): void {
-    const current = this.config.currentPage;
     const total = this.totalPages;
 
     this.pages = [];
     this.showFirstEllipsis = false;
     this.showLastEllipsis = false;
 
-    if (total <= 7) {
-      // Mostrar todas las páginas si son 7 o menos
-      for (let i = 1; i <= total; i++) {
-        this.pages.push(i);
-      }
-    } else {
-      // Lógica para mostrar páginas con elipsis
-      if (current <= 4) {
-        // Cerca del inicio
-        for (let i = 1; i <= 5; i++) {
-          this.pages.push(i);
-        }
-        this.pages.push(total);
-        this.showLastEllipsis = true;
-      } else if (current >= total - 3) {
-        // Cerca del final
-        this.pages.push(1);
-        this.showFirstEllipsis = true;
-        for (let i = total - 4; i <= total; i++) {
-          this.pages.push(i);
-        }
-      } else {
-        // En el medio
-        this.pages.push(1);
-        this.showFirstEllipsis = true;
-        for (let i = current - 1; i <= current + 1; i++) {
-          this.pages.push(i);
-        }
-        this.showLastEllipsis = true;
-        this.pages.push(total);
-      }
+    // Mostrar todas las páginas sin elipsis
+    for (let i = 1; i <= total; i++) {
+      this.pages.push(i);
     }
   }
 
