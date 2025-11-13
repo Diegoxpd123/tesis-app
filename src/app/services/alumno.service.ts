@@ -18,8 +18,12 @@ export class AlumnoService {
     return this.http.get<Alumno[]>(`${this.API_URL}/alumnos`);
   }
 
-  getAlumnosConUsuario(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/alumnos-con-usuario`);
+  getAlumnosConUsuario(docenteid?: number): Observable<any[]> {
+    let url = `${this.API_URL}/alumnos-con-usuario`;
+    if (docenteid) {
+      url += `?docenteid=${docenteid}`;
+    }
+    return this.http.get<any[]>(url);
   }
 
   getAlumno(id: number): Observable<Alumno> {

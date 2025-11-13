@@ -158,10 +158,12 @@
    📌 Page Numbers
    =============================== */
 .page-numbers {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 0.25rem;
   margin: 0 0.5rem;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .page-btn {
@@ -171,6 +173,9 @@
   padding: 0;
   font-size: 0.9rem;
   font-weight: 600;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* ===============================

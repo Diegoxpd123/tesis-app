@@ -30,6 +30,7 @@ export class EstudiantePaginationComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['config']) {
+      console.log('🔄 Config changed:', this.config);
       this.calculatePages();
     }
   }
@@ -85,6 +86,13 @@ export class EstudiantePaginationComponent implements OnInit, OnChanges {
   private calculatePages(): void {
     const total = this.totalPages;
 
+    console.log('📊 Calculating with:', {
+      totalItems: this.config.totalItems,
+      pageSize: this.config.pageSize,
+      calculatedTotal: Math.ceil(this.config.totalItems / this.config.pageSize),
+      totalPages: total
+    });
+
     this.pages = [];
     this.showFirstEllipsis = false;
     this.showLastEllipsis = false;
@@ -93,6 +101,12 @@ export class EstudiantePaginationComponent implements OnInit, OnChanges {
     for (let i = 1; i <= total; i++) {
       this.pages.push(i);
     }
+
+    console.log('📄 Pages calculated:', {
+      totalPages: total,
+      pages: this.pages,
+      config: this.config
+    });
   }
 
   getPageNumbers(): number[] {

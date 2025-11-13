@@ -207,33 +207,18 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   }
 
   private loadEstudiantesByDocente(docenteId: number): void {
-    // Usar el nuevo servicio para obtener estudiantes directamente
-    this.docenteService.getEstudiantesPorDocente(docenteId)
+    // Usar el servicio de alumnos con el filtro de docente
+    this.alumnoService.getAlumnosConUsuario(docenteId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (estudiantesData) => {
-          console.log('Estudiantes cargados para docente:', estudiantesData);
+        next: (alumnos) => {
+          console.log('Estudiantes cargados para docente:', alumnos);
 
-          if (estudiantesData.length === 0) {
+          if (alumnos.length === 0) {
             console.warn('Este docente no tiene estudiantes asignados.');
-            this.estudiantes = [];
-            this.applyFilters();
-            this.loading = false;
-            return;
           }
 
-          // Mapear los datos del API a la estructura esperada
-          this.estudiantes = estudiantesData.map((estudiante: any) => ({
-            id: estudiante.id,
-            nombre: estudiante.nombre,
-            grado: estudiante.grado,
-            seccionid: estudiante.seccionid,
-            porcentaje: estudiante.porcentaje || 0,
-            usuario: estudiante.usuario,
-            usuario_id: estudiante.usuario_id,
-            seccion_nombre: estudiante.seccion_nombre
-          }));
-
+          this.estudiantes = this.mapAlumnosToEstudiantes(alumnos);
           this.applyFilters();
           this.loading = false;
         },
@@ -358,8 +343,12 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   }
 
   private updatePagination(): void {
-    this.paginacion.totalItems = this.estudiantesFiltrados.length;
-    this.paginacion.currentPage = 1; // Reset to first page when filtering
+    // Crear un nuevo objeto para que Angular detecte el cambio
+    this.paginacion = {
+      ...this.paginacion,
+      totalItems: this.estudiantesFiltrados.length,
+      currentPage: 1
+    };
   }
 
   get estudiantesPaginados(): Estudiante[] {
