@@ -19,7 +19,7 @@ export class EstudianteFiltersComponent implements OnInit {
   @Output() filtroChange = new EventEmitter<EstudianteFiltro>();
 
   showAdvancedFilters: boolean = false;
-  sortBy: string = 'grado-progreso'; // Ordenar por grado y progreso
+  sortBy: string = 'nombre'; // Ordenar por nombre por defecto
   sortOrder: 'asc' | 'desc' = 'desc';
 
   ngOnInit(): void {
@@ -111,9 +111,7 @@ export class EstudianteFiltersComponent implements OnInit {
     const labels: { [key: string]: string } = {
       'nombre': 'Nombre',
       'grado': 'Grado',
-      'porcentaje': 'Progreso',
-      'seccion': 'Sección',
-      'grado-progreso': 'Grado y Progreso'
+      'seccion': 'Sección'
     };
     return labels[this.sortBy] || 'Nombre';
   }
