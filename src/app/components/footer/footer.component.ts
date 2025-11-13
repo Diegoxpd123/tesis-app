@@ -22,12 +22,23 @@ export class FooterComponent implements OnInit, OnDestroy {
   // Detectar si el usuario es administrador
   isAdmin: boolean = false;
 
+  // Verificar si los términos ya fueron aceptados
+  termsAlreadyAccepted: boolean = false;
+
   constructor(private termsPrivacyService: TermsPrivacyService) {}
 
   ngOnInit(): void {
     this.loadTheme();
     this.setupThemeListener();
     this.checkUserRole();
+    this.checkIfTermsAccepted();
+  }
+
+  /**
+   * Verifica si los términos y condiciones ya fueron aceptados
+   */
+  private checkIfTermsAccepted(): void {
+    this.termsAlreadyAccepted = this.termsPrivacyService.areTermsAndPrivacyAccepted();
   }
 
   ngOnDestroy(): void {
@@ -69,10 +80,12 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   // Métodos para abrir modales
   openTermsModal(): void {
+    this.checkIfTermsAccepted(); // Actualizar estado antes de abrir
     this.showTermsModal = true;
   }
 
   openPrivacyModal(): void {
+    this.checkIfTermsAccepted(); // Actualizar estado antes de abrir
     this.showPrivacyModal = true;
   }
 
@@ -87,12 +100,14 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   // Métodos para aceptar términos
   acceptTerms(): void {
-    this.showTermsModal = false;
     this.termsPrivacyService.acceptTerms();
+    this.checkIfTermsAccepted(); // Actualizar estado inmediatamente
+    this.showTermsModal = false;
   }
 
   acceptPrivacy(): void {
-    this.showPrivacyModal = false;
     this.termsPrivacyService.acceptPrivacy();
+    this.checkIfTermsAccepted(); // Actualizar estado inmediatamente
+    this.showPrivacyModal = false;
   }
 }

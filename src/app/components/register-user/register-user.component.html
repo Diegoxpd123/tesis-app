@@ -42,17 +42,21 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="usuario">Usuario *</label>
+            <label for="usuario">Usuario * (solo minúsculas)</label>
             <input
               type="text"
               id="usuario"
               formControlName="usuario"
               class="form-input"
               [class.error]="isFieldInvalid('usuario')"
-              placeholder="Ingrese nombre de usuario">
+              placeholder="Ingrese nombre de usuario"
+              (input)="convertToLowercase($event)"
+              pattern="[a-z0-9]*"
+              title="Solo se permiten letras minúsculas y números">
             <div class="error-message" *ngIf="isFieldInvalid('usuario')">
               {{ getErrorMessage('usuario') }}
             </div>
+            <small class="form-hint">Solo letras minúsculas y números</small>
           </div>
 
           <div class="form-group">

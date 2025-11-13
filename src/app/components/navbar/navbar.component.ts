@@ -285,9 +285,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   getUserRole(): string {
     if (!this.currentUser) return '';
 
-    if (this.currentUser.usuario === 'admin') return 'Administrador';
+    // Verificar por tipousuarioid
+    if (this.currentUser.tipousuarioid === 3) return 'Administrador';
+    if (this.currentUser.tipousuarioid === 2) return 'Docente';
+    if (this.currentUser.tipousuarioid === 1) return 'Estudiante';
+
+    // Fallback: verificar si es docente por aludocenid
     if (this.isDocente(this.currentUser)) return 'Docente';
-    return 'Estudiante';
+
+    return 'Usuario';
   }
 
   getRouteTitle(): string {

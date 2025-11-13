@@ -107,14 +107,25 @@
     </div>
 
     <div class="modal-footer">
-      <button type="button" class="btn-reject" (click)="closeTermsModal()">
-        <i class="fas fa-times"></i>
-        No Acepto
-      </button>
-      <button type="button" class="btn-accept" (click)="acceptTerms()">
-        <i class="fas fa-check"></i>
-        Sí Acepto
-      </button>
+      <!-- Solo mostrar botones de aceptar/rechazar si NO fueron aceptados previamente -->
+      <ng-container *ngIf="!termsAlreadyAccepted">
+        <button type="button" class="btn-reject" (click)="closeTermsModal()">
+          <i class="fas fa-times"></i>
+          No Acepto
+        </button>
+        <button type="button" class="btn-accept" (click)="acceptTerms()">
+          <i class="fas fa-check"></i>
+          Sí Acepto
+        </button>
+      </ng-container>
+
+      <!-- Si ya fueron aceptados, solo mostrar botón de cerrar -->
+      <ng-container *ngIf="termsAlreadyAccepted">
+        <button type="button" class="btn-close-only" (click)="closeTermsModal()">
+          <i class="fas fa-times"></i>
+          Cerrar
+        </button>
+      </ng-container>
     </div>
   </div>
 </div>
@@ -216,14 +227,25 @@
     </div>
 
     <div class="modal-footer">
-      <button type="button" class="btn-reject" (click)="closePrivacyModal()">
-        <i class="fas fa-times"></i>
-        No Acepto
-      </button>
-      <button type="button" class="btn-accept" (click)="acceptPrivacy()">
-        <i class="fas fa-check"></i>
-        Sí Acepto
-      </button>
+      <!-- Solo mostrar botones de aceptar/rechazar si NO fueron aceptados previamente -->
+      <ng-container *ngIf="!termsAlreadyAccepted">
+        <button type="button" class="btn-reject" (click)="closePrivacyModal()">
+          <i class="fas fa-times"></i>
+          No Acepto
+        </button>
+        <button type="button" class="btn-accept" (click)="acceptPrivacy()">
+          <i class="fas fa-check"></i>
+          Sí Acepto
+        </button>
+      </ng-container>
+
+      <!-- Si ya fueron aceptados, solo mostrar botón de cerrar -->
+      <ng-container *ngIf="termsAlreadyAccepted">
+        <button type="button" class="btn-close-only" (click)="closePrivacyModal()">
+          <i class="fas fa-times"></i>
+          Cerrar
+        </button>
+      </ng-container>
     </div>
   </div>
 </div>

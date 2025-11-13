@@ -53,13 +53,13 @@
   <!-- Selector de tipo de reporte -->
   <div class="report-type-selector">
     <div class="selector-container">
-      <label class="selector-label">Tipo de reporte:</label>
+      <label class="selector-label">Tipo de Evaluación:</label>
       <select
         class="type-dropdown"
         [(ngModel)]="tipoReporte"
         (change)="onTipoReporteChange()">
-        <option value="examen">📝 Exámenes</option>
-        <option value="practica">📚 Prácticas</option>
+        <option value="examen">📝 Evaluación Continua</option>
+        <option value="practica">📚 Evaluación Inicial</option>
       </select>
     </div>
   </div>
@@ -67,7 +67,7 @@
   <!-- Reporte Agrupado -->
   <div class="table-section">
     <h2 class="table-title">
-      {{ tipoReporte === 'examen' ? '📝 Reporte de Exámenes' : '📚 Reporte de Prácticas' }}
+      {{ tipoReporte === 'examen' ? '📝 Reporte de Evaluación Continua' : '📚 Reporte de Evaluación Inicial' }}
     </h2>
 
     <!-- Loading State -->
@@ -88,7 +88,7 @@
               <th class="th-evaluation">Evaluación</th>
               <th class="th-topic">Tema</th>
               <th class="th-date">Fecha</th>
-              <th class="th-time">Tiempo Examen</th>
+              <th class="th-time">Tiempo Eval.</th>
               <th class="th-reinforcement">Tiempo Ref.</th>
               <th class="th-score">Puntuación</th>
             </tr>
@@ -126,7 +126,7 @@
       <div class="empty-content">
         <div class="empty-icon">📊</div>
         <h3>No hay datos disponibles</h3>
-        <p>No se encontraron registros de {{ tipoReporte === 'examen' ? 'exámenes' : 'prácticas' }} para este curso</p>
+        <p>No se encontraron registros de {{ tipoReporte === 'examen' ? 'Evaluación Continua' : 'Evaluación Inicial' }} para este curso</p>
       </div>
     </div>
   </div>

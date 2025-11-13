@@ -32,16 +32,6 @@
 
     <!-- Números de página -->
     <div class="page-numbers">
-      <!-- Primera página -->
-      <button
-        *ngIf="pages[0] !== 1"
-        class="pagination-btn page-btn"
-        [class.active]="config.currentPage === 1"
-        (click)="goToPage(1)"
-        title="Página 1">
-        1
-      </button>
-
       <!-- Elipsis inicial -->
       <span
         *ngIf="showFirstEllipsis"
@@ -49,7 +39,7 @@
         ...
       </span>
 
-      <!-- Páginas del medio -->
+      <!-- Páginas -->
       <button
         *ngFor="let page of pages"
         class="pagination-btn page-btn"
@@ -65,16 +55,6 @@
         class="pagination-ellipsis">
         ...
       </span>
-
-      <!-- Última página -->
-      <button
-        *ngIf="pages[pages.length - 1] !== totalPages"
-        class="pagination-btn page-btn"
-        [class.active]="config.currentPage === totalPages"
-        (click)="goToPage(totalPages)"
-        [title]="'Página ' + totalPages">
-        {{ totalPages }}
-      </button>
     </div>
 
     <!-- Botón Página siguiente -->

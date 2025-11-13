@@ -103,11 +103,11 @@
         <!-- Reporte de Matemáticas -->
         <div class="course-report" *ngIf="hasDetailedData[1]">
           <div class="report-header">
-            <h4>Reporte de Matemáticas - {{ tipoReporte === 'examen' ? 'Exámenes' : 'Prácticas' }}</h4>
+            <h4>Reporte de Matemáticas - {{ tipoReporte === 'examen' ? 'Evaluación Continua' : 'Evaluación Inicial' }}</h4>
             <div class="report-controls">
               <select [(ngModel)]="tipoReporte" (change)="onTipoReporteChange()" class="report-type-select">
-                <option value="examen">Exámenes</option>
-                <option value="practica">Prácticas</option>
+                <option value="examen">Evaluación Continua</option>
+                <option value="practica">Evaluación Inicial</option>
               </select>
               <button class="btn-excel" (click)="exportarExcel(1)">📥 Descargar Excel</button>
             </div>
@@ -171,11 +171,11 @@
         <!-- Reporte de Comunicación -->
         <div class="course-report" *ngIf="hasDetailedData[2]">
           <div class="report-header">
-            <h4>Reporte de Comunicación - {{ tipoReporte === 'examen' ? 'Exámenes' : 'Prácticas' }}</h4>
+            <h4>Reporte de Comunicación - {{ tipoReporte === 'examen' ? 'Evaluación Continua' : 'Evaluación Inicial' }}</h4>
             <div class="report-controls">
               <select [(ngModel)]="tipoReporte" (change)="onTipoReporteChange()" class="report-type-select">
-                <option value="examen">Exámenes</option>
-                <option value="practica">Prácticas</option>
+                <option value="examen">Evaluación Continua</option>
+                <option value="practica">Evaluación Inicial</option>
               </select>
               <button class="btn-excel" (click)="exportarExcel(2)">📥 Descargar Excel</button>
             </div>
@@ -239,11 +239,11 @@
         <!-- Reporte de Ciencias y Tecnología -->
         <div class="course-report" *ngIf="hasDetailedData[3]">
           <div class="report-header">
-            <h4>Reporte de Ciencias y Tecnología - {{ tipoReporte === 'examen' ? 'Exámenes' : 'Prácticas' }}</h4>
+            <h4>Reporte de Ciencias y Tecnología - {{ tipoReporte === 'examen' ? 'Evaluación Continua' : 'Evaluación Inicial' }}</h4>
             <div class="report-controls">
               <select [(ngModel)]="tipoReporte" (change)="onTipoReporteChange()" class="report-type-select">
-                <option value="examen">Exámenes</option>
-                <option value="practica">Prácticas</option>
+                <option value="examen">Evaluación Continua</option>
+                <option value="practica">Evaluación Inicial</option>
               </select>
               <button class="btn-excel" (click)="exportarExcel(3)">📥 Descargar Excel</button>
             </div>

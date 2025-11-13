@@ -172,6 +172,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.mensajeLogin = '';
     this.colorMensaje = '';
 
+    // Enviar username tal cual (case-sensitive)
     this.usuarioService.login(username, password).subscribe({
       next: (response) => {
         if (response.success) {

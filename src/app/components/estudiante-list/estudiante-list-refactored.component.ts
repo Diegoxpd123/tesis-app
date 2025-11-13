@@ -56,9 +56,14 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false; // Para determinar si es administrador (usuario 4)
 
   // Configuración
-  grados: string[] = ['5', '6'];
+  grados: string[] = ['1', '2', '3', '4', '5', '6'];
   secciones: string[] = ['A', 'B', 'C'];
-  filtro: EstudianteFiltro = { grado: null, seccion: null };
+  filtro: EstudianteFiltro = {
+    grado: null,
+    seccion: null,
+    sortBy: 'grado-progreso',
+    sortOrder: 'desc'
+  };
   paginacion: PaginacionConfig = {
     pageSize: 10,
     currentPage: 1,
@@ -111,6 +116,8 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
 
   private initializeUser(): void {
     const usuarioId = localStorage.getItem('usuario_id');
+    const usuarioTipo = localStorage.getItem('usuario_tipo');
+
     if (!usuarioId) {
       this.router.navigate(['/login']);
       return;
@@ -118,8 +125,8 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
 
     this.usuarioid = usuarioId;
 
-    // Determinar si es administrador (usuario 4)
-    this.isAdmin = Number(usuarioId) === 4;
+    // Determinar si es administrador por tipo de usuario (3 = Admin)
+    this.isAdmin = usuarioTipo === '3';
 
     this.loadUserData(Number(usuarioId));
   }
@@ -140,7 +147,8 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (usuario) => {
           this.currentUser = usuario;
-          this.userType = usuario.tipousuarioid === 1 ? 'admin' : 'docente';
+          // tipousuarioid: 1=Estudiante, 2=Docente, 3=Admin
+          this.userType = usuario.tipousuarioid === 3 ? 'admin' : 'docente';
           this.setUserTitle(this.userType);
           this.loadEstudiantes(usuario);
         },
@@ -155,7 +163,8 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
     const usuarioTipo = localStorage.getItem('usuario_tipo');
     const usuarioNombre = this.currentUser?.usuario || 'Usuario';
 
-    if (userType === 'admin' || usuarioTipo === '1') {
+    // tipousuarioid: 1=Estudiante, 2=Docente, 3=Admin
+    if (userType === 'admin' || usuarioTipo === '3') {
       this.tituloMessage = `¡Bienvenido! Administrador ${usuarioNombre}`;
     } else if (usuarioTipo === '2') {
       this.tituloMessage = `¡Bienvenido! Docente ${usuarioNombre}`;
@@ -167,10 +176,11 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   private loadEstudiantes(usuario: any): void {
     const usuarioTipo = localStorage.getItem('usuario_tipo');
 
-    if (usuario.usuario === 'admin' || usuarioTipo === '1') {
+    // tipousuarioid: 1=Estudiante, 2=Docente, 3=Admin
+    if (usuario.tipousuarioid === 3 || usuarioTipo === '3') {
       // Administrador - cargar todos los estudiantes
       this.loadAllEstudiantes();
-    } else if (usuarioTipo === '2') {
+    } else if (usuario.tipousuarioid === 2 || usuarioTipo === '2') {
       // Docente - cargar solo estudiantes de sus secciones
       this.loadEstudiantesByDocente(usuario.aludocenid);
     } else {
@@ -271,6 +281,7 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
   }
 
   private applyFilters(): void {
+    // Filtrar estudiantes
     this.estudiantesFiltrados = this.estudiantes.filter(est => {
       const gradoMatch = !this.filtro.grado || est.grado === Number(this.filtro.grado);
       const seccionMatch = !this.filtro.seccion || est.seccionid === this.mapSeccionToNumber(this.filtro.seccion);
@@ -278,6 +289,55 @@ export class EstudianteListRefactoredComponent implements OnInit, OnDestroy {
         est.nombre.toLowerCase().includes(this.searchTerm.toLowerCase());
       return gradoMatch && seccionMatch && searchMatch;
     });
+
+    // Aplicar ordenamiento
+    if (this.filtro.sortBy) {
+      this.estudiantesFiltrados.sort((a, b) => {
+        // Ordenamiento especial: grado-progreso
+        if (this.filtro.sortBy === 'grado-progreso') {
+          // Primero ordenar por grado
+          if (a.grado !== b.grado) {
+            return this.filtro.sortOrder === 'asc' ? a.grado - b.grado : b.grado - a.grado;
+          }
+          // Si los grados son iguales, ordenar por porcentaje (progreso)
+          return this.filtro.sortOrder === 'asc' ? a.porcentaje - b.porcentaje : b.porcentaje - a.porcentaje;
+        }
+
+        // Ordenamiento normal para otros casos
+        let valueA: any;
+        let valueB: any;
+
+        switch (this.filtro.sortBy) {
+          case 'nombre':
+            valueA = a.nombre.toLowerCase();
+            valueB = b.nombre.toLowerCase();
+            break;
+          case 'grado':
+            valueA = a.grado;
+            valueB = b.grado;
+            break;
+          case 'porcentaje':
+            valueA = a.porcentaje;
+            valueB = b.porcentaje;
+            break;
+          case 'seccion':
+            valueA = a.seccionid;
+            valueB = b.seccionid;
+            break;
+          default:
+            valueA = a.nombre.toLowerCase();
+            valueB = b.nombre.toLowerCase();
+        }
+
+        if (valueA < valueB) {
+          return this.filtro.sortOrder === 'asc' ? -1 : 1;
+        }
+        if (valueA > valueB) {
+          return this.filtro.sortOrder === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
 
     this.updatePagination();
     this.calculateStats();

@@ -238,4 +238,15 @@ export class RegisterUserComponent implements OnInit, OnDestroy {
     const control = this.registerForm.get(fieldName);
     return !!(control && control.invalid && control.touched);
   }
+
+  /**
+   * Convierte el input de usuario a minúsculas automáticamente
+   */
+  convertToLowercase(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.toLowerCase();
+    this.registerForm.patchValue({
+      usuario: value
+    });
+  }
 }

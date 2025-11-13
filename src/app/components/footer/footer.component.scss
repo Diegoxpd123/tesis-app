@@ -125,7 +125,7 @@
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  z-index: 1000 !important;
+  z-index: 9999999 !important;
   backdrop-filter: blur(5px) !important;
   animation: fadeIn 0.3s ease-in-out !important;
 }
@@ -319,7 +319,7 @@
   }
 }
 
-.btn-reject, .btn-accept {
+.btn-reject, .btn-accept, .btn-close-only {
   padding: 0.8rem 1.5rem !important;
   border-radius: 10px !important;
   font-size: 1rem !important;
@@ -359,6 +359,18 @@
     background: #229954 !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3) !important;
+  }
+}
+
+.btn-close-only {
+  background: #3498db !important;
+  border-color: #2980b9 !important;
+  color: white !important;
+
+  &:hover {
+    background: #2980b9 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3) !important;
   }
 }
 
